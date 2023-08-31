@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 abstract class ItemmasterState extends Equatable {
-  ItemmasterState();
+  const ItemmasterState();
 
   @override
   List<Object> get props => [];
@@ -16,7 +16,7 @@ class IntialState extends ItemmasterState {}
 class StoreListState extends ItemmasterState {
   final List dataList;
 
-  StoreListState(this.dataList);
+  const StoreListState(this.dataList);
 
   @override
   List<Object> get props => [dataList];
@@ -25,7 +25,7 @@ class StoreListState extends ItemmasterState {
 class itemListState extends ItemmasterState {
   final List dataList;
 
-  itemListState(this.dataList);
+  const itemListState(this.dataList);
 
   @override
   List<Object> get props => [dataList];
@@ -34,7 +34,7 @@ class itemListState extends ItemmasterState {
 class itemAddUpdateState extends ItemmasterState {}
 
 class ErrorItemmasterState extends ItemmasterState {
-  ErrorItemmasterState(this.errorMessage);
+  const ErrorItemmasterState(this.errorMessage);
 
   final String errorMessage;
 

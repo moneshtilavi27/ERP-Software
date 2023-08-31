@@ -1,14 +1,14 @@
-import 'package:desktop_window/desktop_window.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
 import 'package:erp/CommonWidgets/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'app_screen/Blocs/Item Mater/itemmaster_bloc.dart';
 
 Future<void> main() async {
-  // WidgetsFlutterBinding.ensureInitialized();
+  // WidgetsFlutmake installterBinding.ensureInitialized();
 
   // // Initialize the desktop window
   // await DesktopWindow.setMinWindowSize(Size(
@@ -34,12 +34,17 @@ class Main extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => ItemmasterBloc(),
+          ),
+          BlocProvider(
+            create: (context) => InvoiceBloc(),
           )
         ],
         child: MaterialApp(
             title: "ERP Software",
             home: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
               return const SplashScreen();
-            })));
+            }))
+        // child: MaterialApp(title: "ERP Software", home: HomePage(title: 'ERP')),
+        );
   }
 }

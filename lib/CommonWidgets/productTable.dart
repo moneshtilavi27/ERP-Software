@@ -95,7 +95,7 @@ class _ProductTableState extends State<ProductTable> {
             child: DataTable(
               headingRowColor: MaterialStateProperty.all(Colors.blue),
               dataRowColor:
-                  MaterialStateProperty.all(Color.fromARGB(255, 81, 164, 232)),
+                  MaterialStateProperty.all(const Color.fromARGB(255, 81, 164, 232)),
               columns: [
                 for (int i = 0; i < widget.columnList.length; i++)
                   DataColumn(

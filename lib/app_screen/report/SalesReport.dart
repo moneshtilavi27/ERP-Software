@@ -1,6 +1,4 @@
-import 'package:erp/CommonWidgets/CustomDataTable.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
-import 'package:erp/service/asset/constants.dart';
 import 'package:flutter/material.dart';
 
 import '../../CommonWidgets/Button.dart';
@@ -83,7 +81,7 @@ class _SalesReportFormState extends State<SalesReport> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.transparent),
                 margin: const EdgeInsets.fromLTRB(0, 10, 0, 1),
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
@@ -91,36 +89,37 @@ class _SalesReportFormState extends State<SalesReport> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
                           SizedBox(
-                              child: Container(
+                              child: SizedBox(
                                   width: 150,
                                   child: TextBox(
                                     helpText: "Item Number",
                                   ))),
                           SizedBox(
-                              child: Container(
+                              child: SizedBox(
                                   width: 450,
                                   child: TextBox(helpText: "Item Name"))),
                           SizedBox(
-                              child: Container(
+                              child: SizedBox(
                                   width: 150,
                                   child: TextBox(helpText: "HSN No"))),
                           Flexible(
-                              child: Container(
+                              child: SizedBox(
                                   width: 150,
                                   child: TextBox(helpText: "Quantity"))),
                           SizedBox(
-                              child: Container(
+                              child: SizedBox(
                                   width: 150,
                                   child: Dropdown(
                                     helpText: "Unit",
+                                    defaultValue: '-',
                                   ))),
                           SizedBox(
-                              child: Container(
+                              child: SizedBox(
                                   width: 150,
                                   child: TextBox(helpText: "Rate"))),
                           SizedBox(
                               child: Container(
-                                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   width: 200,
                                   child: Button(
                                     onPress: () {
@@ -136,7 +135,7 @@ class _SalesReportFormState extends State<SalesReport> {
                                   ))),
                           Flexible(
                               child: Container(
-                                  margin: EdgeInsets.fromLTRB(15, 20, 0, 0),
+                                  margin: const EdgeInsets.fromLTRB(15, 20, 0, 0),
                                   width: 200,
                                   child: Button(
                                     onPress: () {
@@ -161,9 +160,9 @@ class _SalesReportFormState extends State<SalesReport> {
                       border: Border.all(width: 1, color: Colors.black),
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.blue.shade100),
-                  margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
+                  margin: const EdgeInsets.fromLTRB(0, 1, 0, 0),
                   child: Padding(
-                    padding: EdgeInsets.all(3.0),
+                    padding: const EdgeInsets.all(3.0),
                     child: ProductTable(
                         columnList: _columnList, dataList: _dataList),
                   )),

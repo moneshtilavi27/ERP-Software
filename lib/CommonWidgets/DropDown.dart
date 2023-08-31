@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 class Dropdown extends StatelessWidget {
   // Initial Selected Value
-  String dropdownvalue = 'kg';
-
+  final String defaultValue;
   final String? helpText;
   final IconData? prefixIcon, suffixIcon;
   final bool? isPassword, enabled, readOnly;
@@ -13,14 +12,6 @@ class Dropdown extends StatelessWidget {
   int? maxLength;
   Function? onChange;
 
-  // List of items in our dropdown menu
-  // var items = [
-  //   'Item 1',
-  //   'Item 2',
-  //   'Item 3',
-  //   'Item 4',
-  //   'Item 5',
-  // ];
   var items = [
     'pcs',
     'kg',
@@ -42,7 +33,8 @@ class Dropdown extends StatelessWidget {
     'tin',
     'tray',
     'pouch',
-    'unit'
+    'unit',
+    '-'
   ];
 
   Dropdown(
@@ -57,7 +49,8 @@ class Dropdown extends StatelessWidget {
       this.textInputType,
       this.focusNode,
       this.textAlign,
-      this.maxLength})
+      this.maxLength,
+      required this.defaultValue})
       : super(key: key);
 
   get onChanged => null;
@@ -65,7 +58,7 @@ class Dropdown extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(1),
+      padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -76,7 +69,7 @@ class Dropdown extends StatelessWidget {
           ),
           DropdownButtonFormField(
             // Initial Value
-            value: dropdownvalue,
+            value: defaultValue,
             menuMaxHeight: 400,
 
             // Down Arrow Icon
@@ -96,8 +89,8 @@ class Dropdown extends StatelessWidget {
                 : (value) => {},
             decoration: InputDecoration(
               isDense: true,
-              contentPadding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
-              border: OutlineInputBorder(),
+              contentPadding: const EdgeInsets.fromLTRB(10, 10, 0, 10),
+              border: const OutlineInputBorder(),
               prefixIcon: prefixIcon == null
                   ? null
                   : Padding(

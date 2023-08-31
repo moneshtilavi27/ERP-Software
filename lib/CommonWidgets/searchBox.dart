@@ -7,7 +7,7 @@ import '../service/API/api.dart';
 import '../service/API/api_methods.dart';
 
 class SearchBox extends StatefulWidget {
-  late final TextEditingController controller;
+  final TextEditingController controller;
   final String? hintText, helpText;
   final IconData? prefixIcon, suffixIcon;
   final double? listWidth;
@@ -15,7 +15,7 @@ class SearchBox extends StatefulWidget {
   final Function onSelected;
   final List<String>? options;
 
-  SearchBox(
+  const SearchBox(
       {Key? key,
       required this.controller,
       this.hintText,
@@ -43,7 +43,7 @@ class _SearchBoxState extends State<SearchBox> {
   }
 
   getItemList() async {
-    APIMethods obj = new APIMethods();
+    APIMethods obj = APIMethods();
     await obj.postData(API.itemMaster, {'request': "get"}).then((res) {
       // print("important data===>" + res.toString());
       setState(() {
@@ -69,7 +69,7 @@ class _SearchBoxState extends State<SearchBox> {
   Widget build(BuildContext context) {
     return Autocomplete<ItemModel>(
       optionsBuilder: (TextEditingValue textEditingValue) {
-        widget.controller?.text = textEditingValue.text;
+        widget.controller.text = textEditingValue.text;
         if (textEditingValue.text == '') {
           return List.empty();
         }
@@ -106,7 +106,7 @@ class _SearchBoxState extends State<SearchBox> {
                   decoration: InputDecoration(
                     isDense: true,
                     contentPadding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
-                    border: OutlineInputBorder(),
+                    border: const OutlineInputBorder(),
                     prefixIcon: widget.prefixIcon == null
                         ? null
                         : Padding(
@@ -135,7 +135,7 @@ class _SearchBoxState extends State<SearchBox> {
         return Align(
             alignment: Alignment.topLeft,
             child: Container(
-              margin: EdgeInsets.fromLTRB(10, 3, 0, 0),
+              margin: const EdgeInsets.fromLTRB(10, 3, 0, 0),
               child: Material(
                 elevation: 4.0,
                 child: ConstrainedBox(
@@ -170,7 +170,7 @@ class _SearchBoxState extends State<SearchBox> {
       onSelected: widget.onSelected != null
           ? ((value) => {widget.onSelected(value)})
           : (value) => {},
-      displayStringForOption: (ItemModel d) => '${d.item_name!}',
+      displayStringForOption: (ItemModel d) => d.item_name!,
       optionsMaxHeight: 1,
     );
   }

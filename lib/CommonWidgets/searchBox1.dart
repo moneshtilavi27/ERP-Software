@@ -36,7 +36,7 @@ class SearchBox1 extends StatelessWidget {
             decoration: InputDecoration(
               isDense: true,
               contentPadding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               prefixIcon: prefixIcon == null
                   ? null
                   : Padding(
@@ -59,9 +59,8 @@ class SearchBox1 extends StatelessWidget {
             scrollbarDecoration: ScrollbarDecoration(
                 controller: ScrollController(),
                 theme: ScrollbarThemeData(
-                    radius: Radius.circular(30.0),
+                    radius: const Radius.circular(30.0),
                     thickness: MaterialStateProperty.all(20.0),
-                    isAlwaysShown: true,
                     trackColor: MaterialStateProperty.all(Colors.red))),
             label: 'monu',
           ),

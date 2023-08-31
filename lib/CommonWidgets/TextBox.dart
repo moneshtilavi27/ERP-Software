@@ -57,7 +57,8 @@ class TextBox extends StatelessWidget {
             readOnly: readOnly == false ? false : true,
             enabled: enabled == false ? false : true,
             validator: (input) {
-              if (input!.isEmpty) {
+              if (input == 'a') {
+                print("abc");
                 return 'Please enter $hintText !';
               }
               return null;
@@ -65,7 +66,7 @@ class TextBox extends StatelessWidget {
             decoration: InputDecoration(
               isDense: true,
               contentPadding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
-              border: OutlineInputBorder(),
+              border: const OutlineInputBorder(),
               prefixIcon: prefixIcon == null
                   ? null
                   : Padding(

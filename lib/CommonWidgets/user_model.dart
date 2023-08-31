@@ -30,11 +30,11 @@ class UserModel {
   }
 
   Map<dynamic, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = Map<String, dynamic>();
-    data['total_records'] = this.total_records;
-    data['number_of_pages'] = this.number_of_pages;
-    data['current_page'] = this.currentPage;
-    data['status'] = this.status;
+    final Map<dynamic, dynamic> data = <String, dynamic>{};
+    data['total_records'] = total_records;
+    data['number_of_pages'] = number_of_pages;
+    data['current_page'] = currentPage;
+    data['status'] = status;
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
@@ -63,12 +63,12 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['id'] = this.id;
-    data['email'] = this.email;
-    data['first_name'] = this.firstName;
-    data['last_name'] = this.lastName;
-    data['avatar'] = this.avatar;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['id'] = id;
+    data['email'] = email;
+    data['first_name'] = firstName;
+    data['last_name'] = lastName;
+    data['avatar'] = avatar;
     return data;
   }
 }
@@ -103,14 +103,14 @@ class ItemModel {
   }
 
   Map<dynamic, dynamic> toJson() {
-    final Map<dynamic, dynamic> data = Map<String, dynamic>();
-    data['item_id'] = this.item_id;
-    data['item_name'] = this.item_name;
-    data['item_hsn'] = this.item_hsn;
-    data['item_unit'] = this.item_unit;
-    data['item_gst'] = this.item_gst;
-    data['basic_value'] = this.basic_value;
-    data['whole_sale_value'] = this.whole_sale_value;
+    final Map<dynamic, dynamic> data = <String, dynamic>{};
+    data['item_id'] = item_id;
+    data['item_name'] = item_name;
+    data['item_hsn'] = item_hsn;
+    data['item_unit'] = item_unit;
+    data['item_gst'] = item_gst;
+    data['basic_value'] = basic_value;
+    data['whole_sale_value'] = whole_sale_value;
     return data;
   }
 }
@@ -127,9 +127,9 @@ class Support {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = Map<String, dynamic>();
-    data['url'] = this.url;
-    data['text'] = this.text;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['url'] = url;
+    data['text'] = text;
     return data;
   }
 }

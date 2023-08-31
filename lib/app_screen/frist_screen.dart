@@ -2,6 +2,8 @@ import 'package:erp/app_screen/second_screen.dart';
 import 'package:flutter/material.dart';
 
 class FirstScreen extends StatelessWidget {
+  const FirstScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -11,7 +13,7 @@ class FirstScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Container(
-                margin: EdgeInsets.all(24),
+                margin: const EdgeInsets.all(24),
                 child: ElevatedButton(
                   onPressed: () {
                     showDialog(
@@ -50,7 +52,7 @@ class FirstScreen extends StatelessWidget {
                 ),
               ),
               Container(
-                margin: EdgeInsets.all(24),
+                margin: const EdgeInsets.all(24),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.green, // background (button) color
@@ -59,7 +61,7 @@ class FirstScreen extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (context) => SecondScreen(),
+                        builder: (context) => const SecondScreen(),
                       ),
                     );
                   },

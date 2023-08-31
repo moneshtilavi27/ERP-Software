@@ -1,8 +1,6 @@
-import 'package:erp/CommonWidgets/CustomDataTable.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
-import 'package:erp/service/asset/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -22,11 +20,13 @@ class ItemMaster extends StatefulWidget {
 }
 
 class _ItemMasterFormState extends State<ItemMaster> {
-  late TextEditingController _itemIdController = TextEditingController();
-  late TextEditingController _itemNameController = TextEditingController();
-  late TextEditingController _itemHsnController = TextEditingController();
-  late TextEditingController _itemGstController = TextEditingController();
-  late TextEditingController _itemvalueController = TextEditingController();
+  late final TextEditingController _itemIdController = TextEditingController();
+  late final TextEditingController _itemNameController = TextEditingController();
+  late final TextEditingController _itemHsnController = TextEditingController();
+  late final TextEditingController _itemUnitController =
+      TextEditingController(text: "-");
+  late final TextEditingController _itemGstController = TextEditingController();
+  late final TextEditingController _itemvalueController = TextEditingController();
   String itemUnit = "";
   bool condition = true;
 
@@ -40,14 +40,13 @@ class _ItemMasterFormState extends State<ItemMaster> {
     {'title': 'Value', 'key': 'whole_sale_value', 'width': '215.0'},
   ];
 
-  List<Map<String, String>> getDataList() {
-    // Sample data for the table
-    return [
-      {'Name': 'John', 'Age': '25', 'Country': 'USA'},
-      {'Name': 'Alice', 'Age': '30', 'Country': 'Canada'},
-      {'Name': 'Bob', 'Age': '22', 'Country': 'UK'},
-      // Add more data as needed
-    ];
+  clearFields() {
+    _itemIdController.text = "";
+    _itemNameController.text = "";
+    _itemHsnController.text = "";
+    _itemUnitController.text = "-";
+    _itemGstController.text = "";
+    _itemvalueController.text = "";
   }
 
   @override
@@ -80,18 +79,12 @@ class _ItemMasterFormState extends State<ItemMaster> {
                     borderRadius: BorderRadius.circular(10),
                     color: Colors.transparent),
                 margin: const EdgeInsets.fromLTRB(0, 10, 0, 1),
-                padding: EdgeInsets.all(10),
+                padding: const EdgeInsets.all(10),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     Row(mainAxisAlignment: MainAxisAlignment.center, children: <
                         Widget>[
-                      // SizedBox(
-                      //     child: Container(
-                      //         width: 150,
-                      //         child: TextBox(
-                      //           helpText: "Item Number",
-                      //         ))),
                       SizedBox(
                           width: 450,
                           child: Container(
@@ -101,6 +94,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
                               _itemIdController.text = selection?.item_id;
                               _itemNameController.text = selection?.item_name;
                               _itemHsnController.text = selection?.item_hsn;
+                              _itemUnitController.text = selection?.item_unit;
                               _itemGstController.text = selection?.item_gst;
                               _itemvalueController.text =
                                   selection?.basic_value;
@@ -112,8 +106,9 @@ class _ItemMasterFormState extends State<ItemMaster> {
                               });
                             },
                             onChange: (val) {
-                              // BlocProvider.of<ItemmasterBloc>(context)
-                              //     .add(FeatchItemmasterEvent(val));
+                              setState(() {
+                                condition = true;
+                              });
                             },
                             controller: _itemNameController,
                             listWidth: 430,
@@ -137,7 +132,9 @@ class _ItemMasterFormState extends State<ItemMaster> {
                           child: Container(
                               child: Dropdown(
                             helpText: "Unit",
+                            defaultValue: _itemUnitController.text,
                             onChange: (value) {
+                              _itemUnitController.text = value;
                               setState(() {
                                 itemUnit = value;
                               });
@@ -155,24 +152,30 @@ class _ItemMasterFormState extends State<ItemMaster> {
                           return SizedBox(
                               width: 200,
                               child: Container(
-                                  margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                                   child: Button(
                                     onPress: () {
-                                      // if (condition) {
-                                      //   showAboutDialog(
-                                      //     context: context,
-                                      //     applicationName: 'MenuBar Sample',
-                                      //     applicationVersion: '1.0.0',
-                                      //   );
-                                      // }
-                                      BlocProvider.of<ItemmasterBloc>(context)
-                                          .add(AddItemEvent(
-                                              _itemNameController.text,
-                                              _itemHsnController.text,
-                                              _itemGstController.text,
-                                              itemUnit,
-                                              _itemvalueController.text,
-                                              _itemvalueController.text));
+                                      condition
+                                          ? BlocProvider.of<ItemmasterBloc>(
+                                                  context)
+                                              .add(AddItemEvent(
+                                                  _itemNameController.text,
+                                                  _itemHsnController.text,
+                                                  _itemGstController.text,
+                                                  _itemUnitController.text,
+                                                  _itemvalueController.text,
+                                                  _itemvalueController.text))
+                                          : BlocProvider.of<ItemmasterBloc>(
+                                                  context)
+                                              .add(UpdateItemEvent(
+                                                  _itemIdController.text,
+                                                  _itemNameController.text,
+                                                  _itemHsnController.text,
+                                                  _itemGstController.text,
+                                                  _itemUnitController.text,
+                                                  _itemvalueController.text,
+                                                  _itemvalueController.text));
+                                      clearFields();
                                     },
                                     btnColor: condition
                                         ? Colors.green
@@ -185,15 +188,10 @@ class _ItemMasterFormState extends State<ItemMaster> {
                       SizedBox(
                           width: 200,
                           child: Container(
-                              margin: EdgeInsets.fromLTRB(15, 20, 0, 0),
+                              margin: const EdgeInsets.fromLTRB(15, 20, 0, 0),
                               child: Button(
                                 onPress: () {
-                                  showAboutDialog(
-                                    context: context,
-                                    applicationName: 'MenuBar Sample',
-                                    applicationVersion:
-                                        _itemNameController.text,
-                                  );
+                                  _showDeleteConfirmationDialog(context);
                                 },
                                 btnColor: Colors.red,
                                 textColor: Colors.white,
@@ -210,9 +208,9 @@ class _ItemMasterFormState extends State<ItemMaster> {
                       border: Border.all(width: 1, color: Colors.black),
                       borderRadius: BorderRadius.circular(5),
                       color: Colors.blue.shade100),
-                  margin: EdgeInsets.fromLTRB(0, 1, 0, 0),
+                  margin: const EdgeInsets.fromLTRB(0, 1, 0, 0),
                   child: Padding(
-                    padding: EdgeInsets.all(3.0),
+                    padding: const EdgeInsets.all(3.0),
                     child: BlocBuilder<ItemmasterBloc, ItemmasterState>(
                       builder: (context, state) {
                         if (state is StoreListState) {
@@ -226,7 +224,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
                         } else {
                           return ProductTable(
                             columnList: _columnList,
-                            dataList: [],
+                            dataList: const [],
                           );
                         }
                       },
@@ -236,6 +234,36 @@ class _ItemMasterFormState extends State<ItemMaster> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Item'),
+          content: const Text('Are you sure you want to delete this item?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                clearFields();
+                BlocProvider.of<ItemmasterBloc>(context)
+                    .add(DeleteItemEvent(_itemIdController.text));
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

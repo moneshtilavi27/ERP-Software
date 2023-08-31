@@ -11,7 +11,7 @@ class BottomMenu extends StatefulWidget {
 }
 
 class _BottomMenuState extends State<BottomMenu> {
-  final _pagesData = [HomeScreens(), AboutScreens(), ServicesScreens()];
+  final _pagesData = [const HomeScreens(), const AboutScreens(), const ServicesScreens()];
   int _selectedItem = 0;
   @override
   Widget build(BuildContext context) {

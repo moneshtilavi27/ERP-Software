@@ -34,7 +34,6 @@ class SplashScreen extends StatelessWidget {
           );
         }
         if (state is LogoutState) {
-          print("ajknk");
           Navigator.of(context).push(
             MaterialPageRoute(builder: (context) => const Login()),
           );
@@ -62,7 +61,7 @@ class SplashScreen extends StatelessWidget {
                 ),
               ),
               const Padding(padding: EdgeInsets.all(30.0)),
-              Text(
+              const Text(
                 'Bus Tracking',
                 style: TextStyle(
                   fontSize: 30,
@@ -72,7 +71,7 @@ class SplashScreen extends StatelessWidget {
                   height: 2,
                 ),
                 textHeightBehavior:
-                    const TextHeightBehavior(applyHeightToFirstAscent: false),
+                    TextHeightBehavior(applyHeightToFirstAscent: false),
                 textAlign: TextAlign.left,
               ),
             ],

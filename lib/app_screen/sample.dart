@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class HomeScreens extends StatelessWidget {
+  const HomeScreens({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -13,6 +15,8 @@ class HomeScreens extends StatelessWidget {
 }
 
 class AboutScreens extends StatelessWidget {
+  const AboutScreens({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
@@ -25,6 +29,8 @@ class AboutScreens extends StatelessWidget {
 }
 
 class ServicesScreens extends StatelessWidget {
+  const ServicesScreens({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Scaffold(

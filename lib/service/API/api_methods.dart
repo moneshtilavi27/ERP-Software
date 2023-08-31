@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class APIMethods {
   final _dio = Dio();
-  late String jwt =
+  late String demoJwt =
       "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwicGFzc3dvcmQiOiIxYTFkYzkxYzkwNzMyNWM2OTI3MWRkZjBjOTQ0YmM3MiIsInR5cGUiOiJhZG1pbiJ9.4WftTNRu8ZP2nxZECN7wFMMeYYPl4NgMbuXygTDbPFs";
 
   Future<Response> getData(String uri, dynamic data) async {
@@ -12,19 +12,20 @@ class APIMethods {
     try {
       Response response = await _dio.get(uri,
           queryParameters: {'cow_id': 1684150776896},
-          options: Options(headers: {'Authorization': 'Bearer $jwt'}));
+          options: Options(headers: {'Authorization': 'Bearer $demoJwt'}));
       // print(response.data.toString());
       return response;
     } catch (e) {
-      print("error: " + e.toString());
-      throw Exception("error: " + e.toString());
+      print("error: $e");
+      throw Exception("error: $e");
     }
   }
 
   Future<Response> postData(String uri, dynamic data) async {
     try {
+      print(data);
       SharedPreferences sp = await SharedPreferences.getInstance();
-      String jwt = sp.getString("auth_key") ?? "";
+      String jwt = sp.getString("auth_key") ?? demoJwt;
       FormData formData = FormData.fromMap(data);
       // _dio.options.contentType = 'x-www-form-urlencoded';
       _dio.options.headers['Content-Type'] = 'multipart/form-data;';

@@ -14,13 +14,12 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
       featchItemData({'request': "get", "item_name": "monesh"});
     });
 
-    on<FilterItemEvent>((event, emit) => {
-          featchItemData(
+    on<FilterItemEvent>((event, emit) => featchItemData(
               {'request': "getItemNames", "item_name": event.item_name})
-        });
+        );
 
     on<AddItemEvent>((event, emit) async {
-      APIMethods obj = new APIMethods();
+      APIMethods obj = APIMethods();
       Map<String, String> data = {
         "request": "add",
         "item_name": event.item_name,
@@ -30,23 +29,60 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
         "basic_value": event.basic_value,
         "whole_sale_value": event.basic_value
       };
-      await obj.postData(API.itemMaster, data).then((res) async {
-        try {
-          if (res.data['status'] == "success") {
-            print("success");
-            emit(itemAddUpdateState());
-            featchItemData({'request': "get"});
-          } else {
-            emit(ErrorItemmasterState(res.data['data']));
-            print("fails");
-          }
-        } catch (e) {
-          print(e.toString());
-          emit(ErrorItemmasterState(e.toString()));
+      addUpdate(data);
+    });
+
+    on<UpdateItemEvent>((event, emit) async {
+      APIMethods obj = APIMethods();
+      Map<String, String> data1 = {
+        "item_name": event.item_name,
+        "item_hsn": event.item_hsn,
+        "item_gst": event.item_gst,
+        "item_unit": event.item_unit,
+        "basic_value": event.basic_value,
+        "whole_sale_value": event.basic_value
+      };
+      Map<String, dynamic> data = {
+        "request": "update",
+        "item_id": event.item_id,
+        "data": {
+          "item_name": event.item_name,
+          "item_hsn": event.item_hsn,
+          "item_gst": event.item_gst,
+          "item_unit": event.item_unit,
+          "basic_value": event.basic_value,
+          "whole_sale_value": event.basic_value
         }
-      }).catchError((error) {
-        emit(ErrorItemmasterState(error));
-      });
+      };
+      addUpdate(data);
+    });
+
+    on<DeleteItemEvent>((event, emit) async {
+      APIMethods obj = APIMethods();
+      Map<String, dynamic> data = {
+        "request": "update",
+        "item_id": event.item_id,
+        "data": {"delete": 1}
+      };
+      addUpdate(data);
+    });
+  }
+
+  void addUpdate(Map<String, dynamic> data) async {
+    APIMethods obj = APIMethods();
+    await obj.postData(API.itemMaster, data).then((res) async {
+      try {
+        if (res.data['status'] == "success") {
+          featchItemData({'request': "get"});
+          emit(itemAddUpdateState());
+        } else {
+          emit(ErrorItemmasterState(res.data['data']));
+        }
+      } catch (e) {
+        emit(ErrorItemmasterState(e.toString()));
+      }
+    }).catchError((error) {
+      emit(ErrorItemmasterState(error));
     });
   }
 

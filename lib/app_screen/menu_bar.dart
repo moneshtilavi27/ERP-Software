@@ -76,7 +76,7 @@ class MyMenuBar extends StatefulWidget {
 class _MyMenuBarState extends State<MyMenuBar> {
   ShortcutRegistryEntry? _shortcutsEntry;
   String? _lastSelection;
-  Widget _selectedScreens = HomeScreens();
+  Widget _selectedScreens = const HomeScreens();
 
   Color get backgroundColor => _backgroundColor;
   Color _backgroundColor = Colors.red;
@@ -95,7 +95,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
       case SecondScreen:
         {
           setState(() {
-            _selectedScreens = SecondScreen();
+            _selectedScreens = const SecondScreen();
           });
         }
         break;
@@ -103,21 +103,21 @@ class _MyMenuBarState extends State<MyMenuBar> {
       case SimpleForm:
         {
           setState(() {
-            _selectedScreens = SimpleForm();
+            _selectedScreens = const SimpleForm();
           });
         }
         break;
       case Invoice:
         {
           setState(() {
-            _selectedScreens = Invoice();
+            _selectedScreens = const Invoice();
           });
         }
         break;
       case ItemMaster:
         {
           setState(() {
-            _selectedScreens = ItemMaster();
+            _selectedScreens = const ItemMaster();
           });
         }
         break;
@@ -125,14 +125,14 @@ class _MyMenuBarState extends State<MyMenuBar> {
       case HomeScreens:
         {
           setState(() {
-            _selectedScreens = HomeScreens();
+            _selectedScreens = const HomeScreens();
           });
         }
         break;
       case SalesReport:
         {
           setState(() {
-            _selectedScreens = SalesReport();
+            _selectedScreens = const SalesReport();
           });
         }
         break;
@@ -201,7 +201,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
           // ),
           child: Container(
               alignment: Alignment.center,
-              margin: EdgeInsets.all(3),
+              margin: const EdgeInsets.all(3),
               decoration: BoxDecoration(
                 border: Border.all(
                     color: Colors.black, width: 1.0, style: BorderStyle.solid),

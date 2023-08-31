@@ -25,7 +25,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       // var map = {};
       // map["phone"] = event.mobile;
       // map["password"] = event.Password;
-      APIMethods obj = new APIMethods();
+      APIMethods obj = APIMethods();
       Map<String, String> data = {
         "username": event.username,
         "password": event.Password
