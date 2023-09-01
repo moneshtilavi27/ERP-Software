@@ -44,3 +44,18 @@ class ErrorInvoiceState extends InvoiceState {
   @override
   List<Object> get props => [errorMessage];
 }
+
+class InvoiceDataState extends InvoiceState {
+  final List dataList;
+
+  const InvoiceDataState(this.dataList);
+}
+
+class InvoiceStatus extends InvoiceState {
+  final String status;
+
+  const InvoiceStatus(this.status);
+
+  @override
+  List<Object> get props => [status];
+}

@@ -25,8 +25,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     });
 
     on<FilterItemEvent>((event, emit) => featchItemData(
-              {'request': "getItemNames", "item_name": event.item_name})
-        );
+        {'request': "getItemNames", "item_name": event.item_name}));
 
     on<AddItemEvent>((event, emit) async {
       try {
@@ -107,18 +106,31 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         Map<String, dynamic> invoiceData = {
           "request": "getInvoiceNumber",
           "user_id": "1",
+          "customer_id": custId,
           "discount": "0"
         };
         int invoiceNum = await getBillNumber(invoiceData);
-        print('invoice number is =>$invoiceNum');
-        if (event.status == "print") {
-          Map<String, dynamic> invoiceData1 = {
-            "request": "transferItem",
+
+        Map<String, dynamic> invoiceData1 = {
+          "request": "transferItem",
+          "user_id": "1",
+          "invoiceNumber": invoiceNum
+        };
+        await transferItems(invoiceData1);
+
+        Map<String, dynamic> getBill = {
+          "request": "getBill",
+          "data": {
             "user_id": "1",
             "invoiceNumber": invoiceNum,
-            "customerId": custId
-          };
-          await transferItems(invoiceData1);
+          }
+        };
+        await getInvoiceData(getBill);
+        if (event.status == "print") {
+          emit(InvoiceStatus("print"));
+        }
+        if (event.status == "save") {
+          emit(InvoiceStatus("save"));
         }
       }
     });
@@ -201,6 +213,20 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       } else {
         throw ErrorInvoiceState(res.data['data']);
       }
+    } catch (e) {
+      print(e.toString());
+      throw ErrorInvoiceState(e.toString());
+    }
+  }
+
+  Future getInvoiceData(Map<String, dynamic> data) async {
+    try {
+      APIMethods obj = APIMethods();
+      obj.postData(API.invoice, data).then((res) {
+        if (res.data['status'] == "success") {
+          InvoiceDataState(res.data['data']);
+        }
+      });
     } catch (e) {
       print(e.toString());
       throw ErrorInvoiceState(e.toString());

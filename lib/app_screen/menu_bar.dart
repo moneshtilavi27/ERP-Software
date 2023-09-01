@@ -76,7 +76,7 @@ class MyMenuBar extends StatefulWidget {
 class _MyMenuBarState extends State<MyMenuBar> {
   ShortcutRegistryEntry? _shortcutsEntry;
   String? _lastSelection;
-  Widget _selectedScreens = const HomeScreens();
+  Widget _selectedScreens = const Invoice();
 
   Color get backgroundColor => _backgroundColor;
   Color _backgroundColor = Colors.red;

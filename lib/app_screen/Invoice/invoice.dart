@@ -1,4 +1,5 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
+import 'package:erp/CommonWidgets/common.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:flutter/material.dart';
@@ -27,15 +28,18 @@ class _InvoiceFormState extends State<Invoice> {
   late final TextEditingController _customerAddress = TextEditingController();
 
   late final TextEditingController _itemIdController = TextEditingController();
-  late final TextEditingController _itemNameController = TextEditingController();
+  late final TextEditingController _itemNameController =
+      TextEditingController();
   late final TextEditingController _itemHsnController = TextEditingController();
   late final TextEditingController _itemUnitController =
       TextEditingController(text: "-");
   late final TextEditingController _itemQtyController =
       TextEditingController(text: "1");
   late final TextEditingController _itemGstController = TextEditingController();
-  late final TextEditingController _itemvalueController = TextEditingController();
-  late final TextEditingController _itemRateController = TextEditingController();
+  late final TextEditingController _itemvalueController =
+      TextEditingController();
+  late final TextEditingController _itemRateController =
+      TextEditingController();
 
   String itemUnit = "";
   bool condition = true;
@@ -52,6 +56,12 @@ class _InvoiceFormState extends State<Invoice> {
     _itemGstController.text = "";
     _itemvalueController.text = "";
     _itemRateController.text = "";
+  }
+
+  clearCustField() {
+    _customerName.text = "";
+    _customerNumber.text = "";
+    _customerAddress.text = "";
   }
 
   double calculateQuantity(dynamic qty, String unit, dynamic rate) {
@@ -332,8 +342,9 @@ class _InvoiceFormState extends State<Invoice> {
                                         SizedBox(
                                             width: 150,
                                             child: Container(
-                                                margin: const EdgeInsets.fromLTRB(
-                                                    10, 20, 0, 0),
+                                                margin:
+                                                    const EdgeInsets.fromLTRB(
+                                                        10, 20, 0, 0),
                                                 child: Button(
                                                   onPress: () {
                                                     BlocProvider.of<
@@ -369,8 +380,8 @@ class _InvoiceFormState extends State<Invoice> {
                                 SizedBox(
                                     width: 200,
                                     child: Container(
-                                        margin:
-                                            const EdgeInsets.fromLTRB(15, 20, 0, 0),
+                                        margin: const EdgeInsets.fromLTRB(
+                                            15, 20, 0, 0),
                                         child: Button(
                                           onPress: () {
                                             _showDeleteConfirmationDialog(
@@ -435,6 +446,24 @@ class _InvoiceFormState extends State<Invoice> {
                             setState(() {
                               totalItem = state.dataList.length;
                               totalItemValue = tot;
+                            });
+                          }
+                          if (state is InvoiceStatus) {
+                            if (state.status == "save") {
+                              showAboutDialog(
+                                context: context,
+                                applicationName: state.status,
+                                applicationVersion: state.status,
+                              );
+                            } else {
+                              Common cm = Common();
+                              cm.showPrintPreview(context);
+                            }
+                            clearCustField();
+                            clearFields();
+                            setState(() {
+                              totalItem = 0;
+                              totalItemValue = 0;
                             });
                           }
                         },
@@ -533,11 +562,17 @@ class _InvoiceFormState extends State<Invoice> {
                                   margin: const EdgeInsets.all(10),
                                   child: Button(
                                     onPress: () {
-                                      showAboutDialog(
-                                        context: context,
-                                        applicationName: 'MenuBar Sample',
-                                        applicationVersion: '1.0.0',
-                                      );
+                                      if (totalItem > 0) {
+                                        BlocProvider.of<InvoiceBloc>(context)
+                                            .add(PrintBill(
+                                                _customerName.text,
+                                                _customerNumber.text,
+                                                _customerAddress.text,
+                                                "Save"));
+                                      } else {
+                                        _showAlertDialog(
+                                            context, "Insert item...");
+                                      }
                                     },
                                     btnColor: Colors.green,
                                     textColor: Colors.white,
@@ -578,11 +613,12 @@ class _InvoiceFormState extends State<Invoice> {
                                     margin: const EdgeInsets.all(10),
                                     child: Button(
                                       onPress: () {
-                                        showAboutDialog(
-                                          context: context,
-                                          applicationName: 'MenuBar Sample',
-                                          applicationVersion: '1.0.0',
-                                        );
+                                        // showAboutDialog(
+                                        //   context: context,
+                                        //   applicationName: 'MenuBar Sample',
+                                        //   applicationVersion: '1.0.0',
+                                        // );
+                                        _showAlertDialog(context, "Clear data");
                                       },
                                       btnColor: Colors.red,
                                       textColor: Colors.white,
@@ -623,6 +659,26 @@ class _InvoiceFormState extends State<Invoice> {
               },
               style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showAlertDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Alert Dialog'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: Text('Close'),
             ),
           ],
         );

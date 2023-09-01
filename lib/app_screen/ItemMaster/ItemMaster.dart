@@ -21,12 +21,14 @@ class ItemMaster extends StatefulWidget {
 
 class _ItemMasterFormState extends State<ItemMaster> {
   late final TextEditingController _itemIdController = TextEditingController();
-  late final TextEditingController _itemNameController = TextEditingController();
+  late final TextEditingController _itemNameController =
+      TextEditingController();
   late final TextEditingController _itemHsnController = TextEditingController();
   late final TextEditingController _itemUnitController =
       TextEditingController(text: "-");
   late final TextEditingController _itemGstController = TextEditingController();
-  late final TextEditingController _itemvalueController = TextEditingController();
+  late final TextEditingController _itemvalueController =
+      TextEditingController();
   String itemUnit = "";
   bool condition = true;
 
@@ -83,121 +85,128 @@ class _ItemMasterFormState extends State<ItemMaster> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
-                    Row(mainAxisAlignment: MainAxisAlignment.center, children: <
-                        Widget>[
-                      SizedBox(
-                          width: 450,
-                          child: Container(
-                              child: SearchBox(
-                            helpText: "Item Name",
-                            onSelected: (dynamic selection) {
-                              _itemIdController.text = selection?.item_id;
-                              _itemNameController.text = selection?.item_name;
-                              _itemHsnController.text = selection?.item_hsn;
-                              _itemUnitController.text = selection?.item_unit;
-                              _itemGstController.text = selection?.item_gst;
-                              _itemvalueController.text =
-                                  selection?.basic_value;
-                              print(selection?.item_id);
-                              setState(() {
-                                condition = selection?.item_id?.isNotEmpty
-                                    ? false
-                                    : true;
-                              });
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          SizedBox(
+                              width: 450,
+                              child: Container(
+                                  child: SearchBox(
+                                helpText: "Item Name",
+                                onSelected: (dynamic selection) {
+                                  _itemIdController.text = selection?.item_id;
+                                  _itemNameController.text =
+                                      selection?.item_name;
+                                  _itemHsnController.text = selection?.item_hsn;
+                                  _itemUnitController.text =
+                                      selection?.item_unit;
+                                  _itemGstController.text = selection?.item_gst;
+                                  _itemvalueController.text =
+                                      selection?.basic_value;
+                                  print(selection?.item_id);
+                                  setState(() {
+                                    condition = selection?.item_id?.isNotEmpty
+                                        ? false
+                                        : true;
+                                  });
+                                },
+                                onChange: (val) {
+                                  setState(() {
+                                    condition = true;
+                                  });
+                                },
+                                controller: _itemNameController,
+                                listWidth: 430,
+                              ))),
+                          SizedBox(
+                              width: 150,
+                              child: Container(
+                                  child: TextBox(
+                                helpText: "HSN No",
+                                controller: _itemHsnController,
+                              ))),
+                          SizedBox(
+                              width: 150,
+                              child: Container(
+                                  child: TextBox(
+                                helpText: "GST",
+                                controller: _itemGstController,
+                              ))),
+                          SizedBox(
+                              width: 150,
+                              child: Container(
+                                  child: Dropdown(
+                                helpText: "Unit",
+                                defaultValue: _itemUnitController.text,
+                                onChange: (value) {
+                                  _itemUnitController.text = value;
+                                  setState(() {
+                                    itemUnit = value;
+                                  });
+                                },
+                              ))),
+                          SizedBox(
+                              width: 150,
+                              child: Container(
+                                  child: TextBox(
+                                helpText: "Rate",
+                                controller: _itemvalueController,
+                              ))),
+                          BlocBuilder<ItemmasterBloc, ItemmasterState>(
+                            builder: (context, state) {
+                              return SizedBox(
+                                  width: 200,
+                                  child: Container(
+                                      margin: const EdgeInsets.fromLTRB(
+                                          0, 20, 0, 0),
+                                      child: Button(
+                                        onPress: () {
+                                          condition
+                                              ? BlocProvider.of<ItemmasterBloc>(
+                                                      context)
+                                                  .add(AddItemEvent(
+                                                      _itemNameController.text,
+                                                      _itemHsnController.text,
+                                                      _itemGstController.text,
+                                                      _itemUnitController.text,
+                                                      _itemvalueController.text,
+                                                      _itemvalueController
+                                                          .text))
+                                              : BlocProvider.of<ItemmasterBloc>(
+                                                      context)
+                                                  .add(UpdateItemEvent(
+                                                      _itemIdController.text,
+                                                      _itemNameController.text,
+                                                      _itemHsnController.text,
+                                                      _itemGstController.text,
+                                                      _itemUnitController.text,
+                                                      _itemvalueController.text,
+                                                      _itemvalueController
+                                                          .text));
+                                          clearFields();
+                                        },
+                                        btnColor: condition
+                                            ? Colors.green
+                                            : Colors.blue.shade300,
+                                        textColor: Colors.white,
+                                        btnText: condition ? 'Add' : 'Update',
+                                      )));
                             },
-                            onChange: (val) {
-                              setState(() {
-                                condition = true;
-                              });
-                            },
-                            controller: _itemNameController,
-                            listWidth: 430,
-                          ))),
-                      SizedBox(
-                          width: 150,
-                          child: Container(
-                              child: TextBox(
-                            helpText: "HSN No",
-                            controller: _itemHsnController,
-                          ))),
-                      SizedBox(
-                          width: 150,
-                          child: Container(
-                              child: TextBox(
-                            helpText: "GST",
-                            controller: _itemGstController,
-                          ))),
-                      SizedBox(
-                          width: 150,
-                          child: Container(
-                              child: Dropdown(
-                            helpText: "Unit",
-                            defaultValue: _itemUnitController.text,
-                            onChange: (value) {
-                              _itemUnitController.text = value;
-                              setState(() {
-                                itemUnit = value;
-                              });
-                            },
-                          ))),
-                      SizedBox(
-                          width: 150,
-                          child: Container(
-                              child: TextBox(
-                            helpText: "Rate",
-                            controller: _itemvalueController,
-                          ))),
-                      BlocBuilder<ItemmasterBloc, ItemmasterState>(
-                        builder: (context, state) {
-                          return SizedBox(
+                          ),
+                          SizedBox(
                               width: 200,
                               child: Container(
-                                  margin: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                                  margin:
+                                      const EdgeInsets.fromLTRB(15, 20, 0, 0),
                                   child: Button(
                                     onPress: () {
-                                      condition
-                                          ? BlocProvider.of<ItemmasterBloc>(
-                                                  context)
-                                              .add(AddItemEvent(
-                                                  _itemNameController.text,
-                                                  _itemHsnController.text,
-                                                  _itemGstController.text,
-                                                  _itemUnitController.text,
-                                                  _itemvalueController.text,
-                                                  _itemvalueController.text))
-                                          : BlocProvider.of<ItemmasterBloc>(
-                                                  context)
-                                              .add(UpdateItemEvent(
-                                                  _itemIdController.text,
-                                                  _itemNameController.text,
-                                                  _itemHsnController.text,
-                                                  _itemGstController.text,
-                                                  _itemUnitController.text,
-                                                  _itemvalueController.text,
-                                                  _itemvalueController.text));
-                                      clearFields();
+                                      _showDeleteConfirmationDialog(context);
                                     },
-                                    btnColor: condition
-                                        ? Colors.green
-                                        : Colors.blue.shade300,
+                                    btnColor: Colors.red,
                                     textColor: Colors.white,
-                                    btnText: condition ? 'Add' : 'Update',
-                                  )));
-                        },
-                      ),
-                      SizedBox(
-                          width: 200,
-                          child: Container(
-                              margin: const EdgeInsets.fromLTRB(15, 20, 0, 0),
-                              child: Button(
-                                onPress: () {
-                                  _showDeleteConfirmationDialog(context);
-                                },
-                                btnColor: Colors.red,
-                                textColor: Colors.white,
-                                btnText: 'Delete',
-                              ))),
-                    ]),
+                                    btnText: 'Delete',
+                                  ))),
+                        ]),
                   ],
                 )),
             SizedBox(
