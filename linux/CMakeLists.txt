@@ -32,6 +32,7 @@ if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     STRING "Flutter build mode" FORCE)
   set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS
     "Debug" "Profile" "Release")
+  set(PDFIUM_VERSION "4929" CACHE STRING "" FORCE)
 endif()
 
 # Compilation settings that should be applied to most targets.
@@ -137,3 +138,5 @@ if(NOT CMAKE_BUILD_TYPE MATCHES "Debug")
   install(FILES "${AOT_LIBRARY}" DESTINATION "${INSTALL_BUNDLE_LIB_DIR}"
     COMPONENT Runtime)
 endif()
+
+
