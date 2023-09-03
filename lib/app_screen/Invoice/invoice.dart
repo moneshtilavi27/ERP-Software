@@ -286,6 +286,7 @@ class _InvoiceFormState extends State<Invoice> {
                                         child: TextBox(
                                           controller: _itemIdController,
                                           helpText: "Item Number",
+                                          enabled: false,
                                           focusNode: _focusNode,
                                         ))),
                                 SizedBox(
@@ -626,23 +627,17 @@ class _InvoiceFormState extends State<Invoice> {
                                     margin: const EdgeInsets.all(10),
                                     child: Button(
                                       onPress: () {
-                                        // showAboutDialog(
-                                        //   context: context,
-                                        //   applicationName: 'MenuBar Sample',
-                                        //   applicationVersion: '1.0.0',
-                                        // );
-                                        // Navigator.of(context).push(
-                                        //     MaterialPageRoute(
-                                        //         builder: (context) =>
-                                        //             PrintScreen()));
-                                        // Common cm = Common();
-                                        // cm.showPrintPreview(context);
-                                        BlocProvider.of<InvoiceBloc>(context)
-                                            .add(PrintBill(
-                                                _customerName.text,
-                                                _customerNumber.text,
-                                                _customerAddress.text,
-                                                "print"));
+                                        if (totalItem > 0) {
+                                          BlocProvider.of<InvoiceBloc>(context)
+                                              .add(PrintBill(
+                                                  _customerName.text,
+                                                  _customerNumber.text,
+                                                  _customerAddress.text,
+                                                  "print"));
+                                        } else {
+                                          showAlertDialog(
+                                              context, "Insert item...");
+                                        }
                                       },
                                       btnColor: Colors.orange,
                                       textColor: Colors.white,

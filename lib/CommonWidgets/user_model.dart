@@ -19,9 +19,10 @@ class UserModel {
     number_of_pages = json['number_of_pages'];
     currentPage = json['current_page'];
     status = json['status'];
-    if (json['data'] != null) {
+    if (json['status'] == "success" && json['data'] != null) {
       data = <ItemModel>[];
-      json['data'].forEach((v) {
+      print(json);
+      json['data']?.forEach((v) {
         data!.add(ItemModel.fromJson(v));
       });
     }

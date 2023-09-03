@@ -21,7 +21,7 @@ void showDeleteConfirmationDialog(
               Navigator.of(context).pop(); // Close the dialog
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: Text("Ok"),
+            child: const Text("Ok"),
           ),
         ],
       );
@@ -34,14 +34,15 @@ void showAlertDialog(BuildContext context, String message) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text('Alert Dialog'),
+        title: const Text('Alert Dialog'),
         content: Text(message),
         actions: [
-          TextButton(
+          ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
             },
-            child: Text('Close'),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text("Close"),
           ),
         ],
       );
