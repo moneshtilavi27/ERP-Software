@@ -72,3 +72,5 @@ class PrintBill extends InvoiceEvent {
   PrintBill(this.customerName, this.customerNumber, this.customerAddress,
       this.status);
 }
+
+class CancelBill extends InvoiceEvent {}

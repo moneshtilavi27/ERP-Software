@@ -1,4 +1,5 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
+import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
@@ -21,8 +22,7 @@ class ItemMaster extends StatefulWidget {
 
 class _ItemMasterFormState extends State<ItemMaster> {
   late final TextEditingController _itemIdController = TextEditingController();
-  late final TextEditingController _itemNameController =
-      TextEditingController();
+  late TextEditingController _itemNameController = TextEditingController();
   late final TextEditingController _itemHsnController = TextEditingController();
   late final TextEditingController _itemUnitController =
       TextEditingController(text: "-");
@@ -109,6 +109,9 @@ class _ItemMasterFormState extends State<ItemMaster> {
                                         ? false
                                         : true;
                                   });
+                                },
+                                onFocuseOut: (cotroller) {
+                                  _itemNameController = cotroller;
                                 },
                                 onChange: (val) {
                                   setState(() {
@@ -200,7 +203,14 @@ class _ItemMasterFormState extends State<ItemMaster> {
                                       const EdgeInsets.fromLTRB(15, 20, 0, 0),
                                   child: Button(
                                     onPress: () {
-                                      _showDeleteConfirmationDialog(context);
+                                      showDeleteConfirmationDialog(
+                                          context, "Delete", () {
+                                        clearFields();
+                                        BlocProvider.of<ItemmasterBloc>(context)
+                                            .add(DeleteItemEvent(
+                                                _itemIdController
+                                                    .text)); // Close the dialog
+                                      });
                                     },
                                     btnColor: Colors.red,
                                     textColor: Colors.white,
@@ -243,36 +253,6 @@ class _ItemMasterFormState extends State<ItemMaster> {
           ],
         ),
       ),
-    );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete Item'),
-          content: const Text('Are you sure you want to delete this item?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                clearFields();
-                BlocProvider.of<ItemmasterBloc>(context)
-                    .add(DeleteItemEvent(_itemIdController.text));
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

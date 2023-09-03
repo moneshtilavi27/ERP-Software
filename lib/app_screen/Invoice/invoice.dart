@@ -1,7 +1,10 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common.dart';
+import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -28,8 +31,7 @@ class _InvoiceFormState extends State<Invoice> {
   late final TextEditingController _customerAddress = TextEditingController();
 
   late final TextEditingController _itemIdController = TextEditingController();
-  late final TextEditingController _itemNameController =
-      TextEditingController();
+  late TextEditingController _itemNameController = TextEditingController();
   late final TextEditingController _itemHsnController = TextEditingController();
   late final TextEditingController _itemUnitController =
       TextEditingController(text: "-");
@@ -40,6 +42,8 @@ class _InvoiceFormState extends State<Invoice> {
       TextEditingController();
   late final TextEditingController _itemRateController =
       TextEditingController();
+
+  final FocusNode _focusNode = FocusNode();
 
   String itemUnit = "";
   bool condition = true;
@@ -101,6 +105,41 @@ class _InvoiceFormState extends State<Invoice> {
   @override
   void initState() {
     super.initState();
+    _focusNode.addListener(_onFocusChange);
+  }
+
+  void _onFocusChange() {
+    if (!_focusNode.hasFocus) {
+      var id = _itemIdController.text;
+      Map<String, dynamic>? result;
+      if (BlocProvider.of<ItemmasterBloc>(context).state is StoreListState) {
+        final state =
+            BlocProvider.of<ItemmasterBloc>(context).state as StoreListState;
+        result = state.dataList.firstWhere(
+          (map) => map['item_id'] == id,
+          orElse: () => null, // Return null if no match is found
+        );
+      }
+
+      if (result != null) {
+        // When the focus leaves the TextField, print a message
+        print("Focus left TextField: ${result['item_unit']}");
+        _itemIdController.text = result['item_id'];
+        _itemNameController.text = result['item_name'];
+        _itemHsnController.text = result['item_hsn'];
+        _itemQtyController.text = "1";
+        _itemUnitController.text = result['item_unit'];
+        _itemGstController.text = result['item_gst'];
+        _itemRateController.text = result['basic_value'];
+        _itemvalueController.text = result['basic_value'];
+        setState(() {
+          condition = true;
+        });
+      } else {
+        // Handle the case where no match was found
+        print("Focus left TextField: No matching item found for ID: $id");
+      }
+    }
   }
 
   @override
@@ -247,13 +286,15 @@ class _InvoiceFormState extends State<Invoice> {
                                         child: TextBox(
                                           controller: _itemIdController,
                                           helpText: "Item Number",
+                                          focusNode: _focusNode,
                                         ))),
                                 SizedBox(
                                     width: 450,
-                                    child: Container(
-                                        child: SearchBox(
+                                    child: SearchBox(
                                       helpText: "Item Name",
-                                      onSelected: (dynamic selection) {
+                                      onSelected: (dynamic selection,
+                                          dynamic cotroller) {
+                                        _itemNameController = cotroller;
                                         _itemIdController.text =
                                             selection?.item_id;
                                         _itemNameController.text =
@@ -269,7 +310,6 @@ class _InvoiceFormState extends State<Invoice> {
                                             selection?.basic_value;
                                         _itemvalueController.text =
                                             selection?.basic_value;
-                                        print(selection?.item_id);
                                         setState(() {
                                           condition =
                                               selection?.item_id?.isNotEmpty
@@ -282,21 +322,22 @@ class _InvoiceFormState extends State<Invoice> {
                                           condition = true;
                                         });
                                       },
+                                      onFocuseOut: (cotroller) {
+                                        _itemNameController = cotroller;
+                                      },
                                       controller: _itemNameController,
                                       listWidth: 430,
-                                    ))),
+                                    )),
                                 SizedBox(
                                     width: 150,
-                                    child: Container(
-                                        child: TextBox(
+                                    child: TextBox(
                                       enabled: false,
                                       helpText: "HSN No",
                                       controller: _itemHsnController,
-                                    ))),
+                                    )),
                                 SizedBox(
                                     width: 150,
-                                    child: Container(
-                                        child: TextBox(
+                                    child: TextBox(
                                       helpText: "Quantity",
                                       controller: _itemQtyController,
                                       onChange: (val) {
@@ -307,11 +348,10 @@ class _InvoiceFormState extends State<Invoice> {
                                                     _itemRateController.text)
                                                 .toString();
                                       },
-                                    ))),
+                                    )),
                                 SizedBox(
                                     width: 150,
-                                    child: Container(
-                                        child: Dropdown(
+                                    child: Dropdown(
                                       helpText: "Unit",
                                       defaultValue: _itemUnitController.text,
                                       onChange: (value) {
@@ -320,21 +360,19 @@ class _InvoiceFormState extends State<Invoice> {
                                           itemUnit = value;
                                         });
                                       },
-                                    ))),
+                                    )),
                                 SizedBox(
                                     width: 150,
-                                    child: Container(
-                                        child: TextBox(
+                                    child: TextBox(
                                       helpText: "Rate",
                                       controller: _itemRateController,
-                                    ))),
+                                    )),
                                 SizedBox(
                                     width: 150,
-                                    child: Container(
-                                        child: TextBox(
+                                    child: TextBox(
                                       helpText: "Value",
                                       controller: _itemvalueController,
-                                    ))),
+                                    )),
                                 BlocBuilder<InvoiceBloc, InvoiceState>(
                                   builder: (context, state) {
                                     return Row(
@@ -384,8 +422,13 @@ class _InvoiceFormState extends State<Invoice> {
                                             15, 20, 0, 0),
                                         child: Button(
                                           onPress: () {
-                                            _showDeleteConfirmationDialog(
-                                                context);
+                                            showDeleteConfirmationDialog(
+                                                context, "Delete", () {
+                                              BlocProvider.of<InvoiceBloc>(
+                                                      context)
+                                                  .add(DeleteItemEvent(
+                                                      _itemIdController.text));
+                                            });
                                           },
                                           btnColor: Colors.red,
                                           textColor: Colors.white,
@@ -440,7 +483,6 @@ class _InvoiceFormState extends State<Invoice> {
                           // TODO: implement listener
                           if (state is InvoiceItemListState) {
                             for (var product in state.dataList) {
-                              print(product['item_value']);
                               tot += double.parse(product['item_value']);
                             }
                             setState(() {
@@ -570,7 +612,7 @@ class _InvoiceFormState extends State<Invoice> {
                                                 _customerAddress.text,
                                                 "Save"));
                                       } else {
-                                        _showAlertDialog(
+                                        showAlertDialog(
                                             context, "Insert item...");
                                       }
                                     },
@@ -618,7 +660,11 @@ class _InvoiceFormState extends State<Invoice> {
                                         //   applicationName: 'MenuBar Sample',
                                         //   applicationVersion: '1.0.0',
                                         // );
-                                        _showAlertDialog(context, "Clear data");
+                                        showDeleteConfirmationDialog(
+                                            context, "Cancel", () {
+                                          BlocProvider.of<InvoiceBloc>(context)
+                                              .add(CancelBill());
+                                        });
                                       },
                                       btnColor: Colors.red,
                                       textColor: Colors.white,
@@ -633,56 +679,6 @@ class _InvoiceFormState extends State<Invoice> {
           ),
         ),
       ),
-    );
-  }
-
-  void _showDeleteConfirmationDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: const Text('Delete Item'),
-          content: const Text('Are you sure you want to delete this item?'),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                clearFields();
-                BlocProvider.of<InvoiceBloc>(context)
-                    .add(DeleteItemEvent(_itemIdController.text));
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Delete'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  void _showAlertDialog(BuildContext context, String message) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text('Alert Dialog'),
-          content: Text(message),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: Text('Close'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

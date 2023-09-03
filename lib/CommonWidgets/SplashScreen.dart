@@ -1,4 +1,5 @@
 // ignore: library_prefixes
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,8 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ItemMasterBloc = BlocProvider.of<ItemmasterBloc>(context);
+
     double defaultMargin;
     if (Responsive.isDesktop(context)) {
       defaultMargin = 600.0;

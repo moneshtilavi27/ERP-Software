@@ -7,15 +7,18 @@ import '../service/API/api.dart';
 import '../service/API/api_methods.dart';
 
 class SearchBox extends StatefulWidget {
-  final TextEditingController controller;
+  TextEditingController controller;
   final String? hintText, helpText;
   final IconData? prefixIcon, suffixIcon;
   final double? listWidth;
   final Function? onChange;
   final Function onSelected;
+  final Function? onFocuseOut;
   final List<String>? options;
 
-  const SearchBox(
+  late FocusNode _focusNode = FocusNode();
+
+  SearchBox(
       {Key? key,
       required this.controller,
       this.hintText,
@@ -24,6 +27,7 @@ class SearchBox extends StatefulWidget {
       this.suffixIcon,
       this.listWidth,
       this.onChange,
+      this.onFocuseOut,
       required this.onSelected,
       this.options})
       : super(key: key);
@@ -39,37 +43,34 @@ class _SearchBoxState extends State<SearchBox> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    // widget._focusNode.addListener(_onFocusChange);
     getItemList();
+  }
+
+  void _onFocusChange() {
+    if (!widget._focusNode.hasFocus) {
+      widget.onFocuseOut!(widget.controller);
+    } else {
+      widget.onFocuseOut!(widget.controller);
+    }
   }
 
   getItemList() async {
     APIMethods obj = APIMethods();
     await obj.postData(API.itemMaster, {'request': "get"}).then((res) {
-      // print("important data===>" + res.toString());
       setState(() {
         userModel = UserModel.fromJson(json.decode(res.toString()));
       });
     }).catchError((error) {
       print(error);
     });
-
-    // await obj.getData('https://reqres.in/api/users?page=2', {}).then((res) {
-    //   // print("search box");
-    //   // print("important data===>" + res.toString());
-    //   // options = res.data['data'];
-    //   // setState(() {
-    //   //   userModel = UserModel.fromJson(json.decode(res.toString()));
-    //   // });
-    // }).catchError((error) {
-    //   print(error);
-    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return Autocomplete<ItemModel>(
       optionsBuilder: (TextEditingValue textEditingValue) {
-        widget.controller.text = textEditingValue.text;
+        // widget.controller.text = textEditingValue.text;
         if (textEditingValue.text == '') {
           return List.empty();
         }
@@ -81,6 +82,10 @@ class _SearchBoxState extends State<SearchBox> {
       },
       fieldViewBuilder: (BuildContext context, textEditingController, focusNode,
           onFieldSubmitted) {
+        widget.controller = textEditingController;
+        widget._focusNode = focusNode;
+        widget.onFocuseOut!(widget.controller);
+        widget._focusNode.addListener(_onFocusChange);
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
           child: Column(
@@ -168,7 +173,7 @@ class _SearchBoxState extends State<SearchBox> {
             ));
       },
       onSelected: widget.onSelected != null
-          ? ((value) => {widget.onSelected(value)})
+          ? ((value) => {widget.onSelected(value, widget.controller)})
           : (value) => {},
       displayStringForOption: (ItemModel d) => d.item_name!,
       optionsMaxHeight: 1,

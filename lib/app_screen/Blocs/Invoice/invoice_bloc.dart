@@ -134,6 +134,22 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         }
       }
     });
+
+    on<CancelBill>((event, emit) {
+      try {
+        APIMethods obj = APIMethods();
+        Map<String, dynamic> data = {"request": "cancelBill", "user_id": "1"};
+
+        obj.postData(API.invoice, data).then((res) {
+          if (res.data['status'] == "success") {
+            featchItemData({'request': "get"});
+          }
+        });
+      } catch (e) {
+        print(e.toString());
+        throw ErrorInvoiceState(e.toString());
+      }
+    });
   }
 
   void addUpdate(Map<String, dynamic> data) async {
