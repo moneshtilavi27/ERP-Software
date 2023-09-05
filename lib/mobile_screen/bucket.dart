@@ -1,5 +1,12 @@
+import 'package:erp/CommonWidgets/DropDown.dart';
+import 'package:erp/CommonWidgets/TextBox.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:erp/mobile_screen/submitPage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../CommonWidgets/Button.dart';
 
@@ -103,63 +110,72 @@ class _BucketState extends State<Bucket> {
           backgroundColor: Colors.green,
         ),
         backgroundColor: Colors.grey[100],
-        body: isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
-              )
-            : Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: products.length,
-                      itemBuilder: (context, index) => Column(
-                        children: [
-                          ListTile(
-                            tileColor: Colors.white,
-                            title: Text(
-                              products[index]['name'],
-                              maxLines: 2,
-                              overflow: TextOverflow.fade,
-                              style: const TextStyle(
-                                  fontSize: 12, fontWeight: FontWeight.w400),
+        body: BlocBuilder<InvoiceBloc, InvoiceState>(builder: (context, state) {
+          if (state is InvoiceItemListState) {
+            return isLoading
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                          child: ListView.builder(
+                        itemCount: state.dataList.length,
+                        itemBuilder: (context, index) => Column(
+                          children: [
+                            ListTile(
+                              title: Text(
+                                state.dataList[index]['item_name'],
+                                maxLines: 2,
+                                overflow: TextOverflow.fade,
+                                style: const TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w400),
+                              ),
+                              subtitle: Text(state.dataList[index]['item_hsn'],
+                                  textAlign: TextAlign.start,
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                      color: Colors.grey.shade600,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600)),
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.currency_rupee_rounded),
+                                  Text(
+                                    state.dataList[index]['basic_value'] +
+                                        " / " +
+                                        state.dataList[index]['item_unit'],
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 162, 55, 28),
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                ],
+                              ),
+                              onTap: () {
+                                _showItemInputDialog(
+                                    context, state.dataList[index]);
+                              },
+                              onLongPress: () {},
                             ),
-                            subtitle: Text(products[index]['item_hsn'],
-                                textAlign: TextAlign.start,
-                                maxLines: 1,
-                                style: TextStyle(
-                                    color: Colors.grey.shade600,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600)),
-                            trailing: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Icon(Icons.currency_rupee_rounded),
-                                Text(
-                                  products[index]['basic_value'] +
-                                      " / " +
-                                      products[index]['item_unit'],
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 162, 55, 28),
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ],
-                            ),
-                            onTap: () {},
-                            onLongPress: () {},
-                          ),
-                          const Divider(
-                            height: 2,
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                  // Amount and Next Button
-                  _buildBottomWidget(),
-                ],
-              ));
+                            const Divider(
+                              height: 5,
+                            )
+                          ],
+                        ),
+                      )),
+                      // Amount and Next Button
+                      _buildBottomWidget(),
+                    ],
+                  );
+          } else {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+        }));
   }
 
   Widget _buildBottomWidget() {
@@ -176,7 +192,7 @@ class _BucketState extends State<Bucket> {
               Text(
                 'Total: ', // Replace with your actual amount
                 style: TextStyle(
-                  fontSize: 24,
+                  fontSize: 18,
                   fontWeight: FontWeight.bold,
                   color: Color.fromARGB(255, 162, 55, 28),
                 ),
@@ -189,13 +205,13 @@ class _BucketState extends State<Bucket> {
                 "500",
                 style: TextStyle(
                     color: Color.fromARGB(255, 162, 55, 28),
-                    fontSize: 24,
+                    fontSize: 18,
                     fontWeight: FontWeight.w500),
               ),
             ],
           ),
           SizedBox(
-            width: 200,
+            width: 100,
             child: Button(
               onPress: () {
                 // callAPI();
@@ -212,6 +228,87 @@ class _BucketState extends State<Bucket> {
           )
         ],
       ),
+    );
+  }
+
+  Future<void> _showItemInputDialog(BuildContext context, var data) async {
+    TextEditingController quantityController = TextEditingController(text: '1');
+    TextEditingController unitController = TextEditingController();
+    TextEditingController rateController =
+        TextEditingController(text: data['basic_value']);
+
+    return showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(5.0),
+                child: Text(
+                  'Update Item',
+                  style: TextStyle(fontSize: 20),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Text(
+                  data['item_name'],
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ),
+            ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                children: [
+                  SizedBox(
+                    width: 115,
+                    child: TextBox(
+                        helpText: 'Quantity',
+                        controller: quantityController,
+                        textInputType: TextInputType.number),
+                  ),
+                  SizedBox(
+                      width: 115,
+                      child: Dropdown(
+                        helpText: 'unit',
+                        defaultValue: '-',
+                      )),
+                ],
+              ),
+              TextBox(
+                  helpText: 'Rate',
+                  controller: rateController,
+                  textInputType: TextInputType.number),
+            ],
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                // You can handle the form data here
+                String quantity = quantityController.text;
+                String unit = unitController.text;
+                String rate = rateController.text;
+
+                print('Quantity: $quantity, Unit: $unit, Rate: $rate');
+
+                Navigator.pop(context);
+              },
+              child: const Text('Update'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

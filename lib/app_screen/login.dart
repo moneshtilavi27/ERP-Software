@@ -1,5 +1,6 @@
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
+import 'package:erp/mobile_screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -21,8 +22,10 @@ class Login extends StatefulWidget {
 class _LoginFormState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   CustomSnackbar showMsg = CustomSnackbar();
-  late final TextEditingController _usernameController = TextEditingController();
-  late final TextEditingController _passwordController = TextEditingController();
+  late final TextEditingController _usernameController =
+      TextEditingController();
+  late final TextEditingController _passwordController =
+      TextEditingController();
 
   Future<List> fetchSimpleData() async {
     await Future.delayed(const Duration(milliseconds: 500));
@@ -79,8 +82,8 @@ class _LoginFormState extends State<Login> {
                 height: 520,
                 child: Container(
                   decoration: BoxDecoration(
-                      color:
-                          const Color.fromARGB(255, 255, 255, 255).withOpacity(1.0),
+                      color: const Color.fromARGB(255, 255, 255, 255)
+                          .withOpacity(1.0),
                       borderRadius: BorderRadius.circular(15),
                       border: Border.all(
                           color: Colors.black,
@@ -96,10 +99,10 @@ class _LoginFormState extends State<Login> {
                           width: 150,
                           margin: const EdgeInsets.fromLTRB(8, 35, 8, 8),
                           decoration: BoxDecoration(
-                              // image: DecorationImage(
-                              //     image: NetworkImage(
-                              //         "https://picsum.photos/id/237/200/300"),
-                              //     fit: BoxFit.cover),
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      "https://picsum.photos/id/237/200/300"),
+                                  fit: BoxFit.cover),
                               borderRadius: BorderRadius.circular(50.0),
                               color: Colors.amber),
                           child: const Padding(
@@ -161,9 +164,11 @@ class _LoginFormState extends State<Login> {
                                 _passwordController.text = '';
                                 Navigator.of(context).pushReplacement(
                                   MaterialPageRoute(
-                                    builder: (context) => const MyMenuBar(
-                                      message: 'my menu bar',
-                                    ),
+                                    // builder: (context) => const MyMenuBar(
+                                    //   message: 'my menu bar',
+                                    // ),
+                                    builder: (context) =>
+                                        const HomePage(title: "ERP"),
                                   ),
                                 );
                               }

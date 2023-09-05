@@ -44,8 +44,8 @@ class _HomePageState extends State<HomePage> {
         break;
       case "Setting":
         // page = ProfileScreen();
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const ProfileScreen()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const ProfileScreen()));
         break;
       default:
     }
@@ -79,7 +79,8 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Icon(_items[index]['icon'], size: 45),
                   const SizedBox(height: 2.0),
-                  Text(_items[index]['name'], style: const TextStyle(fontSize: 14.0)),
+                  Text(_items[index]['name'],
+                      style: const TextStyle(fontSize: 14.0)),
                 ],
               ),
             ),

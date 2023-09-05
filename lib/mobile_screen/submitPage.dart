@@ -1,3 +1,4 @@
+import 'package:erp/CommonWidgets/common.dart';
 import 'package:flutter/material.dart';
 
 import '../CommonWidgets/Button.dart';
@@ -17,6 +18,7 @@ class _submitScreenState extends State<SubmitScreen> {
   double totalAmount = 1000; // Replace with actual total amount
   double gst = 18; // Replace with actual GST percentage
   double discount = 0;
+  double fontSize = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -41,23 +43,29 @@ class _submitScreenState extends State<SubmitScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   TextFormField(
+                    style: TextStyle(fontSize: fontSize),
                     decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.only(left: 10),
                       labelText: 'Name',
                       border: OutlineInputBorder(),
                     ),
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    style: TextStyle(fontSize: fontSize),
                     decoration: const InputDecoration(
                       labelText: 'Phone Number',
+                      contentPadding: EdgeInsets.only(left: 10),
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.phone,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
+                    style: TextStyle(fontSize: fontSize),
                     decoration: const InputDecoration(
                       labelText: 'Adress',
+                      contentPadding: EdgeInsets.only(left: 10),
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.phone,
@@ -75,12 +83,12 @@ class _submitScreenState extends State<SubmitScreen> {
                   billTiles("Net Bill", controller: total_item),
                   const Divider(height: 5),
                   const Padding(
-                    padding: EdgeInsets.all(8.0),
+                    padding: EdgeInsets.only(top: 5, bottom: 5),
                     child: ListTile(
                       leading: Text(
                         "Net Amount",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 24),
+                        textAlign: TextAlign.start,
+                        style: TextStyle(fontSize: 18),
                       ),
                       trailing: Padding(
                         padding: EdgeInsets.only(right: 35),
@@ -93,7 +101,7 @@ class _submitScreenState extends State<SubmitScreen> {
                               "5000.00",
                               style: TextStyle(
                                   color: Color.fromARGB(255, 162, 55, 28),
-                                  fontSize: 24,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.w600),
                             ),
                           ],
@@ -109,7 +117,8 @@ class _submitScreenState extends State<SubmitScreen> {
                         width: 250,
                         child: Button(
                           onPress: () {
-                            // callAPI();
+                            Common cm = Common();
+                            cm.showPrintPreview(context);
                           },
                           btnColor: Colors.orange,
                           textColor: Colors.white,
@@ -127,12 +136,13 @@ class _submitScreenState extends State<SubmitScreen> {
 class billTiles extends StatelessWidget {
   final String textTitle;
   final TextEditingController controller;
+  final double fontSize = 12;
   const billTiles(this.textTitle, {super.key, required this.controller});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(5.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -140,13 +150,15 @@ class billTiles extends StatelessWidget {
           Text(
             textTitle,
             textAlign: TextAlign.center,
-            style: const TextStyle(fontSize: 18),
+            style: TextStyle(fontSize: fontSize),
           ),
           SizedBox(
-            width: 150,
+            width: 130,
             child: TextFormField(
+              style: TextStyle(fontSize: fontSize),
               controller: controller,
               decoration: const InputDecoration(
+                contentPadding: const EdgeInsets.only(left: 10),
                 hintText: "0.0",
                 border: OutlineInputBorder(),
               ),

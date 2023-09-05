@@ -142,7 +142,7 @@ class AppBarActionButton extends StatelessWidget {
         builder: (context, state) {
       if (state is StoreListState) {
         return IconButton(
-          icon: const Icon(Icons.add),
+          icon: const Icon(Icons.search),
           onPressed: () {
             showSearch(context: context, delegate: UserSearch(state.dataList));
           },

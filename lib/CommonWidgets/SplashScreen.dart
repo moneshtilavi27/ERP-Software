@@ -2,6 +2,7 @@
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
+import 'package:erp/mobile_screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:erp/app_screen/login.dart';
@@ -28,11 +29,16 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is InLoginState) {
-          Navigator.of(context).push(
+          // Navigator.of(context).pushReplacement(
+          //   MaterialPageRoute(
+          //     builder: (context) => const MyMenuBar(
+          //       message: 'my menu bar',
+          //     ),
+          //   ),
+          // );
+          Navigator.of(context).pushReplacement(
             MaterialPageRoute(
-              builder: (context) => const MyMenuBar(
-                message: 'my menu bar',
-              ),
+              builder: (context) => const HomePage(title: "ERP"),
             ),
           );
         }
@@ -65,7 +71,7 @@ class SplashScreen extends StatelessWidget {
               ),
               const Padding(padding: EdgeInsets.all(30.0)),
               const Text(
-                'Bus Tracking',
+                'ERP',
                 style: TextStyle(
                   fontSize: 30,
                   color: Colors.white,
