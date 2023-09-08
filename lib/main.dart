@@ -1,3 +1,5 @@
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_event.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
 import 'package:erp/CommonWidgets/SplashScreen.dart';
@@ -29,6 +31,9 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
         providers: [
+          BlocProvider(
+            create: (context) => NetworkBloc()..add(NetworkObserve()),
+          ),
           BlocProvider(
             create: (context) => LoginBloc(),
           ),

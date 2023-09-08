@@ -1,5 +1,8 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
@@ -175,7 +178,22 @@ class _BucketState extends State<Bucket> {
               child: CircularProgressIndicator(),
             );
           }
-        }));
+        }),
+        bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+          builder: (context, state) {
+            if (state is NetworkFailure) {
+              return InternetStatusMessage(
+                isConnected: false,
+              );
+            } else if (state is NetworkSuccess) {
+              return InternetStatusMessage(
+                isConnected: true,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ));
   }
 
   Widget _buildBottomWidget() {

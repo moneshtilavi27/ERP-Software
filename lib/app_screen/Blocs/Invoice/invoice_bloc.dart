@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:erp/service/API/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -77,22 +79,27 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     });
 
     on<DeleteItemEvent>((event, emit) async {
-      APIMethods obj = APIMethods();
-      Map<String, dynamic> data = {
-        "request": "update",
-        "item_id": event.item_id,
-        "data": {"delete": 1}
-      };
-      addUpdate(data);
+      try {
+        APIMethods obj = APIMethods();
+        Map<String, dynamic> data = {
+          "request": "deleteItem",
+          "item_id": event.item_id,
+          "user_id": 1
+        };
+
+        obj.postData(API.invoice, data).then((res) {
+          if (res.data['status'] == "success") {
+            featchItemData({'request': "get"});
+          }
+        });
+      } catch (e) {
+        print(e.toString());
+        throw ErrorInvoiceState(e.toString());
+      }
     });
 
     on<PrintBill>((event, emit) async {
-      emit(const ErrorInvoiceState(""));
-      if (event.customerName == "") {
-        emit(const ErrorInvoiceState("Please enter Customer Name"));
-      } else if (event.customerNumber == "") {
-        emit(const ErrorInvoiceState("Please enter Customer Number"));
-      } else {
+      try {
         Map<String, dynamic> customerData = {
           "request": "add",
           "data": {
@@ -102,6 +109,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           }
         };
         String custId = await addCustomer(customerData);
+        print("custid  $custId");
 
         Map<String, dynamic> invoiceData = {
           "request": "getInvoiceNumber",
@@ -110,6 +118,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "discount": "0"
         };
         int invoiceNum = await getBillNumber(invoiceData);
+        print("invoiceNum  $invoiceNum");
 
         Map<String, dynamic> invoiceData1 = {
           "request": "transferItem",
@@ -120,18 +129,18 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
         Map<String, dynamic> getBill = {
           "request": "getBill",
-          "data": {
-            "user_id": "1",
-            "invoiceNumber": invoiceNum,
-          }
+          "user_id": "1",
+          "invoiceNumber": invoiceNum
         };
-        await getInvoiceData(getBill);
-        if (event.status == "print") {
-          emit(InvoiceStatus("print"));
-        }
-        if (event.status == "save") {
-          emit(InvoiceStatus("save"));
-        }
+        await getInvoiceData(getBill, event.status);
+        // if (event.status == "print") {
+        //   emit(const InvoiceStatus("print"));
+        // }
+        // if (event.status == "save") {
+        //   emit(const InvoiceStatus("save"));
+        // }
+      } catch (e) {
+        emit(ErrorInvoiceState(e.toString()));
       }
     });
 
@@ -180,7 +189,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         }
       });
     } catch (e) {
-      print(e.toString());
       emit(ErrorInvoiceState(e.toString()));
     }
   }
@@ -235,12 +243,12 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     }
   }
 
-  Future getInvoiceData(Map<String, dynamic> data) async {
+  Future getInvoiceData(Map<String, dynamic> data, String status) async {
     try {
       APIMethods obj = APIMethods();
       obj.postData(API.invoice, data).then((res) {
         if (res.data['status'] == "success") {
-          InvoiceDataState(res.data['data']);
+          emit(InvoiceDataState(res.data['data'], status));
         }
       });
     } catch (e) {

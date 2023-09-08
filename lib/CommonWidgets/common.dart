@@ -4,133 +4,201 @@ import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class Common {
-  Future<void> showPrintPreview(BuildContext context) async {
+  Future<void> showPrintPreview(BuildContext context,
+      Map<String, dynamic> jsonData, bool gstEnabled) async {
     final doc = pw.Document();
 
-    // Load the Noto Sans font
     final font = await PdfGoogleFonts.notoSansRegular();
 
-    final items = [
-      BillItem('Item 1', 10.0, 2),
-      BillItem('Item 2', 5.0, 3),
-      BillItem('Item 3', 8.0, 1),
-    ];
+    final billData = jsonData['billdata'] as List<dynamic>;
+    final billItems = jsonData['billItem'] as List<dynamic>;
 
-    final totalAmount = items.fold<double>(
-        0, (total, item) => total + (item.price * item.quantity));
+    final billNumber = billData.isNotEmpty ? billData[0]['number'] : '';
+    final fileName = 'Bill_$billNumber.pdf'; // Set the document name
+    final customerName =
+        billData.isNotEmpty ? billData[0]['customer_name'] : '';
+    final customerAddress =
+        billData.isNotEmpty ? billData[0]['customer_address'] : '';
+    final customerMobile =
+        billData.isNotEmpty ? billData[0]['customer_mob'] : '';
+    final discount = billData.isNotEmpty ? billData[0]['discount'] : '';
+    final createdDate = billData.isNotEmpty ? billData[0]['created'] ?? '' : '';
+
+    final billDate =
+        createdDate.isNotEmpty ? DateTime.parse(createdDate).toString() : '';
+    final formattedBillDate =
+        billDate.isNotEmpty ? _formatDateTime(billDate) : '';
+
+    double totalAmount = 0;
+    double discountAmount = 0;
 
     doc.addPage(
       pw.Page(
         build: (context) {
-          return pw.Center(
-              child: pw.Container(
-                  width: 300,
-                  padding: const pw.EdgeInsets.all(16),
-                  decoration: pw.BoxDecoration(
-                    border: pw.Border.all(),
+          final itemsList = <pw.Widget>[];
+
+          itemsList.add(
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.start,
+              children: [
+                pw.SizedBox(
+                  width: 100,
+                  child: pw.Text('Item'),
+                ),
+                pw.SizedBox(
+                  width: 40,
+                  child: pw.Text('Qty'),
+                ),
+                pw.SizedBox(
+                  width: 40,
+                  child: pw.Text('Rate'),
+                ),
+                pw.SizedBox(
+                  width: 50,
+                  child: pw.Text('Total (\$)'),
+                ),
+              ],
+            ),
+          );
+
+          itemsList.add(pw.Divider());
+
+          for (final item in billItems) {
+            final itemName = item['item_name'] ?? '';
+            final qty = item['qty'] ?? '0';
+            final rate = item['rate'] ?? '0';
+            final value = item['value'] ?? '0';
+
+            totalAmount += double.parse(value);
+
+            itemsList.add(
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.SizedBox(
+                    width: 100,
+                    child: pw.Text(itemName),
                   ),
-                  child: pw.Column(
-                    crossAxisAlignment: pw.CrossAxisAlignment.center,
+                  pw.SizedBox(
+                    width: 40,
+                    child: pw.Text(qty),
+                  ),
+                  pw.SizedBox(
+                    width: 40,
+                    child: pw.Text(rate),
+                  ),
+                  pw.SizedBox(
+                    width: 50,
+                    child: pw.Text(value),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          itemsList.add(pw.Divider());
+
+          if (gstEnabled) {
+            final gstPercentage = 7; // Change this to your GST percentage
+            final gstAmount = (totalAmount * gstPercentage) / 100;
+
+            itemsList.add(
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('Subtotal'),
+                  pw.Text(totalAmount.toStringAsFixed(2)),
+                ],
+              ),
+            );
+
+            itemsList.add(
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('GST ($gstPercentage%)'),
+                  pw.Text(gstAmount.toStringAsFixed(2)),
+                ],
+              ),
+            );
+
+            totalAmount += gstAmount;
+          }
+
+          // Discount calculation
+          if (discount.isNotEmpty) {
+            discountAmount = (totalAmount * double.parse(discount)) / 100;
+            totalAmount -= discountAmount;
+          }
+
+          itemsList.add(
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('Discount ($discount%)'),
+                pw.Text(discountAmount.toStringAsFixed(2)),
+              ],
+            ),
+          );
+
+          itemsList.add(
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('Total Amount'),
+                pw.Text(totalAmount.toStringAsFixed(2)),
+              ],
+            ),
+          );
+
+          return pw.Center(
+            child: pw.Container(
+              width: 300,
+              padding: const pw.EdgeInsets.all(16),
+              decoration: pw.BoxDecoration(
+                border: pw.Border.all(),
+              ),
+              child: pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.center,
+                children: [
+                  pw.Text(
+                    'Ono Mart',
+                    style: pw.TextStyle(
+                        fontSize: 20, fontWeight: pw.FontWeight.bold),
+                  ),
+                  pw.SizedBox(height: 10),
+                  pw.Text('1234 Market Street, Cityville'),
+                  pw.Text('Phone: (123) 456-7890'),
+                  pw.Divider(),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                     children: [
-                      pw.Text(
-                        'Market Mart',
-                        style: pw.TextStyle(
-                            fontSize: 20, fontWeight: pw.FontWeight.bold),
-                      ),
-                      pw.SizedBox(height: 10),
-                      pw.Text('1234 Market Street, Cityville'),
-                      pw.Text('Phone: (123) 456-7890'),
-                      pw.Divider(),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Date: 2023-08-27'),
-                          pw.Text('Time: 15:30'),
-                        ],
-                      ),
-                      pw.Text('Cashier: John Doe',
-                          textAlign: pw.TextAlign.left),
-                      pw.Text('Invoice #: 12345', textAlign: pw.TextAlign.left),
-                      pw.Divider(),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.start,
-                        children: [
-                          pw.SizedBox(
-                            width: 120,
-                            child: pw.Text('Item'),
-                          ),
-                          pw.SizedBox(
-                            width: 50,
-                            child: pw.Text('Price'),
-                          ),
-                          pw.SizedBox(
-                            width: 50,
-                            child: pw.Text('Qty'),
-                          ),
-                          pw.SizedBox(
-                            width: 50,
-                            child: pw.Text('Total (\$)'),
-                          ),
-                        ],
-                      ),
-                      pw.Divider(),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Expanded(child: pw.Text('Product 1')),
-                          pw.Text('2'),
-                          pw.Text('10.99'),
-                        ],
-                      ),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Expanded(child: pw.Text('Product 2')),
-                          pw.Text('1'),
-                          pw.Text('5.49'),
-                        ],
-                      ),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Expanded(child: pw.Text('Product 3')),
-                          pw.Text('3'),
-                          pw.Text('2.99'),
-                        ],
-                      ),
-                      pw.Divider(),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Subtotal'),
-                          pw.Text('19.47'),
-                        ],
-                      ),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Tax (7%)'),
-                          pw.Text('1.36'),
-                        ],
-                      ),
-                      pw.Divider(),
-                      pw.Row(
-                        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                        children: [
-                          pw.Text('Total'),
-                          pw.Text('20.83'),
-                        ],
-                      ),
-                      pw.Divider(),
-                      pw.Text('Payment Method: Cash'),
-                      pw.Text('Change Due: 30.00'),
-                      pw.SizedBox(height: 10),
-                      pw.Text('Thank you for shopping!'),
-                      pw.Text('Have a great day!'),
+                      pw.Text('Bill Date: $formattedBillDate'),
                     ],
-                  )));
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [pw.Text('Bill Number: $billNumber')],
+                  ),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('Customer: $customerName'),
+                      pw.Text('Mob: $customerMobile'),
+                    ],
+                  ),
+                  pw.Divider(),
+                  ...itemsList,
+                  pw.Divider(),
+                  pw.SizedBox(height: 10),
+                  pw.Text('Thank you for shopping!'),
+                  pw.Text('Have a great day!'),
+                ],
+              ),
+            ),
+          );
         },
-        // fonts: [font], // Specify the font
       ),
     );
 
@@ -138,14 +206,17 @@ class Common {
 
     await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf,
+      name: fileName, // Specify the document name here
     );
   }
-}
 
-class BillItem {
-  final String name;
-  final double price;
-  final int quantity;
+  String _formatDateTime(String dateTime) {
+    final parsedDate = DateTime.parse(dateTime);
+    final formattedDate =
+        "${parsedDate.day.toString().padLeft(2, '0')}/${parsedDate.month.toString().padLeft(2, '0')}/${parsedDate.year}";
+    final formattedTime =
+        "${parsedDate.hour.toString().padLeft(2, '0')}:${parsedDate.minute.toString().padLeft(2, '0')}:${parsedDate.second.toString().padLeft(2, '0')}";
 
-  BillItem(this.name, this.price, this.quantity);
+    return '$formattedDate $formattedTime';
+  }
 }

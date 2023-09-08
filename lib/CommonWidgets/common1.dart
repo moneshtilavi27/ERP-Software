@@ -56,3 +56,27 @@ String camelCase(String input) {
   }
   return input[0].toUpperCase() + input.substring(1);
 }
+
+class InternetStatusMessage extends StatelessWidget {
+  final bool isConnected;
+
+  InternetStatusMessage({required this.isConnected});
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: isConnected ? 2000 : 500),
+      height:
+          isConnected ? 0 : 50, // Set the height to 0 to hide it when connected
+      color: isConnected ? Colors.green : Colors.red,
+      child: Center(
+        child: Text(
+          isConnected
+              ? 'Internet Connection Successfull'
+              : 'No internet connection',
+          style: TextStyle(fontSize: 18, color: Colors.white),
+        ),
+      ),
+    );
+  }
+}

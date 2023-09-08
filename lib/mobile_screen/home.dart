@@ -1,5 +1,9 @@
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/mobile_screen/profile.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'app_drawer.dart';
 
@@ -108,6 +112,24 @@ class _HomePageState extends State<HomePage> {
               _navigate("Setting");
             }
           }),
+      bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+        builder: (context, state) {
+          if (state is NetworkFailure) {
+            return InternetStatusMessage(
+              isConnected: false,
+            );
+          } else if (state is NetworkSuccess) {
+            return InternetStatusMessage(
+              isConnected: true,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+          // return InternetStatusMessage(
+          //   isConnected: (state is NetworkStatus) && state.status,
+          // );
+        },
+      ),
     );
   }
 }

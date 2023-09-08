@@ -46,9 +46,10 @@ class ErrorInvoiceState extends InvoiceState {
 }
 
 class InvoiceDataState extends InvoiceState {
-  final List dataList;
+  final Map<String, dynamic> dataList;
+  final String status;
 
-  const InvoiceDataState(this.dataList);
+  const InvoiceDataState(this.dataList, this.status);
 }
 
 class InvoiceStatus extends InvoiceState {

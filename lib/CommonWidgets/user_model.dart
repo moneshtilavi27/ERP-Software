@@ -21,7 +21,6 @@ class UserModel {
     status = json['status'];
     if (json['status'] == "success" && json['data'] != null) {
       data = <ItemModel>[];
-      print(json);
       json['data']?.forEach((v) {
         data!.add(ItemModel.fromJson(v));
       });

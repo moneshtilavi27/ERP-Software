@@ -1,5 +1,9 @@
 import 'package:erp/CommonWidgets/common.dart';
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../CommonWidgets/Button.dart';
 
@@ -118,7 +122,7 @@ class _submitScreenState extends State<SubmitScreen> {
                         child: Button(
                           onPress: () {
                             Common cm = Common();
-                            cm.showPrintPreview(context);
+                            cm.showPrintPreview(context, {}, true);
                           },
                           btnColor: Colors.orange,
                           textColor: Colors.white,
@@ -129,6 +133,21 @@ class _submitScreenState extends State<SubmitScreen> {
               ),
             ),
           ),
+        ),
+        bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+          builder: (context, state) {
+            if (state is NetworkFailure) {
+              return InternetStatusMessage(
+                isConnected: false,
+              );
+            } else if (state is NetworkSuccess) {
+              return InternetStatusMessage(
+                isConnected: true,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
         ));
   }
 }

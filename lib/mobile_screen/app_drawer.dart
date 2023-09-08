@@ -1,3 +1,6 @@
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:erp/mobile_screen/Users.dart';
@@ -128,6 +131,21 @@ class _AppDrawerState extends State<AppDrawer> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
         onTap: _onItemTapped,
+      ),
+      bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+        builder: (context, state) {
+          if (state is NetworkFailure) {
+            return InternetStatusMessage(
+              isConnected: false,
+            );
+          } else if (state is NetworkSuccess) {
+            return InternetStatusMessage(
+              isConnected: true,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }

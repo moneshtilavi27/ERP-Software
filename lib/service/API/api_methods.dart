@@ -31,10 +31,8 @@ class APIMethods {
       Response response = await _dio.post(uri,
           data: formData,
           options: Options(headers: {'Authorization': 'Bearer $jwt'}));
-      print(response);
       return response;
     } on DioError catch (e) {
-      print(e);
       throw Exception(e.response!.data.toString());
     }
   }

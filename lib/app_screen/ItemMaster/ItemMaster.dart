@@ -205,12 +205,12 @@ class _ItemMasterFormState extends State<ItemMaster> {
                                     onPress: () {
                                       showDeleteConfirmationDialog(
                                           context, "Delete", () {
-                                        clearFields();
                                         BlocProvider.of<ItemmasterBloc>(context)
                                             .add(DeleteItemEvent(
                                                 _itemIdController
                                                     .text)); // Close the dialog
                                       });
+                                      clearFields();
                                     },
                                     btnColor: Colors.red,
                                     textColor: Colors.white,
@@ -236,9 +236,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
                           return ProductTable(
                             columnList: _columnList,
                             dataList: state.dataList,
-                            onTab: (value) {
-                              print(value);
-                            },
+                            onTab: (value) {},
                           );
                         } else {
                           return ProductTable(
