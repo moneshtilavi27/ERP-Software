@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:erp/service/API/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../service/API/api_methods.dart';
 import 'invoice_event.dart';
@@ -10,6 +11,7 @@ import 'invoice_state.dart';
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   InvoiceBloc() : super(IntialState()) {
     APIMethods obj = APIMethods();
+    late SharedPreferences sp;
     featchItemData({'request': "get"});
 
     on<CustomerDetailEvent>((event, emit) {
@@ -32,12 +34,14 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     on<AddItemEvent>((event, emit) async {
       try {
         APIMethods obj = APIMethods();
+        sp = await SharedPreferences.getInstance();
         // double value =
         //     double.parse(event.basic_value) * double.parse(event.item_quant);
         // print(value);
         Map<String, dynamic> data = {
           "request": "add",
           "data": {
+            "user_id": sp.getString('user_id'),
             "item_id": event.item_id,
             "item_name": event.item_name,
             "item_hsn": event.item_hsn,
@@ -48,6 +52,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "item_value": event.value
           }
         };
+        print(data);
         addUpdate(data);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
@@ -80,11 +85,12 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<DeleteItemEvent>((event, emit) async {
       try {
+        sp = await SharedPreferences.getInstance();
         APIMethods obj = APIMethods();
         Map<String, dynamic> data = {
           "request": "deleteItem",
           "item_id": event.item_id,
-          "user_id": 1
+          "user_id": sp.getString('user_id')
         };
 
         obj.postData(API.invoice, data).then((res) {
@@ -100,6 +106,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<PrintBill>((event, emit) async {
       try {
+        sp = await SharedPreferences.getInstance();
         Map<String, dynamic> customerData = {
           "request": "add",
           "data": {
@@ -113,7 +120,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
         Map<String, dynamic> invoiceData = {
           "request": "getInvoiceNumber",
-          "user_id": "1",
+          "user_id": sp.getString('user_id'),
           "customer_id": custId,
           "discount": "0"
         };
@@ -122,14 +129,14 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
         Map<String, dynamic> invoiceData1 = {
           "request": "transferItem",
-          "user_id": "1",
+          "user_id": sp.getString('user_id'),
           "invoiceNumber": invoiceNum
         };
         await transferItems(invoiceData1);
 
         Map<String, dynamic> getBill = {
           "request": "getBill",
-          "user_id": "1",
+          "user_id": sp.getString('user_id'),
           "invoiceNumber": invoiceNum
         };
         await getInvoiceData(getBill, event.status);
@@ -144,10 +151,14 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       }
     });
 
-    on<CancelBill>((event, emit) {
+    on<CancelBill>((event, emit) async {
       try {
         APIMethods obj = APIMethods();
-        Map<String, dynamic> data = {"request": "cancelBill", "user_id": "1"};
+        sp = await SharedPreferences.getInstance();
+        Map<String, dynamic> data = {
+          "request": "cancelBill",
+          "user_id": sp.getString('user_id')
+        };
 
         obj.postData(API.invoice, data).then((res) {
           if (res.data['status'] == "success") {

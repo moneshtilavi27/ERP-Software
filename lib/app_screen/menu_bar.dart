@@ -1,3 +1,6 @@
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Invoice/invoice.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:erp/app_screen/report/SalesReport.dart';
@@ -6,6 +9,7 @@ import 'package:erp/app_screen/second_screen.dart';
 import 'package:erp/app_screen/simple_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'ItemMaster/ItemMaster.dart';
@@ -146,7 +150,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
   }
 
   bool get showingMessage => _showMessage;
-  bool _showMessage = false;
+  bool _showMessage = true;
   set showingMessage(bool value) {
     if (_showMessage != value) {
       setState(() {
@@ -180,25 +184,6 @@ class _MyMenuBarState extends State<MyMenuBar> {
           ],
         ),
         Expanded(
-          // child: Container(
-          //   alignment: Alignment.center,
-          //   color: backgroundColor,
-          //   child: Column(
-          //     mainAxisAlignment: MainAxisAlignment.center,
-          //     children: <Widget>[
-          //       Padding(
-          //         padding: const EdgeInsets.all(12.0),
-          //         child: Text(
-          //           showingMessage ? widget.message : '',
-          //           style: Theme.of(context).textTheme.headlineSmall,
-          //         ),
-          //       ),
-          //       Text(_lastSelection != null
-          //           ? 'Last Selected: $_lastSelection'
-          //           : ''),
-          //     ],
-          //   ),
-          // ),
           child: Container(
               alignment: Alignment.center,
               margin: const EdgeInsets.all(3),
@@ -245,18 +230,18 @@ class _MyMenuBarState extends State<MyMenuBar> {
       MenuEntry(label: 'Report', menuChildren: <MenuEntry>[
         MenuEntry(
           label: 'Sales Bill',
-          onPressed: () {
-            showScreens(SalesReport);
-          },
+          // onPressed: () {
+          //   showScreens(SalesReport);
+          // },
         ),
-        MenuEntry(
-          label: 'Sales Item',
-          onPressed: () {},
-        ),
-        MenuEntry(
-          label: 'C A Report',
-          onPressed: () {},
-        )
+        // MenuEntry(
+        //   label: 'Sales Item',
+        //   onPressed: () {},
+        // ),
+        // MenuEntry(
+        //   label: 'C A Report',
+        //   onPressed: () {},
+        // )
       ]),
       MenuEntry(
         label: 'Logout',
@@ -293,8 +278,26 @@ class MenuBarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(body: MyMenuBar(message: kMessage)),
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: Text("monu")),
+        body: Text("monu"),
+        bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+          builder: (context, state) {
+            if (state is NetworkFailure) {
+              return InternetStatusMessage(
+                isConnected: false,
+              );
+            } else if (state is NetworkSuccess) {
+              return InternetStatusMessage(
+                isConnected: true,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
+        ),
+      ),
     );
   }
 }

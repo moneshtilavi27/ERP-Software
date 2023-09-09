@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common.dart';
 import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
@@ -217,7 +219,7 @@ class _InvoiceFormState extends State<Invoice> {
         "item_id": "2",
         "item_name": "DHANIYA POWDER SPARSH 500GM",
         "item_hsn": "0909",
-        "item_gst": "",
+        "item_gst": "5",
         "qty": "4",
         "unit": "pkt",
         "rate": "70",
@@ -712,16 +714,16 @@ class _InvoiceFormState extends State<Invoice> {
                                       margin: const EdgeInsets.all(10),
                                       child: Button(
                                         onPress: () {
-                                          showDeleteConfirmationDialog(
-                                              context, "Cancel", () {
-                                            BlocProvider.of<InvoiceBloc>(
-                                                    context)
-                                                .add(CancelBill());
-                                          });
+                                          // showDeleteConfirmationDialog(
+                                          //     context, "Cancel", () {
+                                          //   BlocProvider.of<InvoiceBloc>(
+                                          //           context)
+                                          //       .add(CancelBill());
+                                          // });
 
-                                          // Common cm = Common();
-                                          // cm.showPrintPreview(
-                                          //     context, jsonData, true);
+                                          Common cm = Common();
+                                          cm.showPrintPreview(
+                                              context, jsonData, true);
                                         },
                                         btnColor: Colors.red,
                                         textColor: Colors.white,
@@ -736,6 +738,21 @@ class _InvoiceFormState extends State<Invoice> {
             ),
           ),
         ),
+      ),
+      bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+        builder: (context, state) {
+          if (state is NetworkFailure) {
+            return InternetStatusMessage(
+              isConnected: false,
+            );
+          } else if (state is NetworkSuccess) {
+            return InternetStatusMessage(
+              isConnected: true,
+            );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
       ),
     );
   }

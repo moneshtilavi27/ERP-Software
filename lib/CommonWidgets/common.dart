@@ -31,6 +31,8 @@ class Common {
 
     double totalAmount = 0;
     double discountAmount = 0;
+    double cgstAmount = 0;
+    double sgstAmount = 0;
 
     doc.addPage(
       pw.Page(
@@ -68,8 +70,18 @@ class Common {
             final qty = item['qty'] ?? '0';
             final rate = item['rate'] ?? '0';
             final value = item['value'] ?? '0';
+            final gstPercentage = item['item_gst'] ?? '0';
+            print(gstPercentage);
 
             totalAmount += double.parse(value);
+
+            final gstAmount =
+                (double.parse(value) * double.parse(gstPercentage)) / 100;
+            final cgst = gstAmount / 2;
+            final sgst = gstAmount / 2;
+
+            cgstAmount += cgst;
+            sgstAmount += sgst;
 
             itemsList.add(
               pw.Row(
@@ -100,9 +112,6 @@ class Common {
           itemsList.add(pw.Divider());
 
           if (gstEnabled) {
-            final gstPercentage = 7; // Change this to your GST percentage
-            final gstAmount = (totalAmount * gstPercentage) / 100;
-
             itemsList.add(
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -117,18 +126,29 @@ class Common {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('GST ($gstPercentage%)'),
-                  pw.Text(gstAmount.toStringAsFixed(2)),
+                  pw.Text('CGST (${cgstAmount.toStringAsFixed(2)})'),
+                  pw.Text(cgstAmount.toStringAsFixed(2)),
                 ],
               ),
             );
 
-            totalAmount += gstAmount;
+            itemsList.add(
+              pw.Row(
+                mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                children: [
+                  pw.Text('SGST (${sgstAmount.toStringAsFixed(2)})'),
+                  pw.Text(sgstAmount.toStringAsFixed(2)),
+                ],
+              ),
+            );
+
+            // totalAmount += cgstAmount + sgstAmount;
           }
 
           // Discount calculation
           if (discount.isNotEmpty) {
-            discountAmount = (totalAmount * double.parse(discount)) / 100;
+            // discountAmount = (totalAmount * double.parse(discount)) / 100;
+            discountAmount = double.parse(discount);
             totalAmount -= discountAmount;
           }
 
@@ -136,7 +156,7 @@ class Common {
             pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('Discount ($discount%)'),
+                pw.Text('Discount'),
                 pw.Text(discountAmount.toStringAsFixed(2)),
               ],
             ),

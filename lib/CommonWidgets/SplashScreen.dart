@@ -1,4 +1,5 @@
-// ignore: library_prefixes
+import 'dart:io';
+
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
@@ -29,18 +30,21 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is InLoginState) {
-          // Navigator.of(context).pushReplacement(
-          //   MaterialPageRoute(
-          //     builder: (context) => const MyMenuBar(
-          //       message: 'my menu bar',
-          //     ),
-          //   ),
-          // );
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const HomePage(title: "ERP"),
-            ),
-          );
+          if (Platform.isAndroid) {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const HomePage(title: "ERP"),
+              ),
+            );
+          } else {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(
+                builder: (context) => const MyMenuBar(
+                  message: 'my menu bar',
+                ),
+              ),
+            );
+          }
         }
         if (state is LogoutState) {
           Navigator.of(context).push(

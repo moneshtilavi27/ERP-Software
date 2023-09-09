@@ -1,3 +1,9 @@
+import 'dart:io';
+
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/app_screen/menu_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -60,9 +66,7 @@ class _LoginFormState extends State<Login> {
         body: DecoratedBox(
           decoration: const BoxDecoration(
             image: DecorationImage(
-              image: NetworkImage(
-                "https://images.unsplash.com/photo-1578916171728-46686eac8d58?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8cmV0YWlsJTIwc3RvcmV8ZW58MHx8MHx8fDA%3D&w=1000&q=80",
-              ),
+              image: AssetImage('lib/service/asset/background.jpg'),
               fit: BoxFit.fill,
             ),
           ),
@@ -91,9 +95,8 @@ class _LoginFormState extends State<Login> {
                         width: 150,
                         margin: const EdgeInsets.fromLTRB(8, 35, 8, 8),
                         decoration: BoxDecoration(
-                          image: DecorationImage(
-                            image: NetworkImage(
-                                "https://picsum.photos/id/237/200/300"),
+                          image: const DecorationImage(
+                            image: AssetImage('lib/service/asset/logo.png'),
                             fit: BoxFit.cover,
                           ),
                           borderRadius: BorderRadius.circular(50.0),
@@ -136,12 +139,22 @@ class _LoginFormState extends State<Login> {
                             if (state is InLoginState) {
                               _usernameController.text = '';
                               _passwordController.text = '';
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      const HomePage(title: "ERP"),
-                                ),
-                              );
+                              if (Platform.isAndroid) {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        const HomePage(title: "ERP"),
+                                  ),
+                                );
+                              } else {
+                                Navigator.of(context).pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => const MyMenuBar(
+                                      message: 'my menu bar',
+                                    ),
+                                  ),
+                                );
+                              }
                             }
                           },
                           builder: (context, state) {
@@ -169,6 +182,21 @@ class _LoginFormState extends State<Login> {
               ),
             ),
           ),
+        ),
+        bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
+          builder: (context, state) {
+            if (state is NetworkFailure) {
+              return InternetStatusMessage(
+                isConnected: false,
+              );
+            } else if (state is NetworkSuccess) {
+              return InternetStatusMessage(
+                isConnected: true,
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
+          },
         ),
       ),
     );

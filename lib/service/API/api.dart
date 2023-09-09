@@ -1,7 +1,6 @@
 class URL {
   String api = false
-      // ignore: dead_code
-      ? "http://localhost/billing/api/login/"
+      ? "https://moneshtilavi.000webhostapp.com/billing/api/login/"
       : "http://localhost/billing/api/login/";
 }
 
