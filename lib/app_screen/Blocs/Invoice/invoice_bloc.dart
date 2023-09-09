@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:erp/service/API/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,7 +8,6 @@ import 'invoice_state.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   InvoiceBloc() : super(IntialState()) {
-    APIMethods obj = APIMethods();
     late SharedPreferences sp;
     featchItemData({'request': "get"});
 
@@ -33,7 +30,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<AddItemEvent>((event, emit) async {
       try {
-        APIMethods obj = APIMethods();
         sp = await SharedPreferences.getInstance();
         // double value =
         //     double.parse(event.basic_value) * double.parse(event.item_quant);
@@ -52,7 +48,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "item_value": event.value
           }
         };
-        print(data);
         addUpdate(data);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
@@ -61,9 +56,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<UpdateItemEvent>((event, emit) async {
       try {
-        APIMethods obj = APIMethods();
-        double value =
-            double.parse(event.basic_value) * double.parse(event.item_quant);
         Map<String, dynamic> data = {
           "request": "update",
           "item_id": event.item_id,
@@ -99,7 +91,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           }
         });
       } catch (e) {
-        print(e.toString());
         throw ErrorInvoiceState(e.toString());
       }
     });
@@ -116,7 +107,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           }
         };
         String custId = await addCustomer(customerData);
-        print("custid  $custId");
 
         Map<String, dynamic> invoiceData = {
           "request": "getInvoiceNumber",
@@ -125,7 +115,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "discount": "0"
         };
         int invoiceNum = await getBillNumber(invoiceData);
-        print("invoiceNum  $invoiceNum");
 
         Map<String, dynamic> invoiceData1 = {
           "request": "transferItem",
@@ -166,7 +155,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           }
         });
       } catch (e) {
-        print(e.toString());
         throw ErrorInvoiceState(e.toString());
       }
     });
@@ -196,6 +184,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       Map<String, String> para = data;
       await obj.postData(API.invoice, para).then((res) {
         if (res.data['status'] == "success") {
+          print(res);
           emit(InvoiceItemListState(res.data['data']));
         }
       });
@@ -210,13 +199,11 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       final res = await obj.postData(API.customer, data);
 
       if (res.data['status'] == "success") {
-        print(res.data['inserted_id']);
         return res.data['inserted_id'];
       } else {
         throw ErrorInvoiceState(res.data['data']);
       }
     } catch (e) {
-      print(e.toString());
       throw ErrorInvoiceState(e.toString());
     }
   }
@@ -227,13 +214,11 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       final res = await obj.postData(API.invoice, data);
 
       if (res.data['status'] == "success") {
-        print(res.data['invoice_number']);
         return res.data['invoice_number'];
       } else {
         throw ErrorInvoiceState(res.data['data']);
       }
     } catch (e) {
-      print(e.toString());
       throw ErrorInvoiceState(e.toString());
     }
   }
@@ -244,12 +229,10 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       final res = await obj.postData(API.invoice, data);
 
       if (res.data['status'] == "success") {
-        print(res);
       } else {
         throw ErrorInvoiceState(res.data['data']);
       }
     } catch (e) {
-      print(e.toString());
       throw ErrorInvoiceState(e.toString());
     }
   }
@@ -263,7 +246,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
         }
       });
     } catch (e) {
-      print(e.toString());
       throw ErrorInvoiceState(e.toString());
     }
   }

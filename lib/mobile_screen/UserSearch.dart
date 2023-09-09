@@ -28,10 +28,8 @@ class UserSearch extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text(selectedResult),
-      ),
+    return Center(
+      child: Text(selectedResult),
     );
   }
 

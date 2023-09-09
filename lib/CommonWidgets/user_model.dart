@@ -15,18 +15,23 @@ class UserModel {
       this.support});
 
   UserModel.fromJson(Map<dynamic, dynamic> json) {
-    total_records = json['total_records'];
-    number_of_pages = json['number_of_pages'];
-    currentPage = json['current_page'];
-    status = json['status'];
-    if (json['status'] == "success" && json['data'] != null) {
-      data = <ItemModel>[];
-      json['data']?.forEach((v) {
-        data!.add(ItemModel.fromJson(v));
-      });
+    try {
+      total_records = json['total_records'];
+      number_of_pages = json['number_of_pages'];
+      currentPage = json['current_page'];
+      status = json['status'];
+      if (json['status'] == "success" && json['data'] != null) {
+        data = <ItemModel>[];
+        json['data']?.forEach((v) {
+          data!.add(ItemModel.fromJson(v));
+        });
+      }
+      support =
+          json['support'] != null ? Support.fromJson(json['support']) : null;
+    } catch (e) {
+      // Handle exceptions, e.g., log the error or show an error message
+      print('Error parsing UserModel: $e');
     }
-    // support =
-    //     json['support'] != null ? Support.fromJson(json['support']) : null;
   }
 
   Map<dynamic, dynamic> toJson() {
@@ -38,9 +43,9 @@ class UserModel {
     if (this.data != null) {
       data['data'] = this.data!.map((v) => v.toJson()).toList();
     }
-    // if (this.support != null) {
-    //   data['support'] = this.support!.toJson();
-    // }
+    if (this.support != null) {
+      data['support'] = this.support!.toJson();
+    }
     return data;
   }
 }
@@ -55,11 +60,16 @@ class Data {
   Data({this.id, this.email, this.firstName, this.lastName, this.avatar});
 
   Data.fromJson(Map<String, dynamic> json) {
-    id = json['id'];
-    email = json['email'];
-    firstName = json['first_name'];
-    lastName = json['last_name'];
-    avatar = json['avatar'];
+    try {
+      id = json['id'];
+      email = json['email'];
+      firstName = json['first_name'];
+      lastName = json['last_name'];
+      avatar = json['avatar'];
+    } catch (e) {
+      // Handle exceptions, e.g., log the error or show an error message
+      print('Error parsing ItemModel: $e');
+    }
   }
 
   Map<String, dynamic> toJson() {
@@ -93,13 +103,18 @@ class ItemModel {
   });
 
   ItemModel.fromJson(Map<String, dynamic> json) {
-    item_id = json['item_id'];
-    item_name = json['item_name'];
-    item_hsn = json['item_hsn'];
-    item_unit = json['item_unit'];
-    item_gst = json['item_gst'];
-    basic_value = json['basic_value'];
-    whole_sale_value = json['whole_sale_value'];
+    try {
+      item_id = json['item_id'];
+      item_name = json['item_name'];
+      item_hsn = json['item_hsn'];
+      item_unit = json['item_unit'];
+      item_gst = json['item_gst'];
+      basic_value = json['basic_value'];
+      whole_sale_value = json['whole_sale_value'];
+    } catch (e) {
+      // Handle exceptions, e.g., log the error or show an error message
+      print('Error parsing ItemModel: $e');
+    }
   }
 
   Map<dynamic, dynamic> toJson() {

@@ -8,7 +8,7 @@ class Common {
       Map<String, dynamic> jsonData, bool gstEnabled) async {
     final doc = pw.Document();
 
-    final font = await PdfGoogleFonts.notoSansRegular();
+    // final font = await PdfGoogleFonts.notoSansRegular();
 
     final billData = jsonData['billdata'] as List<dynamic>;
     final billItems = jsonData['billItem'] as List<dynamic>;

@@ -7,7 +7,6 @@ import 'itemmaster_state.dart';
 
 class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
   ItemmasterBloc() : super(IntialState()) {
-    APIMethods obj = APIMethods();
     featchItemData({'request': "get"});
 
     on<FeatchItemmasterEvent>((event, emit) async {
@@ -15,8 +14,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
     });
 
     on<FilterItemEvent>((event, emit) => featchItemData(
-              {'request': "getItemNames", "item_name": event.item_name})
-        );
+        {'request': "getItemNames", "item_name": event.item_name}));
 
     on<AddItemEvent>((event, emit) async {
       APIMethods obj = APIMethods();
