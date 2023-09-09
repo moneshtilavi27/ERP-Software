@@ -262,9 +262,7 @@ class _MyMenuBarState extends State<MyMenuBar> {
     ];
     // (Re-)register the shortcuts with the ShortcutRegistry so that they are
     // available to the entire application, and update them if they've changed.
-    if (_shortcutsEntry != null) {
-      _shortcutsEntry?.dispose();
-    }
+    _shortcutsEntry?.dispose();
     _shortcutsEntry =
         ShortcutRegistry.of(context).addAll(MenuEntry.shortcuts(result));
     return result;
