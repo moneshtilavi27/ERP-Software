@@ -106,6 +106,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "customer_address": event.customerAddress,
           }
         };
+
         String custId = await addCustomer(customerData);
 
         Map<String, dynamic> invoiceData = {
@@ -129,12 +130,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "invoiceNumber": invoiceNum
         };
         await getInvoiceData(getBill, event.status);
-        // if (event.status == "print") {
-        //   emit(const InvoiceStatus("print"));
-        // }
-        // if (event.status == "save") {
-        //   emit(const InvoiceStatus("save"));
-        // }
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
       }
@@ -197,7 +192,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     try {
       APIMethods obj = APIMethods();
       final res = await obj.postData(API.customer, data);
-
+      print(res);
       if (res.data['status'] == "success") {
         return res.data['inserted_id'];
       } else {

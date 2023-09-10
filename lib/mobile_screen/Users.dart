@@ -1,11 +1,12 @@
-
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
+import 'package:erp/CommonWidgets/common1.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class Users extends StatefulWidget {
   Users({Key? key}) : super(key: key);
@@ -15,13 +16,22 @@ class Users extends StatefulWidget {
 }
 
 class _UsersState extends State<Users> {
+  final GlobalKey<FormState> _formKey = GlobalKey();
   var isLoading = false;
+  String itemUnit = "";
 
   @override
   void initState() {
     super.initState();
 
     loadData();
+  }
+
+  String? itemvalidation(String? value) {
+    if (value == null || value.isEmpty || value == '0') {
+      return 'Empty Field...';
+    }
+    return null;
   }
 
   loadData() {
@@ -97,8 +107,9 @@ class _UsersState extends State<Users> {
 
   Future<void> _showItemInputDialog(BuildContext context, var data) async {
     TextEditingController quantityController = TextEditingController(text: '1');
-    TextEditingController unitController = TextEditingController();
-    TextEditingController rateController =
+    TextEditingController _itemUnitController =
+        TextEditingController(text: data['item_unit']);
+    TextEditingController _itemvalueController =
         TextEditingController(text: data['basic_value']);
 
     return showDialog(
@@ -124,43 +135,69 @@ class _UsersState extends State<Users> {
               ),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 115,
-                    child: TextBox(
-                        helpText: 'Quantity',
-                        controller: quantityController,
-                        textInputType: TextInputType.number),
-                  ),
-                  SizedBox(
-                      width: 115,
-                      child: Dropdown(
-                        helpText: 'unit',
-                        defaultValue: '-',
-                      )),
-                ],
-              ),
-              TextBox(
-                  helpText: 'Rate',
-                  controller: rateController,
-                  textInputType: TextInputType.number),
-            ],
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                        width: 115,
+                        child: TextBox(
+                            helpText: 'Quantity',
+                            controller: quantityController,
+                            textInputType: TextInputType.number,
+                            validator: itemvalidation,
+                            onChange: (val) {
+                              _itemvalueController.text = calculateQuantity(
+                                      val,
+                                      _itemUnitController.text,
+                                      data['basic_value'])
+                                  .toString();
+                            })),
+                    SizedBox(
+                        width: 115,
+                        child: Dropdown(
+                          helpText: 'unit',
+                          defaultValue: _itemUnitController.text,
+                          onChange: (value) {
+                            _itemUnitController.text = value.toString();
+                            setState(() {
+                              itemUnit = value;
+                            });
+                          },
+                        )),
+                  ],
+                ),
+                TextBox(
+                    enabled: false,
+                    helpText: 'Value',
+                    controller: _itemvalueController,
+                    validator: itemvalidation,
+                    textInputType: TextInputType.number),
+              ],
+            ),
           ),
           actions: [
             ElevatedButton(
               onPressed: () {
-                // You can handle the form data here
-                String quantity = quantityController.text;
-                String unit = unitController.text;
-                String rate = rateController.text;
-
-                print('Quantity: $quantity, Unit: $unit, Rate: $rate');
-
-                Navigator.pop(context);
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    BlocProvider.of<InvoiceBloc>(context).add(AddItemEvent(
+                        data['item_id'].toString(),
+                        data['item_name'].toString(),
+                        data['item_hsn'].toString(),
+                        data['item_gst'].toString(),
+                        quantityController.text,
+                        _itemUnitController.text,
+                        data['basic_value'].toString(),
+                        _itemvalueController.text));
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print(e);
+                  }
+                }
               },
               child: const Text('Add'),
             ),

@@ -71,37 +71,6 @@ class _InvoiceFormState extends State<Invoice> {
     _customerAddress.text = "";
   }
 
-  double calculateQuantity(dynamic qty, String unit, dynamic rate) {
-    double stk = 0;
-    try {
-      qty = qty != null ? double.parse(qty) : 0;
-      rate = rate != null ? double.parse(rate) : 0;
-
-      print(qty);
-
-      if (unit == 'gm' || unit == 'ml') {
-        stk = qty / 1000;
-      }
-      if (unit == 'kg' ||
-          unit == 'ltr' ||
-          unit == 'btl' ||
-          unit == 'pkt' ||
-          unit == 'pcs' ||
-          unit == 'pouch' ||
-          unit == 'hgr') {
-        stk = qty / 1;
-      }
-      if (unit == 'qtl') {
-        stk = qty * 100;
-      }
-      double value = stk * rate;
-      return value;
-    } catch (e) {
-      print(e.toString());
-      return 0;
-    }
-  }
-
   final List<Map<String, String>> _columnList = [
     {'title': 'item Number', 'key': 'item_id', 'width': '180.0'},
     {'title': 'item Name', 'key': 'item_name', 'width': '430.0'},
@@ -169,11 +138,6 @@ class _InvoiceFormState extends State<Invoice> {
   String? _itemQty(String? value) {
     if (value == null || value.isEmpty) {
       return 'Please enter a Item Quantity.';
-    }
-    final mobileNumberRegex = r'^[1-9]$';
-
-    if (!RegExp(mobileNumberRegex).hasMatch(value)) {
-      return 'Please enter a valid mobile number.';
     }
     return null;
   }
@@ -712,16 +676,16 @@ class _InvoiceFormState extends State<Invoice> {
                                       margin: const EdgeInsets.all(10),
                                       child: Button(
                                         onPress: () {
-                                          // showDeleteConfirmationDialog(
-                                          //     context, "Cancel", () {
-                                          //   BlocProvider.of<InvoiceBloc>(
-                                          //           context)
-                                          //       .add(CancelBill());
-                                          // });
+                                          showDeleteConfirmationDialog(
+                                              context, "Cancel", () {
+                                            BlocProvider.of<InvoiceBloc>(
+                                                    context)
+                                                .add(CancelBill());
+                                          });
 
-                                          Common cm = Common();
-                                          cm.showPrintPreview(
-                                              context, jsonData, true);
+                                          // Common cm = Common();
+                                          // cm.showPrintPreview(
+                                          //     context, jsonData, true);
                                         },
                                         btnColor: Colors.red,
                                         textColor: Colors.white,

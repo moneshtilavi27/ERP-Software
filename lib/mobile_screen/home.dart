@@ -1,6 +1,7 @@
 import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/mobile_screen/appinfo.dart';
 import 'package:erp/mobile_screen/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,7 +50,7 @@ class _HomePageState extends State<HomePage> {
       case "Setting":
         // page = ProfileScreen();
         Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const ProfileScreen()));
+            MaterialPageRoute(builder: (context) => const AppInfoPage()));
         break;
       default:
     }

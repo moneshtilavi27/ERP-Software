@@ -55,68 +55,8 @@ class _AppDrawerState extends State<AppDrawer> {
         actions: const [AppBarActionButton()],
       ),
       body: Center(
-        // child: Text(
-        //   'A drawer is an invisible side screen.',
-        //   style: TextStyle(fontSize: 20.0),
-        // )
         child: page,
       ),
-      // drawer: Drawer(
-      //   child: ListView(
-      //     padding: const EdgeInsets.all(0),
-      //     children: [
-      //       const DrawerHeader(
-      //         decoration: BoxDecoration(
-      //           color: Colors.green,
-      //         ),
-      //         child: UserAccountsDrawerHeader(
-      //           decoration: BoxDecoration(color: Colors.green),
-      //           accountName: Text(
-      //             "Monesh Tilavi",
-      //             style: TextStyle(fontSize: 18),
-      //           ),
-      //           accountEmail: Text("moneshitlavi@gmail.com"),
-      //           currentAccountPictureSize: Size.square(50),
-      //           currentAccountPicture: CircleAvatar(
-      //             backgroundColor: Color.fromARGB(255, 165, 255, 137),
-      //             child: Text(
-      //               "M",
-      //               style: TextStyle(fontSize: 30.0, color: Colors.blue),
-      //             ),
-      //           ),
-      //         ),
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.person),
-      //         title: const Text(' My Profile '),
-      //         onTap: () {
-      //           Navigator.pop(context);
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.book),
-      //         title: const Text(' My Course '),
-      //         onTap: () {
-      //           Navigator.pop(context);
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.workspace_premium),
-      //         title: const Text(' Go Premium '),
-      //         onTap: () {
-      //           Navigator.pop(context);
-      //         },
-      //       ),
-      //       ListTile(
-      //         leading: const Icon(Icons.logout),
-      //         title: const Text('LogOut'),
-      //         onTap: () {
-      //           Navigator.pop(context);
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

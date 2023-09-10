@@ -2,40 +2,51 @@ import 'package:erp/app_screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({Key? key}) : super(key: key);
+class AppInfoPage extends StatefulWidget {
+  const AppInfoPage({Key? key}) : super(key: key);
 
   @override
-  State<ProfileScreen> createState() => _ProfileState();
+  _AppInfoPageState createState() => _AppInfoPageState();
 }
 
-class _ProfileState extends State<ProfileScreen> {
+class _AppInfoPageState extends State<AppInfoPage> {
+  void _logout() {
+    // Implement your logout logic here
+    // For example, clear user session, navigate to login screen, etc.
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('App Information'),
         backgroundColor: Colors.green,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               CircleAvatar(
                 radius: 60,
-                backgroundImage: AssetImage(
-                    'lib/service/asset/logo.png'), // Add your image asset here
+                backgroundImage: AssetImage('lib/service/asset/logo.png'),
+                // Update with your image asset path
               ),
               SizedBox(height: 20),
               Text(
-                'Monesh Tilavi',
+                'ERP Software', // Replace with your app name
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
-                'Software Developer',
+                'Version 1.0', // Replace with your app version
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               SizedBox(height: 20),
@@ -44,23 +55,34 @@ class _ProfileState extends State<ProfileScreen> {
               ),
               ListTile(
                 leading: Icon(Icons.phone),
-                title: Text('Phone'),
-                subtitle: Text('+1234567890'),
+                title: Text('Contact Us'),
+                subtitle: Text(
+                    'contact@believebond.com'), // Replace with your contact email
               ),
               Divider(
-                height: 5,
+                height: 10,
               ),
               ListTile(
-                leading: Icon(Icons.email),
-                title: Text('Email'),
-                subtitle: Text('johndoe@example.com'),
+                leading: Icon(Icons.web),
+                title: Text('Visit Website'),
+                subtitle: Text(
+                    'https://believebond.com'), // Replace with your website URL
               ),
               Divider(
-                height: 5,
+                height: 10,
+              ),
+              ListTile(
+                leading: Icon(Icons.info),
+                title: Text('About Us'),
+                subtitle: Text(
+                    'We Develop customise software.'), // Replace with your app description
+              ),
+              Divider(
+                height: 10,
               ),
               ListTile(
                 leading: Icon(Icons.logout),
-                title: Text('Email'),
+                title: Text('Logout'),
                 onTap: () async {
                   SharedPreferences sp = await SharedPreferences.getInstance();
                   sp.clear();
@@ -68,9 +90,6 @@ class _ProfileState extends State<ProfileScreen> {
                       MaterialPageRoute(builder: (context) => const Login()),
                       (route) => false);
                 },
-              ),
-              Divider(
-                height: 10,
               ),
             ],
           ),

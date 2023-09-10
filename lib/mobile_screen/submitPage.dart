@@ -1,7 +1,11 @@
+import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common.dart';
 import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,12 +21,71 @@ class SubmitScreen extends StatefulWidget {
 }
 
 class _submitScreenState extends State<SubmitScreen> {
-  TextEditingController total_item = TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey();
+  TextEditingController _custName = TextEditingController();
+  TextEditingController _custNum = TextEditingController();
+  TextEditingController _custAdd = TextEditingController();
+  TextEditingController _totalItem = TextEditingController();
+  TextEditingController _totalAmt = TextEditingController();
+  TextEditingController _gst = TextEditingController();
+  TextEditingController _discount = TextEditingController();
+
   int totalItems = 5; // Replace with actual total items
-  double totalAmount = 1000; // Replace with actual total amount
+  double totalAmount = 0; // Replace with actual total amount
   double gst = 18; // Replace with actual GST percentage
   double discount = 0;
   double fontSize = 12;
+  int totalItem = 0;
+  double gstAmount = 0;
+  double totalItemValue = 0;
+
+  String? _validateCustomername(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a Customer Name.';
+    }
+    return null;
+  }
+
+  String? _validateMobileNumber(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter a mobile number.';
+    }
+    final mobileNumberRegex = r'^[0-9]{10}$';
+
+    if (!RegExp(mobileNumberRegex).hasMatch(value)) {
+      return 'Please enter a valid mobile number.';
+    }
+    return null;
+  }
+
+  dynamic jsonData = {
+    "billdata": [
+      {
+        "number": "3",
+        "discount": "10",
+        "created": "2023-09-07 01:47:49",
+        "customer_id": "4",
+        "customer_name": "kir",
+        "customer_address": "belgaum",
+        "customer_mob": "9876543210",
+        "customer_email": null
+      }
+    ],
+    "billItem": [
+      {
+        "in_id": "3",
+        "user_id": "1",
+        "item_id": "2",
+        "item_name": "DHANIYA POWDER SPARSH 500GM",
+        "item_hsn": "0909",
+        "item_gst": "5",
+        "qty": "4",
+        "unit": "pkt",
+        "rate": "70",
+        "value": "280"
+      }
+    ]
+  };
 
   @override
   Widget build(BuildContext context) {
@@ -35,103 +98,191 @@ class _submitScreenState extends State<SubmitScreen> {
           backgroundColor: Colors.green,
         ),
         backgroundColor: Colors.grey[100],
-        body: SingleChildScrollView(
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TextFormField(
-                    style: TextStyle(fontSize: fontSize),
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 10),
-                      labelText: 'Name',
-                      border: OutlineInputBorder(),
-                    ),
+        body: Form(
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: BlocConsumer<InvoiceBloc, InvoiceState>(
+                listener: (context, state) {
+              if (state is InvoiceDataState) {
+                if (state.status == "save") {
+                  showAboutDialog(
+                    context: context,
+                    applicationName: state.status,
+                    applicationVersion: state.status,
+                  );
+                } else {
+                  Common cm = Common();
+                  print(state.dataList);
+                  cm.showPrintPreview(context, state.dataList, true);
+                }
+                setState(() {
+                  totalItem = 0;
+                  totalItemValue = 0;
+                });
+              }
+            }, builder: (context, state) {
+              late double tot = 0;
+              late double value = 0;
+              late double gstPercentage = 0;
+              late double gstAmount = 0;
+              if (state is InvoiceItemListState) {
+                _totalItem.text = state.dataList.length.toString();
+                for (var product in state.dataList) {
+                  tot += double.parse(product['item_value']);
+
+                  value = (product['item_value'] != null &&
+                          product['item_value'].isNotEmpty)
+                      ? double.tryParse(product['item_value']) ?? 0
+                      : 0;
+                  gstPercentage = (product['item_gst'] != null &&
+                          product['item_gst'].isNotEmpty)
+                      ? double.tryParse(product['item_gst']) ?? 0
+                      : 0;
+
+                  gstAmount += ((value * gstPercentage) / 100) / 2;
+                }
+                _totalAmt.text = tot.toString();
+                totalAmount = tot;
+                _gst.text = gstAmount.toString();
+
+                return Card(
+                  elevation: 4,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    style: TextStyle(fontSize: fontSize),
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number',
-                      contentPadding: EdgeInsets.only(left: 10),
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 16),
-                  TextFormField(
-                    style: TextStyle(fontSize: fontSize),
-                    decoration: const InputDecoration(
-                      labelText: 'Adress',
-                      contentPadding: EdgeInsets.only(left: 10),
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.phone,
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(height: 5),
-                  billTiles("Total Items", controller: total_item),
-                  const Divider(height: 5),
-                  billTiles("Total Amount:", controller: total_item),
-                  const Divider(height: 5),
-                  billTiles("CGST", controller: total_item),
-                  const Divider(height: 5),
-                  billTiles("SGST", controller: total_item),
-                  const Divider(height: 5),
-                  billTiles("Net Bill", controller: total_item),
-                  const Divider(height: 5),
-                  const Padding(
-                    padding: EdgeInsets.only(top: 5, bottom: 5),
-                    child: ListTile(
-                      leading: Text(
-                        "Net Amount",
-                        textAlign: TextAlign.start,
-                        style: TextStyle(fontSize: 18),
-                      ),
-                      trailing: Padding(
-                        padding: EdgeInsets.only(right: 35),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.currency_rupee_rounded),
-                            Text(
-                              "5000.00",
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 162, 55, 28),
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextBox(
+                            helpText: "Customer Name",
+                            controller: _custName,
+                            validator: _validateCustomername,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextBox(
+                            helpText: "Phone Number",
+                            controller: _custNum,
+                            validator: _validateMobileNumber,
+                            textInputType: TextInputType.number,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: double.infinity,
+                          child: TextBox(
+                            helpText: "Adress",
+                            controller: _custAdd,
+                            textInputType: TextInputType.multiline,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Divider(height: 5),
+                        billTiles(
+                          "Total Items",
+                          controller: _totalItem,
+                          enable: false,
+                        ),
+                        const Divider(height: 5),
+                        billTiles(
+                          "Total Amount:",
+                          controller: _totalAmt,
+                          enable: false,
+                        ),
+                        const Divider(height: 5),
+                        billTiles(
+                          "CGST",
+                          controller: _gst,
+                          enable: false,
+                        ),
+                        const Divider(height: 5),
+                        billTiles(
+                          "SGST",
+                          controller: _gst,
+                          enable: false,
+                        ),
+                        const Divider(height: 5),
+                        billTiles("Discount",
+                            controller: _discount,
+                            enable: true, onChange: (value) {
+                          double v = (value != null && value.isNotEmpty)
+                              ? double.tryParse(value) ?? 0
+                              : 0;
+                          setState(() {
+                            totalAmount = tot - v;
+                          });
+                        }),
+                        const Divider(height: 5),
+                        Padding(
+                          padding: const EdgeInsets.only(top: 5, bottom: 5),
+                          child: ListTile(
+                            leading: const Text(
+                              "Net Amount",
+                              textAlign: TextAlign.start,
+                              style: TextStyle(fontSize: 18),
                             ),
-                          ],
+                            trailing: Padding(
+                              padding: const EdgeInsets.only(right: 35),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.currency_rupee_rounded),
+                                  Text(
+                                    totalAmount.toString(),
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 162, 55, 28),
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
+                        const Divider(height: 5),
+                        const SizedBox(height: 10),
+                        Align(
+                            alignment: Alignment.center,
+                            child: SizedBox(
+                              width: 250,
+                              child: Button(
+                                onPress: () {
+                                  if (_formKey.currentState!.validate()) {
+                                    if (tot > 0) {
+                                      BlocProvider.of<InvoiceBloc>(context).add(
+                                          PrintBill(
+                                              _custName.text,
+                                              _custNum.text,
+                                              _custAdd.text,
+                                              "print"));
+                                    } else {
+                                      showAlertDialog(
+                                          context, "Insert item...");
+                                    }
+                                  }
+                                },
+                                btnColor: Colors.orange,
+                                textColor: Colors.white,
+                                btnText: 'Print / Save',
+                              ),
+                            )),
+                      ],
                     ),
                   ),
-                  const Divider(height: 5),
-                  const SizedBox(height: 10),
-                  Align(
-                      alignment: Alignment.center,
-                      child: SizedBox(
-                        width: 250,
-                        child: Button(
-                          onPress: () {
-                            Common cm = Common();
-                            cm.showPrintPreview(context, {}, true);
-                          },
-                          btnColor: Colors.orange,
-                          textColor: Colors.white,
-                          btnText: 'Print / Save',
-                        ),
-                      )),
-                ],
-              ),
-            ),
+                );
+              } else {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            }),
           ),
         ),
         bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(
@@ -154,12 +305,20 @@ class _submitScreenState extends State<SubmitScreen> {
 
 class billTiles extends StatelessWidget {
   final String textTitle;
+  final bool enable;
   final TextEditingController controller;
   final double fontSize = 12;
-  const billTiles(this.textTitle, {super.key, required this.controller});
+  final Function? onChange;
+  const billTiles(this.textTitle,
+      {super.key,
+      required this.controller,
+      required this.enable,
+      this.onChange});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(
+    BuildContext context,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(
@@ -175,6 +334,7 @@ class billTiles extends StatelessWidget {
             width: 130,
             child: TextFormField(
               style: TextStyle(fontSize: fontSize),
+              enabled: enable,
               controller: controller,
               decoration: const InputDecoration(
                 contentPadding: const EdgeInsets.only(left: 10),
@@ -182,6 +342,9 @@ class billTiles extends StatelessWidget {
                 border: OutlineInputBorder(),
               ),
               keyboardType: TextInputType.phone,
+              onChanged: onChange != null
+                  ? ((value) => {onChange!(value)})
+                  : (value) => {},
             ),
           ),
         ],

@@ -48,7 +48,8 @@ class Main extends StatelessWidget {
             title: "ERP Software",
             home: BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
               return const SplashScreen();
-            }))
+            }),
+            debugShowCheckedModeBanner: false)
         // child: MaterialApp(title: "ERP Software", home: HomePage(title: 'ERP')),
         );
   }

@@ -4,6 +4,7 @@ import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
@@ -22,7 +23,11 @@ class Bucket extends StatefulWidget {
 }
 
 class _BucketState extends State<Bucket> {
+  final GlobalKey<FormState> _formKey = GlobalKey();
   var isLoading = false;
+  int totalItem = 0;
+  String itemUnit = "";
+  double totalItemValue = 0;
 
   late List products = [
     {
@@ -96,6 +101,13 @@ class _BucketState extends State<Bucket> {
     loadData();
   }
 
+  String? itemvalidation(String? value) {
+    if (value == null || value.isEmpty || value == '0') {
+      return 'Empty Field...';
+    }
+    return null;
+  }
+
   loadData() {
     setState(() {
       isLoading = false;
@@ -115,6 +127,15 @@ class _BucketState extends State<Bucket> {
         backgroundColor: Colors.grey[100],
         body: BlocBuilder<InvoiceBloc, InvoiceState>(builder: (context, state) {
           if (state is InvoiceItemListState) {
+            late double tot = 0;
+            totalItemValue = 0;
+            for (var product in state.dataList) {
+              totalItemValue += double.parse(product['item_value']);
+            }
+            // setState(() {
+            //   totalItem = state.dataList.length;
+            //   totalItemValue = tot;
+            // });
             return isLoading
                 ? const Center(
                     child: CircularProgressIndicator(),
@@ -147,8 +168,9 @@ class _BucketState extends State<Bucket> {
                                 children: [
                                   const Icon(Icons.currency_rupee_rounded),
                                   Text(
-                                    state.dataList[index]['basic_value'] +
+                                    state.dataList[index]['item_value'] +
                                         " / " +
+                                        state.dataList[index]['item_quant'] +
                                         state.dataList[index]['item_unit'],
                                     style: const TextStyle(
                                         color: Color.fromARGB(255, 162, 55, 28),
@@ -170,7 +192,7 @@ class _BucketState extends State<Bucket> {
                         ),
                       )),
                       // Amount and Next Button
-                      _buildBottomWidget(),
+                      _buildBottomWidget(totalItemValue.toString()),
                     ],
                   );
           } else {
@@ -196,7 +218,7 @@ class _BucketState extends State<Bucket> {
         ));
   }
 
-  Widget _buildBottomWidget() {
+  Widget _buildBottomWidget(String value) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
@@ -204,10 +226,10 @@ class _BucketState extends State<Bucket> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Row(
+          Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
+              const Text(
                 'Total: ', // Replace with your actual amount
                 style: TextStyle(
                   fontSize: 18,
@@ -215,13 +237,13 @@ class _BucketState extends State<Bucket> {
                   color: Color.fromARGB(255, 162, 55, 28),
                 ),
               ),
-              Icon(
+              const Icon(
                 Icons.currency_rupee_rounded,
                 color: Color.fromARGB(255, 162, 55, 28),
               ),
               Text(
-                "500",
-                style: TextStyle(
+                value,
+                style: const TextStyle(
                     color: Color.fromARGB(255, 162, 55, 28),
                     fontSize: 18,
                     fontWeight: FontWeight.w500),
@@ -250,10 +272,12 @@ class _BucketState extends State<Bucket> {
   }
 
   Future<void> _showItemInputDialog(BuildContext context, var data) async {
-    TextEditingController quantityController = TextEditingController(text: '1');
-    TextEditingController unitController = TextEditingController();
-    TextEditingController rateController =
-        TextEditingController(text: data['basic_value']);
+    TextEditingController quantityController =
+        TextEditingController(text: data['item_quant']);
+    TextEditingController _itemUnitController =
+        TextEditingController(text: data['item_unit']);
+    TextEditingController _itemvalueController =
+        TextEditingController(text: data['item_value']);
 
     return showDialog(
       context: context,
@@ -265,7 +289,7 @@ class _BucketState extends State<Bucket> {
               const Padding(
                 padding: EdgeInsets.all(5.0),
                 child: Text(
-                  'Update Item',
+                  'Add Item',
                   style: TextStyle(fontSize: 20),
                 ),
               ),
@@ -278,51 +302,81 @@ class _BucketState extends State<Bucket> {
               ),
             ],
           ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 115,
-                    child: TextBox(
-                        helpText: 'Quantity',
-                        controller: quantityController,
-                        textInputType: TextInputType.number),
-                  ),
-                  SizedBox(
-                      width: 115,
-                      child: Dropdown(
-                        helpText: 'unit',
-                        defaultValue: '-',
-                      )),
-                ],
-              ),
-              TextBox(
-                  helpText: 'Rate',
-                  controller: rateController,
-                  textInputType: TextInputType.number),
-            ],
+          content: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    SizedBox(
+                        width: 115,
+                        child: TextBox(
+                            helpText: 'Quantity',
+                            controller: quantityController,
+                            textInputType: TextInputType.number,
+                            validator: itemvalidation,
+                            onChange: (val) {
+                              _itemvalueController.text = calculateQuantity(
+                                      val,
+                                      _itemUnitController.text,
+                                      data['item_rate'])
+                                  .toString();
+                            })),
+                    SizedBox(
+                        width: 115,
+                        child: Dropdown(
+                          helpText: 'unit',
+                          defaultValue: _itemUnitController.text,
+                          onChange: (value) {
+                            _itemUnitController.text = value.toString();
+                            setState(() {
+                              itemUnit = value;
+                            });
+                          },
+                        )),
+                  ],
+                ),
+                TextBox(
+                    enabled: false,
+                    helpText: 'Value',
+                    controller: _itemvalueController,
+                    validator: itemvalidation,
+                    textInputType: TextInputType.number),
+              ],
+            ),
           ),
           actions: [
             ElevatedButton(
               onPressed: () {
-                // You can handle the form data here
-                String quantity = quantityController.text;
-                String unit = unitController.text;
-                String rate = rateController.text;
-
-                print('Quantity: $quantity, Unit: $unit, Rate: $rate');
-
-                Navigator.pop(context);
+                if (_formKey.currentState!.validate()) {
+                  try {
+                    BlocProvider.of<InvoiceBloc>(context).add(AddItemEvent(
+                        data['item_id'].toString(),
+                        data['item_name'].toString(),
+                        data['item_hsn'].toString(),
+                        data['item_gst'].toString(),
+                        quantityController.text,
+                        _itemUnitController.text,
+                        data['item_rate'].toString(),
+                        _itemvalueController.text));
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print(e);
+                  }
+                }
               },
               child: const Text('Update'),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
-                Navigator.pop(context);
+                showDeleteConfirmationDialog(context, "Delete", () {
+                  BlocProvider.of<InvoiceBloc>(context)
+                      .add(DeleteItemEvent(data['item_id'].toString()));
+                });
               },
-              child: const Text('Cancel'),
+              child: const Text('Delete'),
             ),
           ],
         );

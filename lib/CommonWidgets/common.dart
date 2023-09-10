@@ -70,13 +70,14 @@ class Common {
             final qty = item['qty'] ?? '0';
             final rate = item['rate'] ?? '0';
             final value = item['value'] ?? '0';
-            final gstPercentage = item['item_gst'] ?? '0';
-            print(gstPercentage);
+            final gstPercentage =
+                (item['item_gst'] != null && item['item_gst'].isNotEmpty)
+                    ? double.tryParse(item['item_gst']) ?? 0
+                    : 0;
 
             totalAmount += double.parse(value);
 
-            final gstAmount =
-                (double.parse(value) * double.parse(gstPercentage)) / 100;
+            final gstAmount = (double.parse(value) * gstPercentage) / 100;
             final cgst = gstAmount / 2;
             final sgst = gstAmount / 2;
 

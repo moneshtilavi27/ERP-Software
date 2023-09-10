@@ -80,3 +80,36 @@ class InternetStatusMessage extends StatelessWidget {
     );
   }
 }
+
+double calculateQuantity(dynamic qty, String unit, dynamic rate) {
+  double stk = 0;
+  try {
+    qty = (qty != null && qty.isNotEmpty) ? double.tryParse(qty) ?? 0 : 0;
+    rate = (rate != null && rate.isNotEmpty) ? double.tryParse(rate) ?? 0 : 0;
+
+    print(rate);
+
+    if (unit == 'gm' || unit == 'ml') {
+      stk = qty / 1000;
+    }
+    if (unit == 'kg' ||
+        unit == 'ltr' ||
+        unit == 'btl' ||
+        unit == 'pkt' ||
+        unit == 'pcs' ||
+        unit == 'pouch' ||
+        unit == '-' ||
+        unit == 'hgr') {
+      stk = qty / 1;
+    }
+    if (unit == 'qtl') {
+      stk = qty * 100;
+    }
+    double value = stk * rate;
+    print(unit);
+    return value;
+  } catch (e) {
+    print(e.toString());
+    return 0;
+  }
+}
