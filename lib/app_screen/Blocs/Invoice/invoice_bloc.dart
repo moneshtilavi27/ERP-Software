@@ -1,4 +1,5 @@
 import 'package:erp/service/API/api.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -9,7 +10,14 @@ import 'invoice_state.dart';
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
   InvoiceBloc() : super(IntialState()) {
     late SharedPreferences sp;
-    featchItemData({'request': "get"});
+    SharedPreferences.getInstance().then((value) {
+      sp = value;
+      print(value.getString('user_id').toString());
+      featchItemData({
+        'request': "get",
+        "user_id": value.getString('user_id').toString(),
+      });
+    });
 
     on<CustomerDetailEvent>((event, emit) {
       if (event.customerName == "") {
@@ -22,7 +30,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     });
 
     on<FeatchInvoiceEvent>((event, emit) async {
-      featchItemData({'request': "get", "item_name": "monesh"});
+      featchItemData(
+          {'request': "get", "user_id": sp.getString('user_id').toString()});
     });
 
     on<FilterItemEvent>((event, emit) => featchItemData(
@@ -60,6 +69,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "request": "update",
           "item_id": event.item_id,
           "data": {
+            "user_id": sp.getString('user_id'),
             "item_name": event.item_name,
             "item_hsn": event.item_hsn,
             "item_gst": event.item_gst,
@@ -87,7 +97,10 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
         obj.postData(API.invoice, data).then((res) {
           if (res.data['status'] == "success") {
-            featchItemData({'request': "get"});
+            featchItemData({
+              'request': "get",
+              "user_id": sp.getString('user_id').toString()
+            });
           }
         });
       } catch (e) {
@@ -129,7 +142,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "user_id": sp.getString('user_id'),
           "invoiceNumber": invoiceNum
         };
-        await getInvoiceData(getBill, event.status);
+        getInvoiceData(getBill, event.status);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
       }
@@ -160,7 +173,8 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     await obj.postData(API.invoice, data).then((res) async {
       try {
         if (res.data['status'] == "success") {
-          featchItemData({'request': "get"});
+          featchItemData(
+              {'request': "get", 'user_id': data['data']!['user_id']});
           emit(itemAddUpdateState());
         } else {
           emit(ErrorInvoiceState(res.data['data']));
@@ -237,7 +251,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       APIMethods obj = APIMethods();
       obj.postData(API.invoice, data).then((res) {
         if (res.data['status'] == "success") {
-          emit(InvoiceDataState(res.data['data'], status));
+          emit(InvoiceDataState(res.data['data'], status, true));
         }
       });
     } catch (e) {

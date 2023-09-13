@@ -228,18 +228,19 @@ class Common {
 
     final pdf = await doc.save();
 
+    late bool ans;
     if (Platform.isAndroid) {
-      bool ans = await Printing.sharePdf(
+      ans = await Printing.sharePdf(
         bytes: pdf,
         filename: fileName, // Specify the document name here
       );
     } else {
-      bool ans = await Printing.layoutPdf(
+      ans = await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdf,
         name: fileName, // Specify the document name here
       );
     }
-    return true;
+    return ans;
   }
 
   String _formatDateTime(String dateTime) {

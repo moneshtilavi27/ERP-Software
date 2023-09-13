@@ -2,6 +2,7 @@ import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
 import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/mobile_screen/appinfo.dart';
+import 'package:erp/mobile_screen/itemList.dart';
 import 'package:erp/mobile_screen/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,9 +28,17 @@ class _HomePageState extends State<HomePage> {
       'icon': Icons.inventory_outlined,
     },
     {
+      'name': 'Item Master',
+      'icon': Icons.playlist_add,
+    },
+    {
+      'name': 'Invoice Details',
+      'icon': Icons.store_outlined,
+    },
+    {
       'name': 'Setting',
       'icon': Icons.settings,
-    }
+    },
   ];
 
   void _onItemTapped(int index) {
@@ -46,6 +55,13 @@ class _HomePageState extends State<HomePage> {
             context,
             MaterialPageRoute(
                 builder: (context) => const AppDrawer(title: "Invoice")));
+        break;
+      case "Item Master":
+        // page = AppDrawer(title: "Invoice");
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ItemList(title: "Item Master")));
         break;
       case "Setting":
         // page = ProfileScreen();
@@ -82,7 +98,7 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(_items[index]['icon'], size: 45),
+                  Icon(_items[index]['icon'], size: 45, color: Colors.green),
                   const SizedBox(height: 2.0),
                   Text(_items[index]['name'],
                       style: const TextStyle(fontSize: 14.0)),
@@ -104,7 +120,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
           currentIndex: _selectedIndex,
-          selectedItemColor: Colors.amber[800],
+          selectedItemColor: Colors.green,
           onTap: (index) {
             if (index == 0) {
               print(index);

@@ -6,6 +6,7 @@ import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/mobile_screen/app_drawer.dart';
 import 'package:erp/mobile_screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -86,13 +87,12 @@ class _submitScreenState extends State<SubmitScreen> {
                   );
                 } else {
                   Common cm = Common();
-                  print(state.dataList);
                   cm
                       .showPrintPreview(context, state.dataList, true)
                       .then((value) {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
-                        builder: (context) => const HomePage(title: "ERP"),
+                        builder: (context) => const AppDrawer(title: "Invoice"),
                       ),
                       (route) => false, // Clear all routes from the stack.
                     );

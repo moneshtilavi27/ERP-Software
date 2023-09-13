@@ -52,7 +52,7 @@ class _AppDrawerState extends State<AppDrawer> {
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.green,
-        actions: const [AppBarActionButton()],
+        actions: [AppBarActionButton()],
       ),
       body: Center(
         child: page,
@@ -69,7 +69,7 @@ class _AppDrawerState extends State<AppDrawer> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: Colors.amber[800],
+        selectedItemColor: Colors.green,
         onTap: _onItemTapped,
       ),
       bottomSheet: BlocBuilder<NetworkBloc, NetworkState>(

@@ -183,7 +183,15 @@ class _BucketState extends State<Bucket> {
                                 _showItemInputDialog(
                                     context, state.dataList[index]);
                               },
-                              onLongPress: () {},
+                              onLongPress: () {
+                                showDeleteConfirmationDialog(context, "Delete",
+                                    () {
+                                  BlocProvider.of<InvoiceBloc>(context).add(
+                                      DeleteItemEvent(state.dataList[index]
+                                              ['item_id']
+                                          .toString()));
+                                });
+                              },
                             ),
                             const Divider(
                               height: 5,
@@ -255,11 +263,13 @@ class _BucketState extends State<Bucket> {
             child: Button(
               onPress: () {
                 // callAPI();
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) =>
-                            const SubmitScreen(title: "Bill Screen")));
+                double.tryParse(value)! > 0
+                    ? Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                const SubmitScreen(title: "Bill Screen")))
+                    : showAlertDialog(context, "Insert Item..");
               },
               btnColor: Colors.orange,
               textColor: Colors.white,
@@ -373,15 +383,11 @@ class _BucketState extends State<Bucket> {
               },
               child: const Text('Update'),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            TextButton(
               onPressed: () {
-                showDeleteConfirmationDialog(context, "Delete", () {
-                  BlocProvider.of<InvoiceBloc>(context)
-                      .add(DeleteItemEvent(data['item_id'].toString()));
-                });
+                Navigator.pop(context);
               },
-              child: const Text('Delete'),
+              child: const Text('Cancel'),
             ),
           ],
         );
