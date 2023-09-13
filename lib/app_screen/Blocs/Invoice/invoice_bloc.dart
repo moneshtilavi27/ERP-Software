@@ -28,7 +28,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     on<FilterItemEvent>((event, emit) => featchItemData(
         {'request': "getItemNames", "item_name": event.item_name}));
 
-    on<AddItemEvent>((event, emit) async {
+    on<AddProductEvent>((event, emit) async {
       try {
         sp = await SharedPreferences.getInstance();
         // double value =
@@ -54,7 +54,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       }
     });
 
-    on<UpdateItemEvent>((event, emit) async {
+    on<UpdateProductEvent>((event, emit) async {
       try {
         Map<String, dynamic> data = {
           "request": "update",

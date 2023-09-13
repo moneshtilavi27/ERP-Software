@@ -400,7 +400,7 @@ class _InvoiceFormState extends State<Invoice> {
                                                         BlocProvider.of<
                                                                     InvoiceBloc>(
                                                                 context)
-                                                            .add(AddItemEvent(
+                                                            .add(AddProductEvent(
                                                                 _itemIdController
                                                                     .text,
                                                                 _itemNameController

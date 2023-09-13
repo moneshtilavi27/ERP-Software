@@ -70,7 +70,7 @@ class Dropdown extends StatelessWidget {
           ),
           DropdownButtonFormField(
             // Initial Value
-            value: defaultValue,
+            value: defaultValue ?? "-",
             menuMaxHeight: 400,
 
             // Down Arrow Icon

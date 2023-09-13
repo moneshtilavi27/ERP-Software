@@ -22,7 +22,7 @@ class FilterItemEvent extends InvoiceEvent {
   FilterItemEvent(this.item_name);
 }
 
-class AddItemEvent extends InvoiceEvent {
+class AddProductEvent extends InvoiceEvent {
   final String item_id;
   final String item_name;
   final String item_hsn;
@@ -32,7 +32,7 @@ class AddItemEvent extends InvoiceEvent {
   final String basic_value;
   final String value;
 
-  AddItemEvent(
+  AddProductEvent(
     this.item_id,
     this.item_name,
     this.item_hsn,
@@ -44,7 +44,7 @@ class AddItemEvent extends InvoiceEvent {
   );
 }
 
-class UpdateItemEvent extends InvoiceEvent {
+class UpdateProductEvent extends InvoiceEvent {
   final String item_id;
   final String item_name;
   final String item_hsn;
@@ -54,7 +54,7 @@ class UpdateItemEvent extends InvoiceEvent {
   final String basic_value;
   final String value;
 
-  UpdateItemEvent(this.item_id, this.item_name, this.item_hsn, this.item_gst,
+  UpdateProductEvent(this.item_id, this.item_name, this.item_hsn, this.item_gst,
       this.item_quant, this.item_unit, this.basic_value, this.value);
 }
 

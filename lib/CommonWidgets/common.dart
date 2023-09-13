@@ -1,10 +1,12 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 class Common {
-  Future<void> showPrintPreview(BuildContext context,
+  Future<bool> showPrintPreview(BuildContext context,
       Map<String, dynamic> jsonData, bool gstEnabled) async {
     final doc = pw.Document();
 
@@ -68,6 +70,7 @@ class Common {
           for (final item in billItems) {
             final itemName = item['item_name'] ?? '';
             final qty = item['qty'] ?? '0';
+            final unit = item['unit'] ?? '-';
             final rate = item['rate'] ?? '0';
             final value = item['value'] ?? '0';
             final gstPercentage =
@@ -95,7 +98,7 @@ class Common {
                   ),
                   pw.SizedBox(
                     width: 40,
-                    child: pw.Text(qty),
+                    child: pw.Text("$qty $unit"),
                   ),
                   pw.SizedBox(
                     width: 40,
@@ -223,12 +226,20 @@ class Common {
       ),
     );
 
-    final pdf = doc.save();
+    final pdf = await doc.save();
 
-    await Printing.layoutPdf(
-      onLayout: (PdfPageFormat format) async => pdf,
-      name: fileName, // Specify the document name here
-    );
+    if (Platform.isAndroid) {
+      bool ans = await Printing.sharePdf(
+        bytes: pdf,
+        filename: fileName, // Specify the document name here
+      );
+    } else {
+      bool ans = await Printing.layoutPdf(
+        onLayout: (PdfPageFormat format) async => pdf,
+        name: fileName, // Specify the document name here
+      );
+    }
+    return true;
   }
 
   String _formatDateTime(String dateTime) {

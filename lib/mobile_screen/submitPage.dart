@@ -6,6 +6,7 @@ import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/mobile_screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -58,34 +59,7 @@ class _submitScreenState extends State<SubmitScreen> {
     return null;
   }
 
-  dynamic jsonData = {
-    "billdata": [
-      {
-        "number": "3",
-        "discount": "10",
-        "created": "2023-09-07 01:47:49",
-        "customer_id": "4",
-        "customer_name": "kir",
-        "customer_address": "belgaum",
-        "customer_mob": "9876543210",
-        "customer_email": null
-      }
-    ],
-    "billItem": [
-      {
-        "in_id": "3",
-        "user_id": "1",
-        "item_id": "2",
-        "item_name": "DHANIYA POWDER SPARSH 500GM",
-        "item_hsn": "0909",
-        "item_gst": "5",
-        "qty": "4",
-        "unit": "pkt",
-        "rate": "70",
-        "value": "280"
-      }
-    ]
-  };
+  dynamic jsonData;
 
   @override
   Widget build(BuildContext context) {
@@ -113,7 +87,16 @@ class _submitScreenState extends State<SubmitScreen> {
                 } else {
                   Common cm = Common();
                   print(state.dataList);
-                  cm.showPrintPreview(context, state.dataList, true);
+                  cm
+                      .showPrintPreview(context, state.dataList, true)
+                      .then((value) {
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
+                        builder: (context) => const HomePage(title: "ERP"),
+                      ),
+                      (route) => false, // Clear all routes from the stack.
+                    );
+                  });
                 }
                 setState(() {
                   totalItem = 0;

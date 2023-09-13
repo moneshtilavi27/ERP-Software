@@ -330,6 +330,11 @@ class _BucketState extends State<Bucket> {
                           defaultValue: _itemUnitController.text,
                           onChange: (value) {
                             _itemUnitController.text = value.toString();
+                            _itemvalueController.text = calculateQuantity(
+                                    quantityController.text,
+                                    _itemUnitController.text,
+                                    data['item_rate'])
+                                .toString();
                             setState(() {
                               itemUnit = value;
                             });
@@ -351,7 +356,7 @@ class _BucketState extends State<Bucket> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
-                    BlocProvider.of<InvoiceBloc>(context).add(AddItemEvent(
+                    BlocProvider.of<InvoiceBloc>(context).add(AddProductEvent(
                         data['item_id'].toString(),
                         data['item_name'].toString(),
                         data['item_hsn'].toString(),

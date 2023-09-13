@@ -4,6 +4,7 @@ import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,6 +18,7 @@ class Users extends StatefulWidget {
 
 class _UsersState extends State<Users> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  final GlobalKey<FormState> _formKey1 = GlobalKey();
   var isLoading = false;
   String itemUnit = "";
 
@@ -163,6 +165,11 @@ class _UsersState extends State<Users> {
                           defaultValue: _itemUnitController.text,
                           onChange: (value) {
                             _itemUnitController.text = value.toString();
+                            _itemvalueController.text = calculateQuantity(
+                                    quantityController.text,
+                                    _itemUnitController.text,
+                                    data['basic_value'])
+                                .toString();
                             setState(() {
                               itemUnit = value;
                             });
@@ -184,7 +191,7 @@ class _UsersState extends State<Users> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
-                    BlocProvider.of<InvoiceBloc>(context).add(AddItemEvent(
+                    BlocProvider.of<InvoiceBloc>(context).add(AddProductEvent(
                         data['item_id'].toString(),
                         data['item_name'].toString(),
                         data['item_hsn'].toString(),
@@ -216,30 +223,34 @@ class _UsersState extends State<Users> {
   Future<void> _showItemRateChangeDialog(BuildContext context, var data) async {
     TextEditingController oldrateController =
         TextEditingController(text: data['basic_value']);
-    TextEditingController newrateController = TextEditingController();
+    TextEditingController newrateController =
+        TextEditingController(text: data['basic_value']);
 
     return showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(5.0),
-                child: Text(
-                  'Update Item Rate',
-                  style: TextStyle(fontSize: 20),
+          title: Form(
+            key: _formKey1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(5.0),
+                  child: Text(
+                    'Update Item Rate',
+                    style: TextStyle(fontSize: 20),
+                  ),
                 ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: Text(
-                  data['item_name'],
-                  style: const TextStyle(fontSize: 12),
+                Padding(
+                  padding: const EdgeInsets.all(5.0),
+                  child: Text(
+                    data['item_name'],
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
@@ -254,19 +265,29 @@ class _UsersState extends State<Users> {
                   helpText: 'New Rate',
                   prefixIcon: Icons.currency_rupee,
                   controller: newrateController,
+                  validator: itemvalidation,
                   textInputType: TextInputType.number),
             ],
           ),
           actions: [
             ElevatedButton(
               onPressed: () {
-                // You can handle the form data here
-                String oldRate = oldrateController.text;
-                String newRate = newrateController.text;
-
-                print('Quantity: $oldRate, Rate: $newRate');
-
-                Navigator.pop(context);
+                if (_formKey1.currentState!.validate()) {
+                  try {
+                    BlocProvider.of<ItemmasterBloc>(context).add(
+                        UpdateItemEvent(
+                            data['item_id'].toString(),
+                            data['item_name'].toString(),
+                            data['item_hsn'].toString(),
+                            data['item_gst'].toString(),
+                            data['item_unit'].toString(),
+                            newrateController.text,
+                            newrateController.text));
+                    Navigator.pop(context);
+                  } catch (e) {
+                    print(e);
+                  }
+                }
               },
               child: const Text('Update'),
             ),
