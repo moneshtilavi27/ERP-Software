@@ -1,6 +1,6 @@
 abstract class InvoiceEvent {}
 
-class UnInvoiceEvent extends InvoiceEvent {}
+class ClearStateEvent extends InvoiceEvent {}
 
 class LoadInvoiceEvent extends InvoiceEvent {}
 
@@ -12,14 +12,20 @@ class CustomerDetailEvent extends InvoiceEvent {
       this.customerName, this.customerNumber, this.customerAddress);
 }
 
-class FeatchInvoiceEvent extends InvoiceEvent {
-  final String item_name;
-  FeatchInvoiceEvent(this.item_name);
-}
+class FeatchInvoiceEvent extends InvoiceEvent {}
 
 class FilterItemEvent extends InvoiceEvent {
   final String item_name;
   FilterItemEvent(this.item_name);
+}
+
+class FeatchInvoiceReportEvent extends InvoiceEvent {}
+
+class GetInvoiceData extends InvoiceEvent {
+  final String invoice_number;
+  final String status;
+
+  GetInvoiceData({required this.invoice_number, required this.status});
 }
 
 class AddProductEvent extends InvoiceEvent {
@@ -68,9 +74,10 @@ class PrintBill extends InvoiceEvent {
   final String customerName;
   final String customerNumber;
   final String customerAddress;
+  final String discount;
   final String status;
   PrintBill(this.customerName, this.customerNumber, this.customerAddress,
-      this.status);
+      this.discount, this.status);
 }
 
 class CancelBill extends InvoiceEvent {}

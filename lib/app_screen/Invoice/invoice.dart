@@ -516,8 +516,8 @@ class _InvoiceFormState extends State<Invoice> {
                               } else {
                                 Common cm = Common();
                                 print(state.dataList);
-                                cm.showPrintPreview(
-                                    context, state.dataList, true);
+                                cm.showPrintPreview(context, state.dataList,
+                                    state.status, true);
                               }
                               clearCustField();
                               clearFields();
@@ -632,6 +632,7 @@ class _InvoiceFormState extends State<Invoice> {
                                                     _customerName.text,
                                                     _customerNumber.text,
                                                     _customerAddress.text,
+                                                    '0',
                                                     "Save"));
                                           } else {
                                             showAlertDialog(
@@ -658,6 +659,7 @@ class _InvoiceFormState extends State<Invoice> {
                                                       _customerName.text,
                                                       _customerNumber.text,
                                                       _customerAddress.text,
+                                                      '0',
                                                       "print"));
                                             } else {
                                               showAlertDialog(

@@ -223,6 +223,8 @@ class _UsersState extends State<Users> {
   Future<void> _showItemRateChangeDialog(BuildContext context, var data) async {
     TextEditingController oldrateController =
         TextEditingController(text: data['basic_value']);
+    TextEditingController newUnitController =
+        TextEditingController(text: data['item_unit']);
     TextEditingController newrateController =
         TextEditingController(text: data['basic_value']);
 
@@ -261,6 +263,13 @@ class _UsersState extends State<Users> {
                   controller: oldrateController,
                   enabled: false,
                   textInputType: TextInputType.number),
+              Dropdown(
+                helpText: 'unit',
+                defaultValue: newUnitController.text,
+                onChange: (value) {
+                  newUnitController.text = value.toString();
+                },
+              ),
               TextBox(
                   helpText: 'New Rate',
                   prefixIcon: Icons.currency_rupee,
@@ -280,7 +289,7 @@ class _UsersState extends State<Users> {
                             data['item_name'].toString(),
                             data['item_hsn'].toString(),
                             data['item_gst'].toString(),
-                            data['item_unit'].toString(),
+                            newUnitController.text,
                             newrateController.text,
                             newrateController.text));
                     Navigator.pop(context);

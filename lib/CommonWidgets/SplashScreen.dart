@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
 import 'package:erp/app_screen/Blocs/Login/login_state.dart';
@@ -17,6 +19,9 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ItemMasterBloc = BlocProvider.of<ItemmasterBloc>(context);
+    final invoiceBloc = BlocProvider.of<InvoiceBloc>(context);
+    invoiceBloc.add(FeatchInvoiceEvent());
+    invoiceBloc.add(FeatchInvoiceReportEvent());
 
     double defaultMargin;
     if (Responsive.isDesktop(context)) {

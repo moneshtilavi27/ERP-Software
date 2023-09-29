@@ -41,7 +41,6 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             emit(InLoginState());
           } else {
             emit(WrongCredential());
-            print("fails");
           }
         } catch (e) {
           print(e.toString());
@@ -104,6 +103,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     try {
       print("page change");
       String auth = sp.getString("auth_key") ?? "";
+      print(sp.getString("user_id"));
       if (auth.isNotEmpty) {
         emit(InLoginState());
       } else {

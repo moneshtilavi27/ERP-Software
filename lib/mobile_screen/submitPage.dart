@@ -8,6 +8,7 @@ import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/mobile_screen/app_drawer.dart';
 import 'package:erp/mobile_screen/home.dart';
+import 'package:erp/mobile_screen/printOptionDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -88,7 +89,8 @@ class _submitScreenState extends State<SubmitScreen> {
                 } else {
                   Common cm = Common();
                   cm
-                      .showPrintPreview(context, state.dataList, true)
+                      .showPrintPreview(
+                          context, state.dataList, state.status, true)
                       .then((value) {
                     Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
@@ -125,7 +127,9 @@ class _submitScreenState extends State<SubmitScreen> {
                   gstAmount += ((value * gstPercentage) / 100) / 2;
                 }
                 _totalAmt.text = tot.toString();
-                totalAmount = tot;
+                if (totalAmount == 0) {
+                  totalAmount = tot;
+                }
                 _gst.text = gstAmount.toString();
 
                 return Card(
@@ -239,12 +243,12 @@ class _submitScreenState extends State<SubmitScreen> {
                                 onPress: () {
                                   if (_formKey.currentState!.validate()) {
                                     if (tot > 0) {
-                                      BlocProvider.of<InvoiceBloc>(context).add(
-                                          PrintBill(
-                                              _custName.text,
-                                              _custNum.text,
-                                              _custAdd.text,
-                                              "print"));
+                                      showPrintDialog(
+                                          context,
+                                          _custName.text,
+                                          _custNum.text,
+                                          _custAdd.text,
+                                          _discount.text);
                                     } else {
                                       showAlertDialog(
                                           context, "Insert item...");

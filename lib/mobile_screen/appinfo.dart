@@ -1,5 +1,8 @@
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppInfoPage extends StatefulWidget {
@@ -85,7 +88,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
                 title: Text('Logout'),
                 onTap: () async {
                   SharedPreferences sp = await SharedPreferences.getInstance();
-                  sp.clear();
+                  BlocProvider.of<InvoiceBloc>(context).add(ClearStateEvent());
+                  // sp.clear();
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(builder: (context) => const Login()),
                       (route) => false);

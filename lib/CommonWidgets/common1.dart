@@ -4,6 +4,7 @@ void showDeleteConfirmationDialog(
     BuildContext context, String msg, Function onPressed) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
         title: Text('$msg Dialog'),
@@ -32,6 +33,7 @@ void showDeleteConfirmationDialog(
 void showAlertDialog(BuildContext context, String message) {
   showDialog(
     context: context,
+    barrierDismissible: false,
     builder: (context) {
       return AlertDialog(
         title: const Text('Alert Dialog'),

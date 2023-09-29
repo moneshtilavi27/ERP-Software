@@ -125,10 +125,10 @@ class UserSearch extends SearchDelegate<String> {
               // You can set the selectedResult to an index or an identifier.
               // selectedResult = index.toString();
               // showResults(context);
-              _showItemInputDialog(context, products[index]);
+              _showItemInputDialog(context, suggestedUser[index]);
             },
             onLongPress: () {
-              _showItemRateChangeDialog(context, products[index]);
+              _showItemRateChangeDialog(context, suggestedUser[index]);
             },
           ),
           const Divider(
@@ -252,6 +252,8 @@ class UserSearch extends SearchDelegate<String> {
   Future<void> _showItemRateChangeDialog(BuildContext context, var data) async {
     TextEditingController oldrateController =
         TextEditingController(text: data['basic_value']);
+    TextEditingController newUnitController =
+        TextEditingController(text: data['item_unit']);
     TextEditingController newrateController =
         TextEditingController(text: data['basic_value']);
 
@@ -290,6 +292,13 @@ class UserSearch extends SearchDelegate<String> {
                   controller: oldrateController,
                   enabled: false,
                   textInputType: TextInputType.number),
+              Dropdown(
+                helpText: 'unit',
+                defaultValue: newUnitController.text,
+                onChange: (value) {
+                  newUnitController.text = value.toString();
+                },
+              ),
               TextBox(
                   helpText: 'New Rate',
                   prefixIcon: Icons.currency_rupee,
@@ -309,7 +318,7 @@ class UserSearch extends SearchDelegate<String> {
                             data['item_name'].toString(),
                             data['item_hsn'].toString(),
                             data['item_gst'].toString(),
-                            data['item_unit'].toString(),
+                            newUnitController.text,
                             newrateController.text,
                             newrateController.text));
                     Navigator.pop(context);

@@ -97,7 +97,7 @@ class _BucketState extends State<Bucket> {
   @override
   void initState() {
     super.initState();
-
+    BlocProvider.of<InvoiceBloc>(context).add(FeatchInvoiceEvent());
     loadData();
   }
 
@@ -126,83 +126,75 @@ class _BucketState extends State<Bucket> {
         ),
         backgroundColor: Colors.grey[100],
         body: BlocBuilder<InvoiceBloc, InvoiceState>(builder: (context, state) {
+          if (state is InitialState) {
+            BlocProvider.of<InvoiceBloc>(context).add(FeatchInvoiceEvent());
+          }
           if (state is InvoiceItemListState) {
             late double tot = 0;
             totalItemValue = 0;
             for (var product in state.dataList) {
               totalItemValue += double.parse(product['item_value']);
             }
-            // setState(() {
-            //   totalItem = state.dataList.length;
-            //   totalItemValue = tot;
-            // });
-            return isLoading
-                ? const Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                    child: ListView.builder(
+                  itemCount: state.dataList.length,
+                  itemBuilder: (context, index) => Column(
                     children: [
-                      Expanded(
-                          child: ListView.builder(
-                        itemCount: state.dataList.length,
-                        itemBuilder: (context, index) => Column(
+                      ListTile(
+                        title: Text(
+                          state.dataList[index]['item_name'],
+                          maxLines: 2,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400),
+                        ),
+                        subtitle: Text(state.dataList[index]['item_hsn'],
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            ListTile(
-                              title: Text(
-                                state.dataList[index]['item_name'],
-                                maxLines: 2,
-                                overflow: TextOverflow.fade,
-                                style: const TextStyle(
-                                    fontSize: 12, fontWeight: FontWeight.w400),
-                              ),
-                              subtitle: Text(state.dataList[index]['item_hsn'],
-                                  textAlign: TextAlign.start,
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600)),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.currency_rupee_rounded),
-                                  Text(
-                                    state.dataList[index]['item_value'] +
-                                        " / " +
-                                        state.dataList[index]['item_quant'] +
-                                        state.dataList[index]['item_unit'],
-                                    style: const TextStyle(
-                                        color: Color.fromARGB(255, 162, 55, 28),
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                ],
-                              ),
-                              onTap: () {
-                                _showItemInputDialog(
-                                    context, state.dataList[index]);
-                              },
-                              onLongPress: () {
-                                showDeleteConfirmationDialog(context, "Delete",
-                                    () {
-                                  BlocProvider.of<InvoiceBloc>(context).add(
-                                      DeleteItemEvent(state.dataList[index]
-                                              ['item_id']
-                                          .toString()));
-                                });
-                              },
+                            const Icon(Icons.currency_rupee_rounded),
+                            Text(
+                              state.dataList[index]['item_value'] +
+                                  " / " +
+                                  state.dataList[index]['item_quant'] +
+                                  state.dataList[index]['item_unit'],
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 162, 55, 28),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
                             ),
-                            const Divider(
-                              height: 5,
-                            )
                           ],
                         ),
-                      )),
-                      // Amount and Next Button
-                      _buildBottomWidget(totalItemValue.toString()),
+                        onTap: () {
+                          _showItemInputDialog(context, state.dataList[index]);
+                        },
+                        onLongPress: () {
+                          showDeleteConfirmationDialog(context, "Delete", () {
+                            BlocProvider.of<InvoiceBloc>(context).add(
+                                DeleteItemEvent(state.dataList[index]['item_id']
+                                    .toString()));
+                          });
+                        },
+                      ),
+                      const Divider(
+                        height: 5,
+                      )
                     ],
-                  );
+                  ),
+                )),
+                // Amount and Next Button
+                _buildBottomWidget(totalItemValue.toString()),
+              ],
+            );
           } else {
             return const Center(
               child: CircularProgressIndicator(),

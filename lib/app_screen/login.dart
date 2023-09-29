@@ -24,6 +24,7 @@ class Login extends StatefulWidget {
 
 class _LoginFormState extends State<Login> {
   final GlobalKey<FormState> _formKey = GlobalKey();
+  late String errorMsg;
   CustomSnackbar showMsg = CustomSnackbar();
   late final TextEditingController _usernameController;
   late final TextEditingController _passwordController;
@@ -31,6 +32,7 @@ class _LoginFormState extends State<Login> {
   @override
   void initState() {
     super.initState();
+    errorMsg = '';
     _usernameController = TextEditingController();
     _passwordController = TextEditingController();
   }
@@ -88,95 +90,111 @@ class _LoginFormState extends State<Login> {
                 padding: const EdgeInsets.all(20.0),
                 child: Form(
                   key: _formKey,
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        height: 150,
-                        width: 150,
-                        margin: const EdgeInsets.fromLTRB(8, 35, 8, 8),
-                        decoration: BoxDecoration(
-                          image: const DecorationImage(
-                            image: AssetImage('lib/service/asset/logo.png'),
-                            fit: BoxFit.cover,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          height: 150,
+                          width: 150,
+                          margin: const EdgeInsets.fromLTRB(8, 35, 8, 8),
+                          decoration: BoxDecoration(
+                            image: const DecorationImage(
+                              image: AssetImage('lib/service/asset/logo.png'),
+                              fit: BoxFit.cover,
+                            ),
+                            borderRadius: BorderRadius.circular(50.0),
+                            color: Colors.amber,
                           ),
-                          borderRadius: BorderRadius.circular(50.0),
-                          color: Colors.amber,
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                            "",
-                            style: TextStyle(color: Colors.black, fontSize: 25),
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          child: TextBox(
-                            helpText: "User Name",
-                            controller: _usernameController,
-                            validator: _validateUsername, // Validate username
+                          child: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              "",
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 25),
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          child: TextBox(
-                            helpText: "Password",
-                            controller: _passwordController,
-                            isPassword: true,
-                            suffixIcon: Icons.visibility_off,
-                            validator: _validatePassword, // Validate password
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            child: TextBox(
+                              helpText: "User Name",
+                              controller: _usernameController,
+                              validator: _validateUsername, // Validate username
+                            ),
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: BlocConsumer<LoginBloc, LoginState>(
-                          listener: (context, state) {
-                            if (state is InLoginState) {
-                              _usernameController.text = '';
-                              _passwordController.text = '';
-                              if (Platform.isAndroid) {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) =>
-                                        const HomePage(title: "ERP"),
-                                  ),
-                                );
-                              } else {
-                                Navigator.of(context).pushReplacement(
-                                  MaterialPageRoute(
-                                    builder: (context) => const MyMenuBar(
-                                      message: 'my menu bar',
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: SizedBox(
+                            child: TextBox(
+                              helpText: "Password",
+                              controller: _passwordController,
+                              isPassword: true,
+                              suffixIcon: Icons.visibility_off,
+                              validator: _validatePassword, // Validate password
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: BlocConsumer<LoginBloc, LoginState>(
+                            listener: (context, state) {
+                              if (state is InLoginState) {
+                                _usernameController.text = '';
+                                _passwordController.text = '';
+                                if (Platform.isAndroid) {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const HomePage(title: "ERP"),
                                     ),
-                                  ),
-                                );
-                              }
-                            }
-                          },
-                          builder: (context, state) {
-                            return Button(
-                              onPress: () {
-                                if (_formKey.currentState!.validate()) {
-                                  BlocProvider.of<LoginBloc>(context).add(
-                                    OnSubmitEvent(
-                                      _usernameController.text,
-                                      _passwordController.text,
+                                  );
+                                } else {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) => const MyMenuBar(
+                                        message: 'my menu bar',
+                                      ),
                                     ),
                                   );
                                 }
-                              },
-                              btnColor: Colors.orange,
-                              textColor: Colors.white,
-                              btnText: 'Submit',
-                            );
-                          },
+                              }
+                              if (state is WrongCredential) {
+                                setState(() {
+                                  errorMsg = state.errorMessage;
+                                });
+                              }
+                            },
+                            builder: (context, state) {
+                              return Column(
+                                children: [
+                                  Button(
+                                    onPress: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        BlocProvider.of<LoginBloc>(context).add(
+                                          OnSubmitEvent(
+                                            _usernameController.text,
+                                            _passwordController.text,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                    btnColor: Colors.orange,
+                                    textColor: Colors.white,
+                                    btnText: 'Submit',
+                                  ),
+                                  Text(
+                                    errorMsg,
+                                    style: TextStyle(color: Colors.red),
+                                  )
+                                ],
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),

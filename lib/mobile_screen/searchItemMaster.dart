@@ -1,8 +1,6 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
 import 'package:flutter/material.dart';
@@ -125,10 +123,13 @@ class SearchItemMaster extends SearchDelegate<String> {
               // You can set the selectedResult to an index or an identifier.
               // selectedResult = index.toString();
               // showResults(context);
-              _showItemInputDialog(context, products[index]);
+              _showItemInputDialog(context, suggestedUser[index]);
             },
             onLongPress: () {
-              // _showItemRateChangeDialog(context, products[index]);
+              showDeleteConfirmationDialog(context, "Delete", () {
+                BlocProvider.of<ItemmasterBloc>(context).add(DeleteItemEvent(
+                    suggestedUser[index]['item_id'].toString()));
+              });
             },
           ),
           const Divider(

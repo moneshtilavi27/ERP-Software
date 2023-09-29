@@ -1,7 +1,7 @@
 class URL {
   String api = true
-      ? "https://moneshtilavi.000webhostapp.com/billing/api/login/"
-      : "http://localhost/billing/api/login/";
+      ? "http://believebond.co.in/billing/api/login/"
+      : "https://moneshtilavi.000webhostapp.com/billing/api/login/";
 }
 
 class API {

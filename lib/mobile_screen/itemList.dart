@@ -1,8 +1,6 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
 import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
@@ -107,7 +105,13 @@ class _ItemMasterState extends State<ItemList> {
                         onTap: () {
                           _showItemInputDialog(context, state.dataList[index]);
                         },
-                        onLongPress: () {},
+                        onLongPress: () {
+                          showDeleteConfirmationDialog(context, "Delete", () {
+                            BlocProvider.of<ItemmasterBloc>(context).add(
+                                DeleteItemEvent(state.dataList[index]['item_id']
+                                    .toString()));
+                          });
+                        },
                       ),
                       const Divider(
                         height: 5,

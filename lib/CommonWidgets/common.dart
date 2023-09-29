@@ -7,7 +7,7 @@ import 'package:pdf/widgets.dart' as pw;
 
 class Common {
   Future<bool> showPrintPreview(BuildContext context,
-      Map<String, dynamic> jsonData, bool gstEnabled) async {
+      Map<String, dynamic> jsonData, String command, bool gstEnabled) async {
     final doc = pw.Document();
 
     // final font = await PdfGoogleFonts.notoSansRegular();
@@ -192,8 +192,15 @@ class Common {
                         fontSize: 20, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 10),
-                  pw.Text('1234 Market Street, Cityville'),
-                  pw.Text('Phone: (123) 456-7890'),
+                  pw.Text('Shivaji Chouk, Main Road, Belgundi'),
+                  pw.Text('GST NO: 29CUCPB1438F1ZZ'),
+                  pw.Row(
+                    mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                    children: [
+                      pw.Text('FSSAI : 11222304000472'),
+                      pw.Text('Mob: +919323020471'),
+                    ],
+                  ),
                   pw.Divider(),
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -230,10 +237,15 @@ class Common {
 
     late bool ans;
     if (Platform.isAndroid) {
-      ans = await Printing.sharePdf(
-        bytes: pdf,
-        filename: fileName, // Specify the document name here
-      );
+      ans = command == "share"
+          ? await Printing.sharePdf(
+              bytes: pdf,
+              filename: fileName, // Specify the document name here
+            )
+          : await Printing.layoutPdf(
+              onLayout: (PdfPageFormat format) async => pdf,
+              name: fileName, // Specify the document name here
+            );
     } else {
       ans = await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdf,

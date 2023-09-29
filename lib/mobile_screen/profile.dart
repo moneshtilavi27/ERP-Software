@@ -1,5 +1,8 @@
+import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -23,53 +26,56 @@ class _ProfileState extends State<ProfileScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              CircleAvatar(
+              const CircleAvatar(
                 radius: 60,
                 backgroundImage: AssetImage(
                     'lib/service/asset/logo.png'), // Add your image asset here
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 'Monesh Tilavi',
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
-              Text(
+              const SizedBox(height: 10),
+              const Text(
                 'Software Developer',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
-              SizedBox(height: 20),
-              Divider(
+              const SizedBox(height: 20),
+              const Divider(
                 height: 5,
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.phone),
                 title: Text('Phone'),
                 subtitle: Text('+1234567890'),
               ),
-              Divider(
+              const Divider(
                 height: 5,
               ),
-              ListTile(
+              const ListTile(
                 leading: Icon(Icons.email),
                 title: Text('Email'),
                 subtitle: Text('johndoe@example.com'),
               ),
-              Divider(
+              const Divider(
                 height: 5,
               ),
               ListTile(
-                leading: Icon(Icons.logout),
-                title: Text('Email'),
+                leading: const Icon(Icons.logout),
+                title: const Text('Email'),
                 onTap: () async {
                   SharedPreferences sp = await SharedPreferences.getInstance();
-                  sp.clear();
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const Login()),
-                      (route) => false);
+                  // ignore: use_build_context_synchronously
+                  BlocProvider.of<InvoiceBloc>(context).add(ClearStateEvent());
+                  // sp.clear();
+                  // // ignore: use_build_context_synchronously
+                  // Navigator.of(context).pushAndRemoveUntil(
+                  //     MaterialPageRoute(builder: (context) => const Login()),
+                  //     (route) => false);
                 },
               ),
-              Divider(
+              const Divider(
                 height: 10,
               ),
             ],

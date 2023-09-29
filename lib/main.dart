@@ -5,12 +5,15 @@ import 'package:erp/app_screen/Blocs/Login/login_state.dart';
 import 'package:erp/CommonWidgets/SplashScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'app_screen/Blocs/Invoice/invoice_bloc.dart';
 import 'app_screen/Blocs/Item Mater/itemmaster_bloc.dart';
 
 Future<void> main() async {
-  // WidgetsFlutmake installterBinding.ensureInitialized();
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensure Flutter is initialized first.
+  final sharedPreferences = await SharedPreferences.getInstance();
 
   // // Initialize the desktop window
   // await DesktopWindow.setMinWindowSize(Size(
@@ -21,11 +24,12 @@ Future<void> main() async {
   // await DesktopWindow.setFullScreen(true);
   // await DesktopWindow.toggleFullScreen(); // Disable window resizing
 
-  runApp(const Main());
+  runApp(Main(sharedPreferences: sharedPreferences));
 }
 
 class Main extends StatelessWidget {
-  const Main({Key? key}) : super(key: key);
+  final SharedPreferences sharedPreferences;
+  const Main({Key? key, required this.sharedPreferences}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +45,7 @@ class Main extends StatelessWidget {
             create: (context) => ItemmasterBloc(),
           ),
           BlocProvider(
-            create: (context) => InvoiceBloc(),
+            create: (context) => InvoiceBloc(sharedPreferences),
           )
         ],
         child: MaterialApp(

@@ -11,7 +11,9 @@ abstract class InvoiceState extends Equatable {
 class UnInvoiceState extends InvoiceState {}
 
 /// Initialized
-class IntialState extends InvoiceState {}
+class InitialState extends InvoiceState {}
+
+class InvoiceLoading extends InvoiceState {}
 
 class InvoiceItemListState extends InvoiceState {
   final List dataList;
@@ -51,6 +53,12 @@ class InvoiceDataState extends InvoiceState {
   final bool flag;
 
   const InvoiceDataState(this.dataList, this.status, this.flag);
+}
+
+class InvoiceReportState extends InvoiceState {
+  final List dataList;
+
+  const InvoiceReportState(this.dataList);
 }
 
 class InvoiceStatus extends InvoiceState {

@@ -15,7 +15,11 @@ class LogoutState extends LoginState {}
 class LogInValidState extends LoginState {}
 
 /// UnInitialized
-class WrongCredential extends LoginState {}
+class WrongCredential extends LoginState {
+  final String errorMessage = "Wrong Credential...";
+  @override
+  List<Object> get props => [errorMessage];
+}
 
 /// Initialized
 class InLoginState extends LoginState {}

@@ -1,23 +1,22 @@
 import 'package:erp/service/API/api.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../service/API/api_methods.dart';
 import 'invoice_event.dart';
 import 'invoice_state.dart';
 
 class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
-  InvoiceBloc() : super(IntialState()) {
-    late SharedPreferences sp;
-    SharedPreferences.getInstance().then((value) {
-      sp = value;
-      print(value.getString('user_id').toString());
-      featchItemData({
-        'request': "get",
-        "user_id": value.getString('user_id').toString(),
-      });
-    });
+  final SharedPreferences sp;
+
+  InvoiceBloc(this.sp) : super(InitialState()) {
+    _initialize();
+  }
+
+  void _initialize() {
+    final userId = sp.getString('user_id');
+    // if (userId != null) {
+    //   featchItemData({'request': "get", "user_id": userId});
+    // }
 
     on<CustomerDetailEvent>((event, emit) {
       if (event.customerName == "") {
@@ -29,17 +28,42 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       }
     });
 
+    on<ClearStateEvent>((event, emit) {
+      emit(InitialState()); // You can use a different state if needed
+    });
+
     on<FeatchInvoiceEvent>((event, emit) async {
-      featchItemData(
-          {'request': "get", "user_id": sp.getString('user_id').toString()});
+      final userId = sp.getString('user_id');
+      await featchItemData({'request': "get", "user_id": userId});
+    });
+
+    on<FeatchInvoiceReportEvent>((event, emit) async {
+      final userId = sp.getString('user_id');
+      await getInvoiceReport({"request": "invoiceList", "user_id": userId});
     });
 
     on<FilterItemEvent>((event, emit) => featchItemData(
         {'request': "getItemNames", "item_name": event.item_name}));
 
+    on<GetInvoiceData>((event, emit) async {
+      try {
+        // double value =
+        //     double.parse(event.basic_value) * double.parse(event.item_quant);
+        // print(value);
+        Map<String, dynamic> getBill = {
+          "request": "getBill",
+          "user_id": sp.getString('user_id'),
+          "invoiceNumber": event.invoice_number
+        };
+        emit(InvoiceItemListState([]));
+        getInvoiceData(getBill, event.status);
+      } catch (e) {
+        emit(ErrorInvoiceState(e.toString()));
+      }
+    });
+
     on<AddProductEvent>((event, emit) async {
       try {
-        sp = await SharedPreferences.getInstance();
         // double value =
         //     double.parse(event.basic_value) * double.parse(event.item_quant);
         // print(value);
@@ -57,7 +81,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "item_value": event.value
           }
         };
-        addUpdate(data);
+        await addUpdate(data);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
       }
@@ -79,7 +103,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "item_value": event.value,
           }
         };
-        addUpdate(data);
+        await addUpdate(data);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
       }
@@ -87,7 +111,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<DeleteItemEvent>((event, emit) async {
       try {
-        sp = await SharedPreferences.getInstance();
         APIMethods obj = APIMethods();
         Map<String, dynamic> data = {
           "request": "deleteItem",
@@ -110,7 +133,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
     on<PrintBill>((event, emit) async {
       try {
-        sp = await SharedPreferences.getInstance();
+        emit(InvoiceLoading());
         Map<String, dynamic> customerData = {
           "request": "add",
           "data": {
@@ -126,7 +149,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "request": "getInvoiceNumber",
           "user_id": sp.getString('user_id'),
           "customer_id": custId,
-          "discount": "0"
+          "discount": event.discount
         };
         int invoiceNum = await getBillNumber(invoiceData);
 
@@ -142,6 +165,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "user_id": sp.getString('user_id'),
           "invoiceNumber": invoiceNum
         };
+        emit(InvoiceItemListState([]));
         getInvoiceData(getBill, event.status);
       } catch (e) {
         emit(ErrorInvoiceState(e.toString()));
@@ -151,7 +175,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     on<CancelBill>((event, emit) async {
       try {
         APIMethods obj = APIMethods();
-        sp = await SharedPreferences.getInstance();
         Map<String, dynamic> data = {
           "request": "cancelBill",
           "user_id": sp.getString('user_id')
@@ -168,7 +191,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     });
   }
 
-  void addUpdate(Map<String, dynamic> data) async {
+  Future addUpdate(Map<String, dynamic> data) async {
     APIMethods obj = APIMethods();
     await obj.postData(API.invoice, data).then((res) async {
       try {
@@ -187,11 +210,10 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     });
   }
 
-  void featchItemData(Map<String, String> data) async {
+  Future featchItemData(Map<String, dynamic> data) async {
     try {
       APIMethods obj = APIMethods();
-      Map<String, String> para = data;
-      await obj.postData(API.invoice, para).then((res) {
+      await obj.postData(API.invoice, data).then((res) {
         if (res.data['status'] == "success") {
           print(res);
           emit(InvoiceItemListState(res.data['data']));
@@ -219,15 +241,18 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
 
   Future<int> getBillNumber(Map<String, dynamic> data) async {
     try {
+      print(data);
       APIMethods obj = APIMethods();
       final res = await obj.postData(API.invoice, data);
 
       if (res.data['status'] == "success") {
         return res.data['invoice_number'];
       } else {
+        print(res);
         throw ErrorInvoiceState(res.data['data']);
       }
     } catch (e) {
+      print(e);
       throw ErrorInvoiceState(e.toString());
     }
   }
@@ -252,6 +277,21 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       obj.postData(API.invoice, data).then((res) {
         if (res.data['status'] == "success") {
           emit(InvoiceDataState(res.data['data'], status, true));
+        }
+      });
+    } catch (e) {
+      throw ErrorInvoiceState(e.toString());
+    }
+  }
+
+  Future getInvoiceReport(Map<String, dynamic> data) async {
+    try {
+      print(data);
+      APIMethods obj = APIMethods();
+      obj.postData(API.invoice, data).then((res) {
+        print(res);
+        if (res.data['status'] == "success") {
+          emit(InvoiceReportState(res.data!['data']));
         }
       });
     } catch (e) {
