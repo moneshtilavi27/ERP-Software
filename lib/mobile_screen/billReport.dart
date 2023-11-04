@@ -1,21 +1,21 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:erp/mobile_screen/app_drawer.dart';
 import 'package:erp/mobile_screen/reportBillPrint.dart';
 import 'package:erp/mobile_screen/searchItemMaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class billReport extends StatefulWidget {
+class BillReport extends StatefulWidget {
   final String title;
-  billReport({Key? key, required this.title}) : super(key: key);
+  BillReport({Key? key, required this.title}) : super(key: key);
   //  late invoiceBloc = BlocProvider.of<InvoiceBloc>(context);
   //   invoiceBloc.add(FeatchInvoiceReportEvent());
 
@@ -24,10 +24,11 @@ class billReport extends StatefulWidget {
   _ItemMasterState createState() => _ItemMasterState();
 }
 
-class _ItemMasterState extends State<billReport> {
+class _ItemMasterState extends State<BillReport> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
   late InvoiceBloc invoiceBloc = BlocProvider.of<InvoiceBloc>(context);
+  List DataSet = [];
   var isLoading = false;
   String itemUnit = "";
 
@@ -64,15 +65,22 @@ class _ItemMasterState extends State<billReport> {
         //   AppBarActionButton(),
         // ],
       ),
-      body: BlocBuilder<InvoiceBloc, InvoiceState>(builder: (context, state) {
-        if (state is InvoiceReportState) {
+      body: BlocConsumer<InvoiceBloc, InvoiceState>(
+        listener: (BuildContext context, InvoiceState state) {
+          if (state is InvoiceReportState) {
+            setState(() {
+              DataSet = state.dataList;
+            });
+          }
+        },
+        builder: (context, state) {
           return ListView.builder(
-            itemCount: state.dataList.length,
+            itemCount: DataSet.length,
             itemBuilder: (context, index) => Column(
               children: [
                 ListTile(
                   leading: Text(
-                    state.dataList[index]['number'],
+                    DataSet[index]['number'],
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: Color.fromARGB(255, 162, 55, 28),
@@ -80,13 +88,13 @@ class _ItemMasterState extends State<billReport> {
                         fontWeight: FontWeight.w500),
                   ),
                   title: Text(
-                    state.dataList[index]['customer_name'],
+                    DataSet[index]['customer_name'],
                     maxLines: 2,
                     overflow: TextOverflow.fade,
                     style: const TextStyle(
                         fontSize: 12, fontWeight: FontWeight.w400),
                   ),
-                  subtitle: Text(state.dataList[index]['created'],
+                  subtitle: Text(DataSet[index]['created'],
                       textAlign: TextAlign.start,
                       maxLines: 1,
                       style: TextStyle(
@@ -98,7 +106,7 @@ class _ItemMasterState extends State<billReport> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ShowInvoice(
-                                invoiceNum: state.dataList[index]['number'])));
+                                invoiceNum: DataSet[index]['number'])));
                   },
                 ),
                 const Divider(
@@ -107,12 +115,8 @@ class _ItemMasterState extends State<billReport> {
               ],
             ),
           );
-        } else {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
-        }
-      }),
+        },
+      ),
     );
   }
 }

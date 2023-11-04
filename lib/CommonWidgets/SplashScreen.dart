@@ -1,15 +1,18 @@
 import 'dart:io';
 
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
-import 'package:erp/app_screen/Blocs/Login/login_state.dart';
+import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Login/login_bloc.dart';
+import 'package:erp/Blocs/Login/login_state.dart';
+import 'package:erp/desktop_screen/NewSidebar.dart';
+import 'package:erp/desktop_screen/sideBar.dart';
 import 'package:erp/mobile_screen/home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:erp/app_screen/menu_bar.dart';
+import 'package:sidebarx/sidebarx.dart';
 
 import 'Responsive.dart';
 
@@ -44,9 +47,7 @@ class SplashScreen extends StatelessWidget {
           } else {
             Navigator.of(context).pushReplacement(
               MaterialPageRoute(
-                builder: (context) => const MyMenuBar(
-                  message: 'my menu bar',
-                ),
+                builder: (context) => SidebarXExampleApp(),
               ),
             );
           }

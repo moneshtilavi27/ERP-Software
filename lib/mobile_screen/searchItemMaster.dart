@@ -1,15 +1,17 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class SearchItemMaster extends SearchDelegate<String> {
   List<dynamic> products;
+  final String userType;
   late String selectedResult;
-  SearchItemMaster(this.products);
+  SearchItemMaster(this.products, this.userType);
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
 
@@ -119,17 +121,25 @@ class SearchItemMaster extends SearchDelegate<String> {
               ],
             ),
             onTap: () {
-              // Handle item selection here
-              // You can set the selectedResult to an index or an identifier.
-              // selectedResult = index.toString();
-              // showResults(context);
-              _showItemInputDialog(context, suggestedUser[index]);
+              if (userType == "admin") {
+                _showItemInputDialog(context, suggestedUser[index]);
+              } else {
+                Fluttertoast.showToast(
+                  msg: "You Dont Have Permission to add Item",
+                );
+              }
             },
             onLongPress: () {
-              showDeleteConfirmationDialog(context, "Delete", () {
-                BlocProvider.of<ItemmasterBloc>(context).add(DeleteItemEvent(
-                    suggestedUser[index]['item_id'].toString()));
-              });
+              if (userType == "admin") {
+                showDeleteConfirmationDialog(context, "Delete", () {
+                  BlocProvider.of<ItemmasterBloc>(context).add(DeleteItemEvent(
+                      suggestedUser[index]['item_id'].toString()));
+                });
+              } else {
+                Fluttertoast.showToast(
+                  msg: "You Dont Have Permission to add Item",
+                );
+              }
             },
           ),
           const Divider(
@@ -229,6 +239,7 @@ class SearchItemMaster extends SearchDelegate<String> {
           ),
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
@@ -256,7 +267,8 @@ class SearchItemMaster extends SearchDelegate<String> {
               },
               child: Text(heading),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 Navigator.pop(context);
               },

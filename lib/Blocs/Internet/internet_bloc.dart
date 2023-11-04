@@ -1,6 +1,6 @@
-import 'package:erp/app_screen/Blocs/Internet/internet_event.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
-import 'package:erp/app_screen/Blocs/Internet/network_helper.dart';
+import 'package:erp/Blocs/Internet/internet_event.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Internet/network_helper.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class NetworkBloc extends Bloc<NetworkEvent, NetworkState> {

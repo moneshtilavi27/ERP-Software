@@ -48,6 +48,12 @@ class _TextBoxState extends State<TextBox> {
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // You can adjust these values as needed to control responsiveness
+    final fontSize = screenWidth > 600 ? 14.0 : 12.0;
+    final iconSize = screenWidth > 600 ? 25.0 : 20.0;
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
       child: Column(
@@ -59,7 +65,7 @@ class _TextBoxState extends State<TextBox> {
             child: Text(widget.helpText!, textAlign: TextAlign.start),
           ),
           TextFormField(
-            style: const TextStyle(fontSize: 14),
+            style: TextStyle(fontSize: fontSize),
             maxLength: widget.maxLength,
             textAlign: widget.textAlign ?? TextAlign.start,
             focusNode: widget.focusNode,
@@ -90,7 +96,7 @@ class _TextBoxState extends State<TextBox> {
                           top: 0, left: 0, right: 0, bottom: 0),
                       child: Icon(
                         widget.prefixIcon,
-                        size: 25,
+                        size: iconSize,
                       )),
               suffixIcon: widget.isPassword == true
                   ? IconButton(
@@ -112,7 +118,7 @@ class _TextBoxState extends State<TextBox> {
                             onTap: () {},
                             child: Icon(
                               widget.suffixIcon,
-                              size: 25,
+                              size: iconSize,
                             ),
                           )),
             ),

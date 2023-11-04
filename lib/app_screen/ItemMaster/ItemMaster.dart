@@ -1,9 +1,9 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +11,7 @@ import '../../CommonWidgets/Button.dart';
 import '../../CommonWidgets/DropDown.dart';
 import '../../CommonWidgets/productTable.dart';
 import '../../CommonWidgets/searchBox.dart';
-import '../Blocs/Item Mater/itemmaster_event.dart';
+import '../../Blocs/Item Mater/itemmaster_event.dart';
 
 class ItemMaster extends StatefulWidget {
   const ItemMaster({super.key});

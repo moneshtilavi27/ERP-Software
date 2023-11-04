@@ -1,11 +1,11 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/mobile_screen/app_drawer.dart';
 import 'package:erp/mobile_screen/home.dart';
 import 'package:erp/mobile_screen/printOptionDialog.dart';
@@ -81,11 +81,16 @@ class _submitScreenState extends State<SubmitScreen> {
                 listener: (context, state) {
               if (state is InvoiceDataState) {
                 if (state.status == "save") {
-                  showAboutDialog(
-                    context: context,
-                    applicationName: state.status,
-                    applicationVersion: state.status,
-                  );
+                  // Navigator.of(context)
+                  //     .popUntil((route) => route.settings.name == "AppDrawer");
+                  int count = 0;
+                  Navigator.of(context).popUntil((_) => count++ >= 2);
+                  // Navigator.of(context).pushAndRemoveUntil(
+                  //   MaterialPageRoute(
+                  //     builder: (context) => const AppDrawer(title: "Invoice"),
+                  //   ),
+                  //   (route) => false, // Clear all routes from the stack.
+                  // );
                 } else {
                   Common cm = Common();
                   cm

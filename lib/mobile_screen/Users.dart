@@ -1,13 +1,15 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_event.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Users extends StatefulWidget {
   Users({Key? key}) : super(key: key);
@@ -21,6 +23,8 @@ class _UsersState extends State<Users> {
   final GlobalKey<FormState> _formKey1 = GlobalKey();
   var isLoading = false;
   String itemUnit = "";
+  late SharedPreferences sp;
+  late String userType = "user";
 
   @override
   void initState() {
@@ -36,10 +40,13 @@ class _UsersState extends State<Users> {
     return null;
   }
 
-  loadData() {
+  loadData() async {
+    sp = await SharedPreferences.getInstance();
     setState(() {
       isLoading = false;
+      userType = sp.getString('user_type')!;
     });
+    print(userType);
   }
 
   @override
@@ -56,43 +63,48 @@ class _UsersState extends State<Users> {
                 itemBuilder: (context, index) => Column(
                   children: [
                     ListTile(
-                      title: Text(
-                        state.dataList[index]['item_name'],
-                        maxLines: 2,
-                        overflow: TextOverflow.fade,
-                        style: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w400),
-                      ),
-                      subtitle: Text(state.dataList[index]['item_hsn'],
-                          textAlign: TextAlign.start,
-                          maxLines: 1,
-                          style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600)),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.currency_rupee_rounded),
-                          Text(
-                            state.dataList[index]['basic_value'] +
-                                " / " +
-                                state.dataList[index]['item_unit'],
-                            style: const TextStyle(
-                                color: Color.fromARGB(255, 162, 55, 28),
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500),
-                          ),
-                        ],
-                      ),
-                      onTap: () {
-                        _showItemInputDialog(context, state.dataList[index]);
-                      },
-                      onLongPress: () {
-                        _showItemRateChangeDialog(
-                            context, state.dataList[index]);
-                      },
-                    ),
+                        title: Text(
+                          state.dataList[index]['item_name'],
+                          maxLines: 2,
+                          overflow: TextOverflow.fade,
+                          style: const TextStyle(
+                              fontSize: 12, fontWeight: FontWeight.w400),
+                        ),
+                        subtitle: Text(state.dataList[index]['item_hsn'],
+                            textAlign: TextAlign.start,
+                            maxLines: 1,
+                            style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600)),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.currency_rupee_rounded),
+                            Text(
+                              state.dataList[index]['basic_value'] +
+                                  " / " +
+                                  state.dataList[index]['item_unit'],
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 162, 55, 28),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        ),
+                        onTap: () {
+                          _showItemInputDialog(context, state.dataList[index]);
+                        },
+                        onLongPress: () {
+                          if (userType == "admin") {
+                            _showItemRateChangeDialog(
+                                context, state.dataList[index]);
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "You Dont Have Permission to Update Item",
+                            );
+                          }
+                        }),
                     const Divider(
                       height: 5,
                     )
@@ -188,6 +200,7 @@ class _UsersState extends State<Users> {
           ),
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
@@ -208,7 +221,8 @@ class _UsersState extends State<Users> {
               },
               child: const Text('Add'),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 Navigator.pop(context);
               },
@@ -280,6 +294,7 @@ class _UsersState extends State<Users> {
           ),
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               onPressed: () {
                 if (_formKey1.currentState!.validate()) {
                   try {
@@ -300,7 +315,8 @@ class _UsersState extends State<Users> {
               },
               child: const Text('Update'),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 Navigator.pop(context);
               },

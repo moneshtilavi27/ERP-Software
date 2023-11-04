@@ -1,15 +1,16 @@
 import 'dart:io';
 
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/menu_bar.dart';
+import 'package:erp/desktop_screen/sideBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:erp/app_screen/Blocs/Login/login_bloc.dart';
-import 'package:erp/app_screen/Blocs/Login/login_event.dart';
-import 'package:erp/app_screen/Blocs/Login/login_state.dart';
+import 'package:erp/Blocs/Login/login_bloc.dart';
+import 'package:erp/Blocs/Login/login_event.dart';
+import 'package:erp/Blocs/Login/login_state.dart';
 import 'package:erp/CommonWidgets/Button.dart';
 import 'package:erp/CommonWidgets/CustomSnackbar.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
@@ -153,11 +154,16 @@ class _LoginFormState extends State<Login> {
                                 } else {
                                   Navigator.of(context).pushReplacement(
                                     MaterialPageRoute(
-                                      builder: (context) => const MyMenuBar(
-                                        message: 'my menu bar',
-                                      ),
+                                      builder: (context) => const Sidebar(),
                                     ),
                                   );
+                                  // Navigator.of(context).pushReplacement(
+                                  //   MaterialPageRoute(
+                                  //     builder: (context) => const MyMenuBar(
+                                  //       message: 'my menu bar',
+                                  //     ),
+                                  //   ),
+                                  // );
                                 }
                               }
                               if (state is WrongCredential) {

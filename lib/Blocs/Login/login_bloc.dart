@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../../../service/API/api.dart';
-import '../../../service/API/api_methods.dart';
+import '../../service/API/api.dart';
+import '../../service/API/api_methods.dart';
 import 'login_event.dart';
 import 'login_state.dart';
 
@@ -37,6 +37,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           if (res.data['status'] == "success") {
             sp.setString("auth_key", res.data['accessToken']);
             sp.setString("user_id", res.data['user_id']);
+            sp.setString("user_type", res.data['user_type']);
             print(res.data);
             emit(InLoginState());
           } else {

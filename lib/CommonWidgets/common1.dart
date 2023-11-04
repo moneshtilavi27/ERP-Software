@@ -115,3 +115,12 @@ double calculateQuantity(dynamic qty, String unit, dynamic rate) {
     return 0;
   }
 }
+
+bool shouldRemoveRoute(Route<dynamic> route) {
+  // Check the route's settings to determine when to stop removing routes.
+  if (route.settings.name == '/invoice') {
+    // Stop removing routes when the "Invoice" screen is encountered.
+    return true;
+  }
+  return false; // Continue removing routes until the "Invoice" screen is found.
+}

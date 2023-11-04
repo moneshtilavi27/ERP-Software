@@ -1,6 +1,6 @@
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
 import 'package:erp/mobile_screen/appinfo.dart';
 import 'package:erp/mobile_screen/billReport.dart';
 import 'package:erp/mobile_screen/itemList.dart';
@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => billReport(title: "Invoice Report")));
+                builder: (context) => BillReport(title: "Invoice Report")));
         break;
       case "Setting":
         // page = ProfileScreen();

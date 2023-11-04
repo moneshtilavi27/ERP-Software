@@ -1,8 +1,8 @@
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:erp/mobile_screen/Users.dart';
 import 'package:erp/mobile_screen/bucket.dart';
 import 'package:flutter/material.dart';

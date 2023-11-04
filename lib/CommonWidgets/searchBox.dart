@@ -57,13 +57,13 @@ class _SearchBoxState extends State<SearchBox> {
 
   getItemList() async {
     APIMethods obj = APIMethods();
-    await obj.postData(API.itemMaster, {'request': "get"}).then((res) {
-      setState(() {
-        userModel = UserModel.fromJson(json.decode(res.toString()));
-      });
-    }).catchError((error) {
-      print(error);
-    });
+    // await obj.postData(API.itemMaster, {'request': "get"}).then((res) {
+    //   setState(() {
+    //     userModel = UserModel.fromJson(json.decode(res.toString()));
+    //   });
+    // }).catchError((error) {
+    //   print(error);
+    // });
   }
 
   @override

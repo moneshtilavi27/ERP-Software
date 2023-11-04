@@ -1,9 +1,11 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:pdf/widgets.dart' as pw;
+import 'package:google_fonts/google_fonts.dart';
 
 class Common {
   Future<bool> showPrintPreview(BuildContext context,
@@ -36,6 +38,11 @@ class Common {
     double cgstAmount = 0;
     double sgstAmount = 0;
 
+    // Load the custom Hindi font
+    final hindiFontData = await rootBundle
+        .load('lib/service/asset/fonts/TiroDevanagariMarathi-Regular.ttf');
+    final ttf = pw.Font.ttf(hindiFontData.buffer.asByteData());
+
     doc.addPage(
       pw.Page(
         build: (context) {
@@ -55,11 +62,15 @@ class Common {
                 ),
                 pw.SizedBox(
                   width: 40,
+                  child: pw.Text('GST'),
+                ),
+                pw.SizedBox(
+                  width: 40,
                   child: pw.Text('Rate'),
                 ),
                 pw.SizedBox(
-                  width: 50,
-                  child: pw.Text('Total (\$)'),
+                  width: 40,
+                  child: pw.Text('Total'),
                 ),
               ],
             ),
@@ -71,6 +82,7 @@ class Common {
             final itemName = item['item_name'] ?? '';
             final qty = item['qty'] ?? '0';
             final unit = item['unit'] ?? '-';
+            final gst = item['item_gst'] ?? '-';
             final rate = item['rate'] ?? '0';
             final value = item['value'] ?? '0';
             final gstPercentage =
@@ -99,6 +111,10 @@ class Common {
                   pw.SizedBox(
                     width: 40,
                     child: pw.Text("$qty $unit"),
+                  ),
+                  pw.SizedBox(
+                    width: 40,
+                    child: pw.Text(gst),
                   ),
                   pw.SizedBox(
                     width: 40,
@@ -192,7 +208,7 @@ class Common {
                         fontSize: 20, fontWeight: pw.FontWeight.bold),
                   ),
                   pw.SizedBox(height: 10),
-                  pw.Text('Shivaji Chouk, Main Road, Belgundi'),
+                  pw.Text('Main Road, Shivaji Chowk, Belgundi'),
                   pw.Text('GST NO: 29CUCPB1438F1ZZ'),
                   pw.Row(
                     mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
@@ -223,8 +239,12 @@ class Common {
                   ...itemsList,
                   pw.Divider(),
                   pw.SizedBox(height: 10),
-                  pw.Text('Thank you for shopping!'),
-                  pw.Text('Have a great day!'),
+                  pw.Text(
+                      'घेतलेला माल व पैसे काऊंटरवरच तपासून घेणे. व काही तकरार असेल तर दोन दीवसात येऊन भेटावे. नंतर कोणतीही तकरार ऐकली जाणार नाही.',
+                      style: pw.TextStyle(font: ttf),
+                      textAlign: pw.TextAlign.center),
+                  pw.Text('This bill is including GST'),
+                  pw.Text('Thank you for shopping!, Have a great day!'),
                 ],
               ),
             ),

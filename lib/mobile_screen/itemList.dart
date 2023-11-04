@@ -1,12 +1,14 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_event.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:erp/mobile_screen/searchItemMaster.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ItemList extends StatefulWidget {
   final String title;
@@ -18,15 +20,18 @@ class ItemList extends StatefulWidget {
 }
 
 class _ItemMasterState extends State<ItemList> {
+  late SharedPreferences sp;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
   var isLoading = false;
+  late String userType = "user";
   String itemUnit = "";
 
   @override
   void initState() {
     super.initState();
-
+    // sp = await SharedPreferences.getInstance();
+    // print(sp);
     loadData();
   }
 
@@ -37,10 +42,13 @@ class _ItemMasterState extends State<ItemList> {
     return null;
   }
 
-  loadData() {
+  loadData() async {
+    sp = await SharedPreferences.getInstance();
     setState(() {
       isLoading = false;
+      userType = sp.getString('user_type')!;
     });
+    print(userType);
   }
 
   @override
@@ -52,14 +60,7 @@ class _ItemMasterState extends State<ItemList> {
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.green,
-        actions: [
-          AppBarActionButton(),
-          IconButton(
-              icon: const Icon(Icons.add),
-              onPressed: () {
-                _showItemInputDialog(context, {});
-              })
-        ],
+        actions: [AppBarActionButton(userType: userType)],
       ),
       body: BlocBuilder<ItemmasterBloc, ItemmasterState>(
           builder: (context, state) {
@@ -103,14 +104,28 @@ class _ItemMasterState extends State<ItemList> {
                           ],
                         ),
                         onTap: () {
-                          _showItemInputDialog(context, state.dataList[index]);
+                          if (userType == "admin") {
+                            _showItemInputDialog(
+                                context, state.dataList[index]);
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "You Dont Have Permission to Update Item",
+                            );
+                          }
                         },
                         onLongPress: () {
-                          showDeleteConfirmationDialog(context, "Delete", () {
-                            BlocProvider.of<ItemmasterBloc>(context).add(
-                                DeleteItemEvent(state.dataList[index]['item_id']
-                                    .toString()));
-                          });
+                          if (userType == "admin") {
+                            showDeleteConfirmationDialog(context, "Delete", () {
+                              BlocProvider.of<ItemmasterBloc>(context).add(
+                                  DeleteItemEvent(state.dataList[index]
+                                          ['item_id']
+                                      .toString()));
+                            });
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "You Dont Have Permission to Delete Item",
+                            );
+                          }
                         },
                       ),
                       const Divider(
@@ -125,6 +140,20 @@ class _ItemMasterState extends State<ItemList> {
           );
         }
       }),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.green,
+        onPressed: () {
+          // Handle the print action here
+          if (userType == "admin") {
+            _showItemInputDialog(context, {});
+          } else {
+            Fluttertoast.showToast(
+              msg: "You Dont Have Permission to add Item",
+            );
+          }
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -220,6 +249,7 @@ class _ItemMasterState extends State<ItemList> {
           ),
           actions: [
             ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
@@ -247,11 +277,14 @@ class _ItemMasterState extends State<ItemList> {
               },
               child: Text(heading),
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: const Text('Cancel'),
+              child: const Text(
+                'Cancel',
+              ),
             ),
           ],
         );
@@ -261,7 +294,8 @@ class _ItemMasterState extends State<ItemList> {
 }
 
 class AppBarActionButton extends StatelessWidget {
-  const AppBarActionButton({super.key});
+  final String userType;
+  AppBarActionButton({super.key, required this.userType});
 
   @override
   Widget build(BuildContext context) {
@@ -272,7 +306,8 @@ class AppBarActionButton extends StatelessWidget {
           icon: const Icon(Icons.search),
           onPressed: () {
             showSearch(
-                context: context, delegate: SearchItemMaster(state.dataList));
+                context: context,
+                delegate: SearchItemMaster(state.dataList, userType));
           },
         );
       } else {

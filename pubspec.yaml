@@ -46,6 +46,9 @@ dependencies:
   desktop_window: ^0.4.0
   printing: ^5.11.0
   connectivity_plus: ^3.0.6
+  fluttertoast: ^8.2.2
+  sidebarx: ^0.16.2
+  google_fonts: ^6.1.0
   # pdf: ^3.7.2
 
 dev_dependencies:
@@ -85,6 +88,20 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+  fonts:
+    - family: TiroDevanagariMarathi
+      fonts:
+        - asset: lib/service/asset/fonts/TiroDevanagariMarathi-Regular.ttf
+        - asset: lib/service/asset/fonts/TiroDevanagariMarathi-Italic.ttf
+          style: italic
+    - family: TiroDevanagariHindi
+      fonts:
+        - asset: lib/service/asset/fonts/TiroDevanagariHindi-Regular.ttf
+        - asset: lib/service/asset/fonts/TiroDevanagariHindi-Italic.ttf
+          style: italic
+    - family: shreelipi
+      fonts:
+        - asset: lib/service/asset/fonts/Shreelipi.TTF
 
   # To add assets to your application, add an assets section, like this:
   assets:

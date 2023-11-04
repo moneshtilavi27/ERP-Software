@@ -1,6 +1,6 @@
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
 import 'package:erp/app_screen/Invoice/invoice.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:erp/app_screen/report/SalesReport.dart';

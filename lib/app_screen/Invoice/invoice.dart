@@ -1,12 +1,12 @@
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_bloc.dart';
-import 'package:erp/app_screen/Blocs/Internet/internet_state.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_bloc.dart';
-import 'package:erp/app_screen/Blocs/Invoice/invoice_state.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_bloc.dart';
-import 'package:erp/app_screen/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Blocs/Internet/internet_bloc.dart';
+import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
+import 'package:erp/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
+import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -15,7 +15,7 @@ import '../../CommonWidgets/CustomSnackbar.dart';
 import '../../CommonWidgets/DropDown.dart';
 import '../../CommonWidgets/productTable.dart';
 import '../../CommonWidgets/searchBox.dart';
-import '../Blocs/Invoice/invoice_event.dart';
+import '../../Blocs/Invoice/invoice_event.dart';
 
 class Invoice extends StatefulWidget {
   const Invoice({super.key});

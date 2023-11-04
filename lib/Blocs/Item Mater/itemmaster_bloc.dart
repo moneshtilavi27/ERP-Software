@@ -1,7 +1,7 @@
 import 'package:erp/service/API/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../service/API/api_methods.dart';
+import '../../service/API/api_methods.dart';
 import 'itemmaster_event.dart';
 import 'itemmaster_state.dart';
 
