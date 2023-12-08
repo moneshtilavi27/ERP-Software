@@ -232,6 +232,7 @@ class ShowInvoice extends StatelessWidget {
     double totalAmount = _calculateTotalAmount(billItems);
     double totalCGST = _calculateTotalCGST(billItems);
     double totalSGST = _calculateTotalSGST(billItems);
-    return totalAmount + totalCGST + totalSGST - discount;
+    // return totalAmount + totalCGST + totalSGST - discount;
+    return totalAmount - discount;
   }
 }

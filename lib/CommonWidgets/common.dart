@@ -45,6 +45,7 @@ class Common {
 
     doc.addPage(
       pw.Page(
+        pageFormat: PdfPageFormat.undefined,
         build: (context) {
           final itemsList = <pw.Widget>[];
 
@@ -241,6 +242,9 @@ class Common {
                   pw.SizedBox(height: 10),
                   pw.Text(
                       'घेतलेला माल व पैसे काऊंटरवरच तपासून घेणे. व काही तकरार असेल तर दोन दीवसात येऊन भेटावे. नंतर कोणतीही तकरार ऐकली जाणार नाही.',
+                      style: pw.TextStyle(font: ttf),
+                      textAlign: pw.TextAlign.center),
+                  pw.Text('येतेवेळ   पिशवी  आणा, प्लास्टीक प्रदूषण टाळा',
                       style: pw.TextStyle(font: ttf),
                       textAlign: pw.TextAlign.center),
                   pw.Text('This bill is including GST'),

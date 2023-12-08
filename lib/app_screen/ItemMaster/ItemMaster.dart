@@ -10,7 +10,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../CommonWidgets/Button.dart';
 import '../../CommonWidgets/DropDown.dart';
 import '../../CommonWidgets/productTable.dart';
-import '../../CommonWidgets/searchBox.dart';
+import '../../CommonWidgets/itemAutoComplete/searchBox.dart';
 import '../../Blocs/Item Mater/itemmaster_event.dart';
 
 class ItemMaster extends StatefulWidget {

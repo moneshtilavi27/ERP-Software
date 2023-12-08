@@ -5,7 +5,7 @@ import 'package:erp/CommonWidgets/Button.dart';
 import 'package:erp/CommonWidgets/DropDown.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
-import 'package:erp/CommonWidgets/searchBox.dart';
+import 'package:erp/CommonWidgets/itemAutoComplete/searchBox.dart';
 import 'package:erp/Constants/Colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

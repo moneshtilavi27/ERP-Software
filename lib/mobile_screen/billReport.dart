@@ -35,6 +35,7 @@ class _ItemMasterState extends State<BillReport> {
   @override
   void initState() {
     super.initState();
+    invoiceBloc.add(ClearStateEvent());
     invoiceBloc.add(FeatchInvoiceReportEvent());
     loadData();
   }
@@ -66,14 +67,14 @@ class _ItemMasterState extends State<BillReport> {
         // ],
       ),
       body: BlocConsumer<InvoiceBloc, InvoiceState>(
-        listener: (BuildContext context, InvoiceState state) {
-          if (state is InvoiceReportState) {
-            setState(() {
-              DataSet = state.dataList;
-            });
-          }
-        },
-        builder: (context, state) {
+          listener: (BuildContext context, InvoiceState state) {
+        if (state is InvoiceReportState) {
+          setState(() {
+            DataSet = state.dataList;
+          });
+        }
+      }, builder: (context, state) {
+        if (DataSet.isNotEmpty) {
           return ListView.builder(
             itemCount: DataSet.length,
             itemBuilder: (context, index) => Column(
@@ -115,8 +116,12 @@ class _ItemMasterState extends State<BillReport> {
               ],
             ),
           );
-        },
-      ),
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        }
+      }),
     );
   }
 }

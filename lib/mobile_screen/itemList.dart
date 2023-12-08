@@ -23,15 +23,17 @@ class _ItemMasterState extends State<ItemList> {
   late SharedPreferences sp;
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
+  late ItemmasterBloc itemBloc = BlocProvider.of<ItemmasterBloc>(context);
   var isLoading = false;
+  List DataSet = [];
   late String userType = "user";
   String itemUnit = "";
 
   @override
   void initState() {
     super.initState();
-    // sp = await SharedPreferences.getInstance();
-    // print(sp);
+    itemBloc.add(LoaderEvent());
+    itemBloc.add(LoadItemmasterEvent());
     loadData();
   }
 
@@ -62,78 +64,81 @@ class _ItemMasterState extends State<ItemList> {
         backgroundColor: Colors.green,
         actions: [AppBarActionButton(userType: userType)],
       ),
-      body: BlocBuilder<ItemmasterBloc, ItemmasterState>(
-          builder: (context, state) {
+      body: BlocConsumer<ItemmasterBloc, ItemmasterState>(
+          listener: (BuildContext context, ItemmasterState state) {
         if (state is StoreListState) {
-          return isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(),
-                )
-              : ListView.builder(
-                  itemCount: state.dataList.length,
-                  itemBuilder: (context, index) => Column(
+          setState(() {
+            DataSet = state.dataList;
+          });
+        }
+      }, builder: (BuildContext context, ItemmasterState state) {
+        if (DataSet.isNotEmpty) {
+          return ListView.builder(
+            itemCount: DataSet.length,
+            itemBuilder: (context, index) => Column(
+              children: [
+                ListTile(
+                  title: Text(
+                    DataSet[index]['item_name'],
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w400),
+                  ),
+                  subtitle: Text(DataSet[index]['item_hsn'],
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      ListTile(
-                        title: Text(
-                          state.dataList[index]['item_name'],
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                        subtitle: Text(state.dataList[index]['item_hsn'],
-                            textAlign: TextAlign.start,
-                            maxLines: 1,
-                            style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600)),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.currency_rupee_rounded),
-                            Text(
-                              state.dataList[index]['basic_value'] +
-                                  " / " +
-                                  state.dataList[index]['item_unit'],
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 162, 55, 28),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          if (userType == "admin") {
-                            _showItemInputDialog(
-                                context, state.dataList[index]);
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "You Dont Have Permission to Update Item",
-                            );
-                          }
-                        },
-                        onLongPress: () {
-                          if (userType == "admin") {
-                            showDeleteConfirmationDialog(context, "Delete", () {
-                              BlocProvider.of<ItemmasterBloc>(context).add(
-                                  DeleteItemEvent(state.dataList[index]
-                                          ['item_id']
-                                      .toString()));
-                            });
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "You Dont Have Permission to Delete Item",
-                            );
-                          }
-                        },
+                      const Icon(Icons.currency_rupee_rounded),
+                      Text(
+                        DataSet[index]['basic_value'] +
+                            " / " +
+                            DataSet[index]['item_unit'],
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 162, 55, 28),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
                       ),
-                      const Divider(
-                        height: 5,
-                      )
                     ],
                   ),
-                );
+                  onTap: () {
+                    if (userType == "admin") {
+                      _showItemInputDialog(context, index, DataSet[index]);
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "You Dont Have Permission to Update Item",
+                      );
+                    }
+                  },
+                  onLongPress: () {
+                    if (userType == "admin") {
+                      showDeleteConfirmationDialog(context, "Delete", () {
+                        BlocProvider.of<ItemmasterBloc>(context).add(
+                            DeleteItemEvent(
+                                DataSet[index]['item_id'].toString()));
+                        setState(() {
+                          DataSet.removeAt(index);
+                        });
+                      });
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "You Dont Have Permission to Delete Item",
+                      );
+                    }
+                  },
+                ),
+                const Divider(
+                  height: 5,
+                )
+              ],
+            ),
+          );
         } else {
           return const Center(
             child: CircularProgressIndicator(),
@@ -145,7 +150,7 @@ class _ItemMasterState extends State<ItemList> {
         onPressed: () {
           // Handle the print action here
           if (userType == "admin") {
-            _showItemInputDialog(context, {});
+            _showItemInputDialog(context, null, {});
           } else {
             Fluttertoast.showToast(
               msg: "You Dont Have Permission to add Item",
@@ -157,7 +162,8 @@ class _ItemMasterState extends State<ItemList> {
     );
   }
 
-  Future<void> _showItemInputDialog(BuildContext context, var data) async {
+  Future<void> _showItemInputDialog(
+      BuildContext context, var index, var data) async {
     bool condition = data!['item_id'] == null ? true : false;
     String heading = condition ? 'Add' : 'Update';
     TextEditingController _itemNameController =
@@ -269,6 +275,36 @@ class _ItemMasterState extends State<ItemList> {
                             _itemUnitController.text,
                             _itemMrpController.text,
                             _itemvalueController.text));
+
+                    // update data in offline
+                    if (index != null) {
+                      setState(() {
+                        DataSet[index]["item_id"] = data['item_id'].toString();
+                        DataSet[index]["item_name"] = _itemNameController.text;
+                        DataSet[index]["item_hsn"] = _itemHsnController.text;
+                        DataSet[index]["item_gst"] = _itemGstController.text;
+                        DataSet[index]["item_unit"] = _itemUnitController.text;
+                        DataSet[index]["basic_value"] = _itemMrpController.text;
+                        DataSet[index]["whole_sale_value"] =
+                            _itemvalueController.text;
+                      });
+                    } else {
+                      // Create a new item
+                      Map<String, dynamic> newItem = {
+                        "item_id": data['item_id'].toString(),
+                        "item_name": _itemNameController.text,
+                        "item_hsn": _itemHsnController.text,
+                        "item_gst": _itemGstController.text,
+                        "item_unit": _itemUnitController.text,
+                        "basic_value": _itemMrpController.text,
+                        "whole_sale_value": _itemvalueController.text,
+                      };
+                      // Add the new item to the DataSet
+                      setState(() {
+                        DataSet.add(newItem);
+                      });
+                    }
+
                     Navigator.pop(context);
                   } catch (e) {
                     print(e);

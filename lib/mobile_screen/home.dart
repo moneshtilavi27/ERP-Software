@@ -89,6 +89,7 @@ class _HomePageState extends State<HomePage> {
           textAlign: TextAlign.center,
         ),
         backgroundColor: Colors.green,
+        centerTitle: true, // Center-align the title
       ),
       body: GridView.builder(
         itemCount: _items.length,

@@ -6,11 +6,15 @@ import 'package:erp/Blocs/Internet/internet_state.dart';
 import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/CommonWidgets/itemAutoComplete/searchBox.dart';
+import 'package:erp/CommonWidgets/userAutoComplete/userSearchBox.dart';
 import 'package:erp/mobile_screen/app_drawer.dart';
 import 'package:erp/mobile_screen/home.dart';
 import 'package:erp/mobile_screen/printOptionDialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:path/path.dart';
 
 import '../CommonWidgets/Button.dart';
 
@@ -32,6 +36,7 @@ class _submitScreenState extends State<SubmitScreen> {
   TextEditingController _totalAmt = TextEditingController();
   TextEditingController _gst = TextEditingController();
   TextEditingController _discount = TextEditingController();
+  bool condition = true;
 
   int totalItems = 5; // Replace with actual total items
   double totalAmount = 0; // Replace with actual total amount
@@ -97,12 +102,8 @@ class _submitScreenState extends State<SubmitScreen> {
                       .showPrintPreview(
                           context, state.dataList, state.status, true)
                       .then((value) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const AppDrawer(title: "Invoice"),
-                      ),
-                      (route) => false, // Clear all routes from the stack.
-                    );
+                    int count = 0;
+                    Navigator.of(context).popUntil((_) => count++ >= 3);
                   });
                 }
                 setState(() {
@@ -148,29 +149,54 @@ class _submitScreenState extends State<SubmitScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         SizedBox(
+                          child: UserSearchBox(
+                            helpText: "Phone Number",
+                            prefixIcon: Icons.phone,
+                            suffixIcon: Icons.search_rounded,
+                            maxLength: 10,
+                            textInputFormatter: <TextInputFormatter>[
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            textInputType: TextInputType.phone,
+                            onSelected: (dynamic selection, dynamic cotroller) {
+                              _custNum = cotroller;
+                              _custName.text = selection?.customer_name;
+                              _custAdd.text = selection?.customer_address;
+                              setState(() {
+                                condition = selection?.customer_mob?.isNotEmpty
+                                    ? false
+                                    : true;
+                              });
+                            },
+                            onChange: (val) {
+                              setState(() {
+                                condition = true;
+                              });
+                            },
+                            onFocuseOut: (cotroller) {
+                              _custNum = cotroller;
+                            },
+                            controller: _custNum,
+                            listWidth: 300,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        SizedBox(
                           width: double.infinity,
                           child: TextBox(
                             helpText: "Customer Name",
                             controller: _custName,
+                            prefixIcon: Icons.verified_user,
                             validator: _validateCustomername,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 10),
                         SizedBox(
                           width: double.infinity,
                           child: TextBox(
-                            helpText: "Phone Number",
-                            controller: _custNum,
-                            validator: _validateMobileNumber,
-                            textInputType: TextInputType.number,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          width: double.infinity,
-                          child: TextBox(
-                            helpText: "Adress",
+                            helpText: "Address",
                             controller: _custAdd,
+                            prefixIcon: Icons.location_city,
                             textInputType: TextInputType.multiline,
                           ),
                         ),
@@ -299,7 +325,6 @@ class billTiles extends StatelessWidget {
   final String textTitle;
   final bool enable;
   final TextEditingController controller;
-  final double fontSize = 12;
   final Function? onChange;
   const billTiles(this.textTitle,
       {super.key,
@@ -311,6 +336,8 @@ class billTiles extends StatelessWidget {
   Widget build(
     BuildContext context,
   ) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final fontSize = screenWidth > 600 ? 14.0 : 12.0;
     return Padding(
       padding: const EdgeInsets.all(5.0),
       child: Row(

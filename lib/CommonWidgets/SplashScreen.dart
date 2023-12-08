@@ -21,10 +21,10 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ItemMasterBloc = BlocProvider.of<ItemmasterBloc>(context);
-    final invoiceBloc = BlocProvider.of<InvoiceBloc>(context);
-    invoiceBloc.add(FeatchInvoiceEvent());
-    invoiceBloc.add(FeatchInvoiceReportEvent());
+    // final ItemMasterBloc = BlocProvider.of<ItemmasterBloc>(context);
+    // final invoiceBloc = BlocProvider.of<InvoiceBloc>(context);
+    // invoiceBloc.add(FeatchInvoiceEvent());
+    // invoiceBloc.add(FeatchInvoiceReportEvent());
 
     double defaultMargin;
     if (Responsive.isDesktop(context)) {
@@ -38,19 +38,21 @@ class SplashScreen extends StatelessWidget {
     return BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is InLoginState) {
-          if (Platform.isAndroid) {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => const HomePage(title: "ERP"),
-              ),
-            );
-          } else {
-            Navigator.of(context).pushReplacement(
-              MaterialPageRoute(
-                builder: (context) => SidebarXExampleApp(),
-              ),
-            );
-          }
+          try {
+            if (Platform.isAndroid) {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const HomePage(title: "Ono Mart"),
+                ),
+              );
+            } else {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => SidebarXExampleApp(),
+                ),
+              );
+            }
+          } catch (e) {}
         }
         if (state is LogoutState) {
           Navigator.of(context).push(
@@ -65,7 +67,10 @@ class SplashScreen extends StatelessWidget {
               gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [Colors.amber.shade100, Colors.blue.shade100],
+            colors: [
+              Color.fromARGB(203, 187, 245, 143),
+              Color.fromARGB(165, 109, 239, 219),
+            ],
           )),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -79,12 +84,12 @@ class SplashScreen extends StatelessWidget {
                   height: 250,
                 ),
               ),
-              const Padding(padding: EdgeInsets.all(30.0)),
+              const Padding(padding: EdgeInsets.all(15.0)),
               const Text(
-                'ERP',
+                'Ono Mart',
                 style: TextStyle(
-                  fontSize: 30,
-                  color: Colors.white,
+                  fontSize: 35,
+                  color: Color.fromARGB(255, 250, 102, 33),
                   letterSpacing: 0.084,
                   fontWeight: FontWeight.w500,
                   height: 2,

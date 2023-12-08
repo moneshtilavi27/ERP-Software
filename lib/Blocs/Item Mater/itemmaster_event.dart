@@ -4,6 +4,8 @@ class UnItemmasterEvent extends ItemmasterEvent {}
 
 class LoadItemmasterEvent extends ItemmasterEvent {}
 
+class LoaderEvent extends ItemmasterEvent {}
+
 class FeatchItemmasterEvent extends ItemmasterEvent {
   final String item_name;
   FeatchItemmasterEvent(this.item_name);

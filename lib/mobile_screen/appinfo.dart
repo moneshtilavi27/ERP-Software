@@ -44,7 +44,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
               ),
               SizedBox(height: 20),
               Text(
-                'ERP Software', // Replace with your app name
+                'BILLING APP', // Replace with your app name
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
@@ -60,7 +60,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                 leading: Icon(Icons.phone),
                 title: Text('Contact Us'),
                 subtitle: Text(
-                    'contact@believebond.com'), // Replace with your contact email
+                    'contact@believebond.co.in'), // Replace with your contact email
               ),
               Divider(
                 height: 10,
@@ -69,7 +69,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
                 leading: Icon(Icons.web),
                 title: Text('Visit Website'),
                 subtitle: Text(
-                    'https://believebond.com'), // Replace with your website URL
+                    'https://believebond.co.in'), // Replace with your website URL
               ),
               Divider(
                 height: 10,

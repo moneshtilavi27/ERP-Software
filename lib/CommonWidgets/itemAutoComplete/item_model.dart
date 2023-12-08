@@ -1,12 +1,12 @@
-class UserModel {
+class ItemModel {
   int? total_records;
   int? number_of_pages;
   int? currentPage;
-  List<ItemModel>? data;
+  List<ItemList>? data;
   String? status;
   Support? support;
 
-  UserModel(
+  ItemModel(
       {this.status,
       this.total_records,
       this.number_of_pages,
@@ -14,23 +14,23 @@ class UserModel {
       this.data,
       this.support});
 
-  UserModel.fromJson(Map<dynamic, dynamic> json) {
+  ItemModel.fromJson(Map<dynamic, dynamic> json) {
     try {
       total_records = json['total_records'];
       number_of_pages = json['number_of_pages'];
       currentPage = json['current_page'];
       status = json['status'];
       if (json['status'] == "success" && json['data'] != null) {
-        data = <ItemModel>[];
+        data = <ItemList>[];
         json['data']?.forEach((v) {
-          data!.add(ItemModel.fromJson(v));
+          data!.add(ItemList.fromJson(v));
         });
       }
       support =
           json['support'] != null ? Support.fromJson(json['support']) : null;
     } catch (e) {
       // Handle exceptions, e.g., log the error or show an error message
-      print('Error parsing UserModel: $e');
+      print('Error parsing ItemModel: $e');
     }
   }
 
@@ -83,7 +83,7 @@ class Data {
   }
 }
 
-class ItemModel {
+class ItemList {
   String? item_id;
   String? item_name;
   String? item_hsn;
@@ -92,7 +92,7 @@ class ItemModel {
   String? basic_value;
   String? whole_sale_value;
 
-  ItemModel({
+  ItemList({
     this.item_id,
     this.item_name,
     this.item_hsn,
@@ -102,7 +102,7 @@ class ItemModel {
     this.whole_sale_value,
   });
 
-  ItemModel.fromJson(Map<String, dynamic> json) {
+  ItemList.fromJson(Map<String, dynamic> json) {
     try {
       item_id = json['item_id'];
       item_name = json['item_name'];

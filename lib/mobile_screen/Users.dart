@@ -21,7 +21,9 @@ class Users extends StatefulWidget {
 class _UsersState extends State<Users> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
+  late ItemmasterBloc itemBloc = BlocProvider.of<ItemmasterBloc>(context);
   var isLoading = false;
+  List DataSet = [];
   String itemUnit = "";
   late SharedPreferences sp;
   late String userType = "user";
@@ -29,7 +31,8 @@ class _UsersState extends State<Users> {
   @override
   void initState() {
     super.initState();
-
+    itemBloc.add(LoaderEvent());
+    itemBloc.add(LoadItemmasterEvent());
     loadData();
   }
 
@@ -51,66 +54,67 @@ class _UsersState extends State<Users> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<ItemmasterBloc, ItemmasterState>(
-        builder: (context, state) {
+    return BlocConsumer<ItemmasterBloc, ItemmasterState>(
+        listener: (BuildContext context, ItemmasterState state) {
       if (state is StoreListState) {
-        return isLoading
-            ? const Center(
-                child: CircularProgressIndicator(),
+        setState(() {
+          DataSet = state.dataList;
+        });
+      }
+    }, builder: (BuildContext context, ItemmasterState state) {
+      if (DataSet.isNotEmpty) {
+        return ListView.builder(
+          itemCount: DataSet.length,
+          itemBuilder: (context, index) => Column(
+            children: [
+              ListTile(
+                  title: Text(
+                    DataSet[index]['item_name'],
+                    maxLines: 2,
+                    overflow: TextOverflow.fade,
+                    style: const TextStyle(
+                        fontSize: 12, fontWeight: FontWeight.w400),
+                  ),
+                  subtitle: Text(DataSet[index]['item_hsn'],
+                      textAlign: TextAlign.start,
+                      maxLines: 1,
+                      style: TextStyle(
+                          color: Colors.grey.shade600,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600)),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.currency_rupee_rounded),
+                      Text(
+                        DataSet[index]['basic_value'] +
+                            " / " +
+                            DataSet[index]['item_unit'],
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 162, 55, 28),
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500),
+                      ),
+                    ],
+                  ),
+                  onTap: () {
+                    _showItemInputDialog(context, DataSet[index]);
+                  },
+                  onLongPress: () {
+                    if (userType == "admin") {
+                      _showItemRateChangeDialog(context, index, DataSet[index]);
+                    } else {
+                      Fluttertoast.showToast(
+                        msg: "You Dont Have Permission to Update Item",
+                      );
+                    }
+                  }),
+              const Divider(
+                height: 5,
               )
-            : ListView.builder(
-                itemCount: state.dataList.length,
-                itemBuilder: (context, index) => Column(
-                  children: [
-                    ListTile(
-                        title: Text(
-                          state.dataList[index]['item_name'],
-                          maxLines: 2,
-                          overflow: TextOverflow.fade,
-                          style: const TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w400),
-                        ),
-                        subtitle: Text(state.dataList[index]['item_hsn'],
-                            textAlign: TextAlign.start,
-                            maxLines: 1,
-                            style: TextStyle(
-                                color: Colors.grey.shade600,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600)),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.currency_rupee_rounded),
-                            Text(
-                              state.dataList[index]['basic_value'] +
-                                  " / " +
-                                  state.dataList[index]['item_unit'],
-                              style: const TextStyle(
-                                  color: Color.fromARGB(255, 162, 55, 28),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        ),
-                        onTap: () {
-                          _showItemInputDialog(context, state.dataList[index]);
-                        },
-                        onLongPress: () {
-                          if (userType == "admin") {
-                            _showItemRateChangeDialog(
-                                context, state.dataList[index]);
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "You Dont Have Permission to Update Item",
-                            );
-                          }
-                        }),
-                    const Divider(
-                      height: 5,
-                    )
-                  ],
-                ),
-              );
+            ],
+          ),
+        );
       } else {
         return const Center(
           child: CircularProgressIndicator(),
@@ -234,7 +238,8 @@ class _UsersState extends State<Users> {
     );
   }
 
-  Future<void> _showItemRateChangeDialog(BuildContext context, var data) async {
+  Future<void> _showItemRateChangeDialog(
+      BuildContext context, var index, var data) async {
     TextEditingController oldrateController =
         TextEditingController(text: data['basic_value']);
     TextEditingController newUnitController =
@@ -307,6 +312,23 @@ class _UsersState extends State<Users> {
                             newUnitController.text,
                             newrateController.text,
                             newrateController.text));
+
+                    // update data in offline
+                    if (index != null) {
+                      setState(() {
+                        DataSet[index]["item_id"] = data['item_id'].toString();
+                        DataSet[index]["item_name"] =
+                            data['item_name'].toString();
+                        DataSet[index]["item_hsn"] =
+                            data['item_hsn'].toString();
+                        DataSet[index]["item_gst"] =
+                            data['item_gst'].toString();
+                        DataSet[index]["item_unit"] = newUnitController.text;
+                        DataSet[index]["basic_value"] = newrateController.text;
+                        DataSet[index]["whole_sale_value"] =
+                            newrateController.text;
+                      });
+                    }
                     Navigator.pop(context);
                   } catch (e) {
                     print(e);

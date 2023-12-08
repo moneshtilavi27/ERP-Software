@@ -128,7 +128,7 @@ class UserSearch extends SearchDelegate<String> {
               _showItemInputDialog(context, suggestedUser[index]);
             },
             onLongPress: () {
-              _showItemRateChangeDialog(context, suggestedUser[index]);
+              _showItemRateChangeDialog(context, index, suggestedUser[index]);
             },
           ),
           const Divider(
@@ -249,7 +249,8 @@ class UserSearch extends SearchDelegate<String> {
     );
   }
 
-  Future<void> _showItemRateChangeDialog(BuildContext context, var data) async {
+  Future<void> _showItemRateChangeDialog(
+      BuildContext context, var index, var data) async {
     TextEditingController oldrateController =
         TextEditingController(text: data['basic_value']);
     TextEditingController newUnitController =
@@ -321,6 +322,13 @@ class UserSearch extends SearchDelegate<String> {
                             newUnitController.text,
                             newrateController.text,
                             newrateController.text));
+                    // update data in offline
+                    if (index != null) {
+                      // DataSet[index]["item_unit"] = newUnitController.text;
+                      products[index]["basic_value"] = newrateController.text;
+                      products[index]["whole_sale_value"] =
+                          newrateController.text;
+                    }
                     Navigator.pop(context);
                   } catch (e) {
                     print(e);

@@ -1,16 +1,22 @@
 import 'dart:convert';
+import 'dart:ffi';
 
-import 'package:erp/CommonWidgets/user_model.dart';
+import 'package:erp/CommonWidgets/userAutoComplete/userModel.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-import '../service/API/api.dart';
-import '../service/API/api_methods.dart';
+import '../../service/API/api.dart';
+import '../../service/API/api_methods.dart';
 
-class SearchBox extends StatefulWidget {
+class UserSearchBox extends StatefulWidget {
   TextEditingController controller;
   final String? hintText, helpText;
   final IconData? prefixIcon, suffixIcon;
   final double? listWidth;
+  final List<TextInputFormatter>? textInputFormatter;
+  final TextInputType? textInputType;
+  final int? maxLength;
+  final FocusNode? focusNode;
   final Function? onChange;
   final Function onSelected;
   final Function? onFocuseOut;
@@ -18,25 +24,29 @@ class SearchBox extends StatefulWidget {
 
   late FocusNode _focusNode = FocusNode();
 
-  SearchBox(
-      {Key? key,
-      required this.controller,
-      this.hintText,
-      this.helpText,
-      this.prefixIcon,
-      this.suffixIcon,
-      this.listWidth,
-      this.onChange,
-      this.onFocuseOut,
-      required this.onSelected,
-      this.options})
-      : super(key: key);
+  UserSearchBox({
+    Key? key,
+    required this.controller,
+    this.hintText,
+    this.helpText,
+    this.prefixIcon,
+    this.suffixIcon,
+    this.listWidth,
+    this.textInputType,
+    this.focusNode,
+    this.textInputFormatter,
+    this.maxLength,
+    this.onChange,
+    this.onFocuseOut,
+    required this.onSelected,
+    this.options,
+  }) : super(key: key);
 
   @override
   _SearchBoxState createState() => _SearchBoxState();
 }
 
-class _SearchBoxState extends State<SearchBox> {
+class _SearchBoxState extends State<UserSearchBox> {
   UserModel? userModel;
 
   @override
@@ -44,7 +54,7 @@ class _SearchBoxState extends State<SearchBox> {
     // TODO: implement initState
     super.initState();
     // widget._focusNode.addListener(_onFocusChange);
-    getItemList();
+    getUserList();
   }
 
   void _onFocusChange() {
@@ -55,27 +65,27 @@ class _SearchBoxState extends State<SearchBox> {
     }
   }
 
-  getItemList() async {
+  getUserList() async {
     APIMethods obj = APIMethods();
-    // await obj.postData(API.itemMaster, {'request': "get"}).then((res) {
-    //   setState(() {
-    //     userModel = UserModel.fromJson(json.decode(res.toString()));
-    //   });
-    // }).catchError((error) {
-    //   print(error);
-    // });
+    await obj.postData(API.customer, {'request': "get"}).then((res) {
+      setState(() {
+        userModel = UserModel.fromJson(json.decode(res.toString()));
+      });
+    }).catchError((error) {
+      print(error);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Autocomplete<ItemModel>(
+    return Autocomplete<UserList>(
       optionsBuilder: (TextEditingValue textEditingValue) {
         // widget.controller.text = textEditingValue.text;
         if (textEditingValue.text == '') {
           return List.empty();
         }
         return userModel!.data!
-            .where((element) => element.item_name!
+            .where((element) => element.customer_mob!
                 .toLowerCase()
                 .contains(textEditingValue.text.toLowerCase()))
             .toList();
@@ -86,6 +96,11 @@ class _SearchBoxState extends State<SearchBox> {
         widget._focusNode = focusNode;
         widget.onFocuseOut!(widget.controller);
         widget._focusNode.addListener(_onFocusChange);
+        final screenWidth = MediaQuery.of(context).size.width;
+        // You can adjust these values as needed to control responsiveness
+        final fontSize = screenWidth > 600 ? 14.0 : 12.0;
+        final iconSize = screenWidth > 600 ? 25.0 : 20.0;
+
         return Padding(
           padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
           child: Column(
@@ -99,7 +114,7 @@ class _SearchBoxState extends State<SearchBox> {
               TextField(
                   focusNode: focusNode,
                   controller: textEditingController,
-                  style: const TextStyle(fontSize: 14),
+                  style: TextStyle(fontSize: fontSize),
                   onChanged: widget.onChange != null
                       ? ((value) {
                           widget.onChange!(value);
@@ -108,9 +123,13 @@ class _SearchBoxState extends State<SearchBox> {
                   onEditingComplete: () {
                     print("complete");
                   },
+                  inputFormatters: widget.textInputFormatter,
+                  keyboardType: widget.textInputType,
+                  maxLength: widget.maxLength,
                   decoration: InputDecoration(
                     isDense: true,
-                    contentPadding: const EdgeInsets.fromLTRB(10, 15, 0, 15),
+                    counterText: "",
+                    contentPadding: const EdgeInsets.fromLTRB(10, 12, 0, 12),
                     border: const OutlineInputBorder(),
                     prefixIcon: widget.prefixIcon == null
                         ? null
@@ -119,7 +138,6 @@ class _SearchBoxState extends State<SearchBox> {
                                 top: 0, left: 0, right: 0, bottom: 0),
                             child: Icon(
                               widget.prefixIcon,
-                              size: 25,
                             )),
                     suffixIcon: widget.suffixIcon == null
                         ? null
@@ -128,7 +146,6 @@ class _SearchBoxState extends State<SearchBox> {
                                 top: 0, left: 0, right: 0, bottom: 0),
                             child: Icon(
                               widget.suffixIcon,
-                              size: 25,
                             )),
                   )),
             ],
@@ -136,34 +153,30 @@ class _SearchBoxState extends State<SearchBox> {
         );
       },
       optionsViewBuilder: (BuildContext context, Function onSelected,
-          Iterable<ItemModel> options) {
+          Iterable<UserList> options) {
         return Align(
             alignment: Alignment.topLeft,
             child: Container(
               margin: const EdgeInsets.fromLTRB(10, 3, 0, 0),
               child: Material(
-                elevation: 4.0,
+                elevation: 3.0,
                 child: ConstrainedBox(
                   constraints: BoxConstraints(
                       minHeight: 0.0,
-                      maxHeight: 200,
-                      maxWidth: widget.listWidth ?? 350),
+                      maxHeight: 300,
+                      maxWidth: widget.listWidth ?? 320),
                   child: ListView.builder(
                     itemCount: options.length,
                     itemBuilder: (context, index) {
-                      ItemModel d = options.elementAt(index);
+                      UserList d = options.elementAt(index);
                       return InkWell(
                         onTap: () {
                           onSelected(d);
                         },
                         child: ListTile(
-                          title: Text(d.item_name!),
-                          // leading: Image.network(
-                          //   d.avatar!,
-                          //   width: 50,
-                          //   height: 50,
-                          //   fit: BoxFit.fill,
-                          // ),
+                          leading: Icon(Icons.verified_user),
+                          title: Text(d.customer_name!),
+                          subtitle: Text(d.customer_mob!),
                         ),
                       );
                     },
@@ -173,9 +186,10 @@ class _SearchBoxState extends State<SearchBox> {
             ));
       },
       onSelected: widget.onSelected != null
-          ? ((value) => {widget.onSelected(value, widget.controller)})
+          ? ((value) =>
+              {print(value), widget.onSelected(value, widget.controller)})
           : (value) => {},
-      displayStringForOption: (ItemModel d) => d.item_name!,
+      displayStringForOption: (UserList d) => d.customer_mob!,
       optionsMaxHeight: 1,
     );
   }

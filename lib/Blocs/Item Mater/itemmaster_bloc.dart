@@ -1,3 +1,4 @@
+import 'package:erp/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/service/API/api.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -8,6 +9,16 @@ import 'itemmaster_state.dart';
 class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
   ItemmasterBloc() : super(IntialState()) {
     featchItemData({'request': "get"});
+
+    on<LoaderEvent>((event, emit) async {
+      print("initial State");
+      emit(IntialState());
+    });
+
+    on<LoadItemmasterEvent>((event, emit) async {
+      print("event called");
+      featchItemData({'request': "get"});
+    });
 
     on<FeatchItemmasterEvent>((event, emit) async {
       featchItemData({'request': "get", "item_name": "monesh"});
@@ -71,8 +82,8 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
     await obj.postData(API.itemMaster, data).then((res) async {
       try {
         if (res.data['status'] == "success") {
-          featchItemData({'request': "get"});
-          emit(itemAddUpdateState());
+          // featchItemData({'request': "get"});
+          // emit(itemAddUpdateState());
         } else {
           emit(ErrorItemmasterState(res.data['data']));
         }

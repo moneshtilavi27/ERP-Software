@@ -14,7 +14,7 @@ import '../../CommonWidgets/Button.dart';
 import '../../CommonWidgets/CustomSnackbar.dart';
 import '../../CommonWidgets/DropDown.dart';
 import '../../CommonWidgets/productTable.dart';
-import '../../CommonWidgets/searchBox.dart';
+import '../../CommonWidgets/itemAutoComplete/searchBox.dart';
 import '../../Blocs/Invoice/invoice_event.dart';
 
 class Invoice extends StatefulWidget {
