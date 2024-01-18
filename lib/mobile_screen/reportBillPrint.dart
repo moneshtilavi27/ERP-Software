@@ -1,6 +1,7 @@
 import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/Blocs/Invoice/invoice_state.dart';
+import 'package:erp/Constants/Colors.dart';
 import 'package:erp/mobile_screen/printOptionDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -18,7 +19,8 @@ class ShowInvoice extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Invoice Preview'),
-        backgroundColor: Colors.green,
+        backgroundColor: TheamColors.theamColor,
+        foregroundColor: TheamColors.white,
       ),
       body: BlocBuilder<InvoiceBloc, InvoiceState>(
         builder: (context, state) {

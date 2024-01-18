@@ -8,7 +8,7 @@ import 'package:erp/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/CommonWidgets/itemAutoComplete/searchBox.dart';
 import 'package:erp/CommonWidgets/userAutoComplete/userSearchBox.dart';
-import 'package:erp/mobile_screen/app_drawer.dart';
+import 'package:erp/mobile_screen/invoice.dart';
 import 'package:erp/mobile_screen/home.dart';
 import 'package:erp/mobile_screen/printOptionDialog.dart';
 import 'package:flutter/material.dart';
@@ -77,6 +77,7 @@ class _submitScreenState extends State<SubmitScreen> {
             textAlign: TextAlign.center,
           ),
           backgroundColor: Colors.green,
+          foregroundColor: Colors.white,
         ),
         backgroundColor: Colors.grey[100],
         body: Form(

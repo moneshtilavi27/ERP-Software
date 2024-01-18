@@ -17,6 +17,7 @@ class FilterItemEvent extends ItemmasterEvent {
 }
 
 class AddItemEvent extends ItemmasterEvent {
+  final String barcode;
   final String item_name;
   final String item_hsn;
   final String item_gst;
@@ -24,12 +25,13 @@ class AddItemEvent extends ItemmasterEvent {
   final String basic_value;
   final String whole_sale_value;
 
-  AddItemEvent(this.item_name, this.item_hsn, this.item_gst, this.item_unit,
-      this.basic_value, this.whole_sale_value);
+  AddItemEvent(this.barcode, this.item_name, this.item_hsn, this.item_gst,
+      this.item_unit, this.basic_value, this.whole_sale_value);
 }
 
 class UpdateItemEvent extends ItemmasterEvent {
   final String item_id;
+  final String barcode;
   final String item_name;
   final String item_hsn;
   final String item_gst;
@@ -37,8 +39,8 @@ class UpdateItemEvent extends ItemmasterEvent {
   final String basic_value;
   final String whole_sale_value;
 
-  UpdateItemEvent(this.item_id, this.item_name, this.item_hsn, this.item_gst,
-      this.item_unit, this.basic_value, this.whole_sale_value);
+  UpdateItemEvent(this.item_id, this.barcode, this.item_name, this.item_hsn,
+      this.item_gst, this.item_unit, this.basic_value, this.whole_sale_value);
 }
 
 class DeleteItemEvent extends ItemmasterEvent {

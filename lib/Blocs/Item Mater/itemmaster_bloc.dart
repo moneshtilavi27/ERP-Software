@@ -31,6 +31,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
       APIMethods obj = APIMethods();
       Map<String, String> data = {
         "request": "add",
+        "barcode": event.barcode,
         "item_name": event.item_name,
         "item_hsn": event.item_hsn,
         "item_gst": event.item_gst,
@@ -44,6 +45,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
     on<UpdateItemEvent>((event, emit) async {
       APIMethods obj = APIMethods();
       Map<String, String> data1 = {
+        "barcode": event.barcode,
         "item_name": event.item_name,
         "item_hsn": event.item_hsn,
         "item_gst": event.item_gst,
@@ -55,6 +57,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
         "request": "update",
         "item_id": event.item_id,
         "data": {
+          "barcode": event.barcode,
           "item_name": event.item_name,
           "item_hsn": event.item_hsn,
           "item_gst": event.item_gst,

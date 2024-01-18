@@ -91,16 +91,16 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       try {
         Map<String, dynamic> data = {
           "request": "update",
-          "item_id": event.item_id,
           "data": {
             "user_id": sp.getString('user_id'),
+            "item_id": event.item_id,
             "item_name": event.item_name,
             "item_hsn": event.item_hsn,
-            "item_gst": event.item_gst,
+            "item_gst": event.item_gst.isEmpty ? 0 : event.item_gst,
             "item_quant": event.item_quant,
             "item_unit": event.item_unit,
             "item_rate": event.basic_value,
-            "item_value": event.value,
+            "item_value": event.value
           }
         };
         await addUpdate(data);

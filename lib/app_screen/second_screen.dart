@@ -1,3 +1,4 @@
+import 'package:erp/mobile_screen/styles.dart';
 import 'package:flutter/material.dart';
 
 class SecondScreen extends StatelessWidget {
@@ -11,10 +12,7 @@ class SecondScreen extends StatelessWidget {
           child: Container(
             margin: const EdgeInsets.all(24),
             child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green, // background (button) color
-                foregroundColor: Colors.white, //
-              ),
+              style: ElevatedButtonStyle.greenButtonStyle,
               onPressed: () {
                 Navigator.of(context).pop();
               },

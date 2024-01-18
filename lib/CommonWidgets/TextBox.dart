@@ -13,6 +13,7 @@ class TextBox extends StatefulWidget {
   int? maxLength;
   Function? onChange;
   Function? validator;
+  Function? suffixClick;
 
   TextBox(
       {Key? key,
@@ -28,6 +29,7 @@ class TextBox extends StatefulWidget {
       this.validator,
       this.textInputType,
       this.focusNode,
+      this.suffixClick,
       this.textInputFormatter,
       this.textAlign,
       this.maxLength})
@@ -115,7 +117,9 @@ class _TextBoxState extends State<TextBox> {
                           padding: const EdgeInsets.only(
                               top: 0, left: 0, right: 0, bottom: 0),
                           child: InkWell(
-                            onTap: () {},
+                            onTap: () {
+                              widget.suffixClick!();
+                            },
                             child: Icon(
                               widget.suffixIcon,
                               size: iconSize,

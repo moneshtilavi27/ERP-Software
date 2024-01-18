@@ -1,5 +1,6 @@
 import 'package:erp/Blocs/Invoice/invoice_bloc.dart';
 import 'package:erp/Blocs/Invoice/invoice_event.dart';
+import 'package:erp/Constants/Colors.dart';
 import 'package:erp/app_screen/login.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,7 +24,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('App Information'),
-        backgroundColor: Colors.green,
+        backgroundColor: TheamColors.theamColor,
+        foregroundColor: TheamColors.white,
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
@@ -44,12 +46,12 @@ class _AppInfoPageState extends State<AppInfoPage> {
               ),
               SizedBox(height: 20),
               Text(
-                'BILLING APP', // Replace with your app name
+                'Ono Mart', // Replace with your app name
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
               Text(
-                'Version 1.0', // Replace with your app version
+                'Version 1.1', // Replace with your app version
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
               SizedBox(height: 20),

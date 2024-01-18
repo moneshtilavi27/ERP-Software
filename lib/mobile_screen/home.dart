@@ -1,6 +1,7 @@
 import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/Blocs/Internet/internet_bloc.dart';
 import 'package:erp/Blocs/Internet/internet_state.dart';
+import 'package:erp/Constants/Colors.dart';
 import 'package:erp/mobile_screen/appinfo.dart';
 import 'package:erp/mobile_screen/billReport.dart';
 import 'package:erp/mobile_screen/itemList.dart';
@@ -8,7 +9,7 @@ import 'package:erp/mobile_screen/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'app_drawer.dart';
+import 'invoice.dart';
 
 class HomePage extends StatefulWidget {
   final String title;
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const AppDrawer(title: "Invoice")));
+                builder: (context) => const Invoice(title: "Invoice")));
         break;
       case "Item Master":
         // page = AppDrawer(title: "Invoice");
@@ -88,7 +89,8 @@ class _HomePageState extends State<HomePage> {
           widget.title,
           textAlign: TextAlign.center,
         ),
-        backgroundColor: Colors.green,
+        backgroundColor: TheamColors.theamColor,
+        foregroundColor: TheamColors.white,
         centerTitle: true, // Center-align the title
       ),
       body: GridView.builder(

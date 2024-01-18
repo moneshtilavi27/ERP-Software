@@ -8,6 +8,8 @@ import 'package:erp/Blocs/Invoice/invoice_event.dart';
 import 'package:erp/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
+import 'package:erp/Constants/Colors.dart';
+import 'package:erp/mobile_screen/styles.dart';
 import 'package:erp/mobile_screen/submitPage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -122,7 +124,8 @@ class _BucketState extends State<Bucket> {
             widget.title,
             textAlign: TextAlign.center,
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: TheamColors.theamColor,
+          foregroundColor: TheamColors.white,
         ),
         backgroundColor: Colors.grey[100],
         body: BlocBuilder<InvoiceBloc, InvoiceState>(builder: (context, state) {
@@ -161,7 +164,8 @@ class _BucketState extends State<Bucket> {
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Icon(Icons.currency_rupee_rounded),
+                            const Icon(Icons.currency_rupee_rounded,
+                                color: Colors.grey),
                             Text(
                               state.dataList[index]['item_value'] +
                                   " / " +
@@ -355,6 +359,7 @@ class _BucketState extends State<Bucket> {
           ),
           actions: [
             ElevatedButton(
+              style: ElevatedButtonStyle.greenButtonStyle,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
@@ -376,6 +381,7 @@ class _BucketState extends State<Bucket> {
               child: const Text('Update'),
             ),
             TextButton(
+              style: ElevatedButtonStyle.redButtonStyle,
               onPressed: () {
                 Navigator.pop(context);
               },

@@ -244,7 +244,7 @@ class Common {
                       'घेतलेला माल व पैसे काऊंटरवरच तपासून घेणे. व काही तकरार असेल तर दोन दीवसात येऊन भेटावे. नंतर कोणतीही तकरार ऐकली जाणार नाही.',
                       style: pw.TextStyle(font: ttf),
                       textAlign: pw.TextAlign.center),
-                  pw.Text('येतेवेळ   पिशवी  आणा, प्लास्टीक प्रदूषण टाळा',
+                  pw.Text('Bring a bag when you come, avoid plastic pollution',
                       style: pw.TextStyle(font: ttf),
                       textAlign: pw.TextAlign.center),
                   pw.Text('This bill is including GST'),

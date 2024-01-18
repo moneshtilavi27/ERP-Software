@@ -1,3 +1,4 @@
+import 'package:erp/mobile_screen/styles.dart';
 import 'package:flutter/material.dart';
 
 void showDeleteConfirmationDialog(
@@ -21,7 +22,7 @@ void showDeleteConfirmationDialog(
               onPressed();
               Navigator.of(context).pop(); // Close the dialog
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButtonStyle.redButtonStyle,
             child: const Text("Ok"),
           ),
         ],
@@ -43,7 +44,7 @@ void showAlertDialog(BuildContext context, String message) {
             onPressed: () {
               Navigator.of(context).pop(); // Close the dialog
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            style: ElevatedButtonStyle.redButtonStyle,
             child: const Text("Close"),
           ),
         ],

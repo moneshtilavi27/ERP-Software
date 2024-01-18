@@ -60,8 +60,16 @@ class UpdateProductEvent extends InvoiceEvent {
   final String basic_value;
   final String value;
 
-  UpdateProductEvent(this.item_id, this.item_name, this.item_hsn, this.item_gst,
-      this.item_quant, this.item_unit, this.basic_value, this.value);
+  UpdateProductEvent(
+    this.item_id,
+    this.item_name,
+    this.item_hsn,
+    this.item_gst,
+    this.item_quant,
+    this.item_unit,
+    this.basic_value,
+    this.value,
+  );
 }
 
 class DeleteItemEvent extends InvoiceEvent {

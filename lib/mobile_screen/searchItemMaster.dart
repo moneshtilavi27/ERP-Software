@@ -1,11 +1,14 @@
 import 'package:erp/CommonWidgets/DropDown.dart';
+import 'package:erp/CommonWidgets/Music/musicPlayer.dart';
 import 'package:erp/CommonWidgets/TextBox.dart';
 import 'package:erp/CommonWidgets/common1.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
+import 'package:erp/mobile_screen/styles.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 
 class SearchItemMaster extends SearchDelegate<String> {
   List<dynamic> products;
@@ -153,6 +156,8 @@ class SearchItemMaster extends SearchDelegate<String> {
   Future<void> _showItemInputDialog(BuildContext context, var data) async {
     bool condition = data!['item_id'] == null ? true : false;
     String heading = condition ? 'Add' : 'Update';
+    TextEditingController _barcodeController =
+        TextEditingController(text: data!['barcode'] ?? '');
     TextEditingController _itemNameController =
         TextEditingController(text: data!['item_name'] ?? '');
     TextEditingController _itemHsnController =
@@ -165,7 +170,7 @@ class SearchItemMaster extends SearchDelegate<String> {
         TextEditingController(text: data['basic_value'] ?? '0');
     TextEditingController _itemvalueController =
         TextEditingController(text: data['basic_value'] ?? '0');
-
+    late var res;
     return showDialog(
       context: context,
       builder: (context) {
@@ -177,74 +182,94 @@ class SearchItemMaster extends SearchDelegate<String> {
               style: TextStyle(fontSize: 20),
             ),
           ),
-          content: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextBox(
-                  helpText: 'Item Name',
-                  controller: _itemNameController,
-                  validator: itemvalidation,
-                ),
-                TextBox(
-                    helpText: 'Item HSN',
-                    controller: _itemHsnController,
+          content: SingleChildScrollView(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextBox(
+                    helpText: 'Barcode Id',
+                    controller: _barcodeController,
+                    suffixIcon: Icons.qr_code_scanner_sharp,
+                    suffixClick: () async => {
+                      res = await Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const SimpleBarcodeScannerPage(),
+                          )),
+                      if (res != '-1')
+                        {
+                          MusicPlayer.playMusic("success"),
+                          _barcodeController.text = res
+                        }
+                    },
+                  ),
+                  TextBox(
+                    helpText: 'Item Name',
+                    controller: _itemNameController,
                     validator: itemvalidation,
-                    textInputType: TextInputType.number),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 115,
-                      child: TextBox(
-                          helpText: 'Item GST',
-                          controller: _itemGstController,
-                          validator: itemvalidation,
-                          textInputType: TextInputType.number),
-                    ),
-                    SizedBox(
-                      width: 115,
-                      child: Dropdown(
-                        helpText: 'unit',
-                        defaultValue: _itemUnitController.text,
-                        onChange: (value) {
-                          _itemUnitController.text = value.toString();
-                        },
+                  ),
+                  TextBox(
+                      helpText: 'Item HSN',
+                      controller: _itemHsnController,
+                      validator: itemvalidation,
+                      textInputType: TextInputType.number),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 115,
+                        child: TextBox(
+                            helpText: 'Item GST',
+                            controller: _itemGstController,
+                            textInputType: TextInputType.number),
                       ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    SizedBox(
-                      width: 115,
-                      child: TextBox(
-                          helpText: 'MRP Rate',
-                          controller: _itemMrpController,
-                          validator: itemvalidation,
-                          textInputType: TextInputType.number),
-                    ),
-                    SizedBox(
-                      width: 115,
-                      child: TextBox(
-                          helpText: 'Sale Rate',
-                          controller: _itemvalueController,
-                          validator: itemvalidation,
-                          textInputType: TextInputType.number),
-                    ),
-                  ],
-                ),
-              ],
+                      SizedBox(
+                        width: 115,
+                        child: Dropdown(
+                          helpText: 'unit',
+                          defaultValue: _itemUnitController.text,
+                          onChange: (value) {
+                            _itemUnitController.text = value.toString();
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      SizedBox(
+                        width: 115,
+                        child: TextBox(
+                            helpText: 'MRP Rate',
+                            controller: _itemMrpController,
+                            validator: itemvalidation,
+                            textInputType: TextInputType.number),
+                      ),
+                      SizedBox(
+                        width: 115,
+                        child: TextBox(
+                            helpText: 'Sale Rate',
+                            controller: _itemvalueController,
+                            validator: itemvalidation,
+                            textInputType: TextInputType.number),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           actions: [
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              style: ElevatedButtonStyle.greenButtonStyle,
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   try {
                     BlocProvider.of<ItemmasterBloc>(context).add(condition
                         ? AddItemEvent(
+                            _barcodeController.text,
                             _itemNameController.text,
                             _itemHsnController.text,
                             _itemGstController.text,
@@ -253,12 +278,14 @@ class SearchItemMaster extends SearchDelegate<String> {
                             _itemvalueController.text)
                         : UpdateItemEvent(
                             data['item_id'].toString(),
+                            _barcodeController.text,
                             _itemNameController.text,
                             _itemHsnController.text,
                             _itemGstController.text,
                             _itemUnitController.text,
                             _itemMrpController.text,
                             _itemvalueController.text));
+                    data!['barcode'] = _barcodeController.text;
                     Navigator.pop(context);
                   } catch (e) {
                     print(e);
@@ -268,7 +295,7 @@ class SearchItemMaster extends SearchDelegate<String> {
               child: Text(heading),
             ),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              style: ElevatedButtonStyle.redButtonStyle,
               onPressed: () {
                 Navigator.pop(context);
               },

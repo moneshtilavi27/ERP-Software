@@ -26,7 +26,13 @@ class Button extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      style: ElevatedButton.styleFrom(backgroundColor: btnColor),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: btnColor,
+        shape: RoundedRectangleBorder(
+          borderRadius:
+              BorderRadius.circular(8.0), // Adjust this value to make it square
+        ),
+      ),
       onPressed: () => onPress(),
       child: Padding(
         padding: const EdgeInsets.all(10),

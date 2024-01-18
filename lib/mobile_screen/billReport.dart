@@ -7,7 +7,8 @@ import 'package:erp/Blocs/Invoice/invoice_state.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_bloc.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_event.dart';
 import 'package:erp/Blocs/Item%20Mater/itemmaster_state.dart';
-import 'package:erp/mobile_screen/app_drawer.dart';
+import 'package:erp/Constants/Colors.dart';
+import 'package:erp/mobile_screen/invoice.dart';
 import 'package:erp/mobile_screen/reportBillPrint.dart';
 import 'package:erp/mobile_screen/searchItemMaster.dart';
 import 'package:flutter/material.dart';
@@ -61,7 +62,8 @@ class _ItemMasterState extends State<BillReport> {
           widget.title,
           textAlign: TextAlign.center,
         ),
-        backgroundColor: Colors.green,
+        backgroundColor: TheamColors.theamColor,
+        foregroundColor: TheamColors.white,
         // actions: [
         //   AppBarActionButton(),
         // ],

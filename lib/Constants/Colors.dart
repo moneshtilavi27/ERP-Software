@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 class TheamColors {
+  static Color theamColor = Colors.green;
   static Color mainColor = const Color(0xffB0EACD);
 
   static Color primaryColor = Color(0xFF685BFF);

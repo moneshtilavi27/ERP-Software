@@ -24,6 +24,7 @@ class ItemMaster extends StatefulWidget {
 
 class _ItemMasterFormState extends State<ItemMaster> {
   late final TextEditingController _itemIdController = TextEditingController();
+  TextEditingController _barcodeController = TextEditingController();
   late TextEditingController _itemNameController = TextEditingController();
   late final TextEditingController _itemHsnController = TextEditingController();
   late final TextEditingController _itemUnitController =
@@ -46,6 +47,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
 
   clearFields() {
     _itemIdController.text = "";
+    _barcodeController.text = "";
     _itemNameController.text = "";
     _itemHsnController.text = "";
     _itemUnitController.text = "-";
@@ -170,6 +172,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
                                               ? BlocProvider.of<ItemmasterBloc>(
                                                       context)
                                                   .add(AddItemEvent(
+                                                      _barcodeController.text,
                                                       _itemNameController.text,
                                                       _itemHsnController.text,
                                                       _itemGstController.text,
@@ -181,6 +184,7 @@ class _ItemMasterFormState extends State<ItemMaster> {
                                                       context)
                                                   .add(UpdateItemEvent(
                                                       _itemIdController.text,
+                                                      _barcodeController.text,
                                                       _itemNameController.text,
                                                       _itemHsnController.text,
                                                       _itemGstController.text,
