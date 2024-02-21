@@ -97,7 +97,10 @@ class _ItemMasterState extends State<BillReport> {
                     style: const TextStyle(
                         fontSize: 12, fontWeight: FontWeight.w400),
                   ),
-                  subtitle: Text(DataSet[index]['created'],
+                  subtitle: Text(
+                      DateTime.parse(DataSet[index]['created'])
+                          .add(Duration(minutes: 30))
+                          .toString(),
                       textAlign: TextAlign.start,
                       maxLines: 1,
                       style: TextStyle(

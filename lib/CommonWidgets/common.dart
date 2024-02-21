@@ -28,8 +28,9 @@ class Common {
     final discount = billData.isNotEmpty ? billData[0]['discount'] : '';
     final createdDate = billData.isNotEmpty ? billData[0]['created'] ?? '' : '';
 
-    final billDate =
-        createdDate.isNotEmpty ? DateTime.parse(createdDate).toString() : '';
+    final billDate = createdDate.isNotEmpty
+        ? DateTime.parse(createdDate).add(Duration(minutes: 30)).toString()
+        : '';
     final formattedBillDate =
         billDate.isNotEmpty ? _formatDateTime(billDate) : '';
 
