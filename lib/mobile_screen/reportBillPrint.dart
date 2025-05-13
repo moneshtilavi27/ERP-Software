@@ -69,13 +69,13 @@ class ShowInvoice extends StatelessWidget {
                     },
                     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
                     children: [
-                      TableRow(
+                      const TableRow(
                         children: [
-                          TableCell(
-                              child: Center(
-                                  child: Text('SL',
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold)))),
+                          // TableCell(
+                          //     child: Center(
+                          //         child: Text('SL',
+                          //             style: TextStyle(
+                          //                 fontWeight: FontWeight.bold)))),
                           TableCell(
                               child: Center(
                                   child: Text('Item Name',
@@ -84,6 +84,11 @@ class ShowInvoice extends StatelessWidget {
                           TableCell(
                               child: Center(
                                   child: Text('Qty',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold)))),
+                          TableCell(
+                              child: Center(
+                                  child: Text('GST',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold)))),
                           TableCell(
@@ -101,8 +106,8 @@ class ShowInvoice extends StatelessWidget {
                       for (int i = 0; i < billItems.length; i++)
                         TableRow(
                           children: [
-                            TableCell(
-                                child: Center(child: Text((i + 1).toString()))),
+                            // TableCell(
+                            //     child: Center(child: Text((i + 1).toString()))),
                             TableCell(
                               child: Padding(
                                 padding: const EdgeInsets.all(4.0),
@@ -118,11 +123,19 @@ class ShowInvoice extends StatelessWidget {
                                         '${billItems[i]['qty']} ${billItems[i]['unit']}'))),
                             TableCell(
                                 child: Center(
-                                    child: Text('₹${billItems[i]['rate']}'))),
+                                    child:
+                                        Text('${billItems[i]['item_gst']}'))),
+                            TableCell(
+                              child: Center(
+                                child: Text(
+                                  '₹${((double.tryParse(billItems[i]['rate'].toString()) ?? 0) - ((double.tryParse(billItems[i]['rate'].toString()) ?? 0) * (double.tryParse(billItems[i]['item_gst'].toString()) ?? 0) / 100)).toStringAsFixed(2)}',
+                                ),
+                              ),
+                            ),
                             TableCell(
                                 child: Center(
                                     child: Text(
-                                        '₹${_calculateTotalAmountForItem(billItems[i])}'))),
+                                        '₹${_calculateTotalAmountForItem(billItems[i]).toStringAsFixed(2)}'))),
                           ],
                         ),
                     ],
@@ -164,7 +177,7 @@ class ShowInvoice extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Text(
-                        'Grand Total: ₹${_calculateGrandTotal(billItems, totalDiscount)}',
+                        'Grand Total: ₹${_calculateGrandTotal(billItems, totalDiscount).toStringAsFixed(2)}',
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
@@ -202,9 +215,14 @@ class ShowInvoice extends StatelessWidget {
 
   double _calculateTotalAmountForItem(Map<String, dynamic> item) {
     try {
-      return double.parse(item['value'].toString());
+      final value = double.tryParse(item['value'].toString()) ?? 0.0;
+      final gst = double.tryParse(item['item_gst'].toString()) ?? 0.0;
+
+      // Calculate GST-exclusive value
+      final baseValue = value - ((value * gst) / 100);
+
+      return baseValue;
     } catch (e) {
-      // Handle error, for example, return 0 or log the error
       print('Error parsing value: $e');
       return 0.0;
     }
@@ -247,31 +265,30 @@ class ShowInvoice extends StatelessWidget {
   }
 
   double _calculateSGST(Map<String, dynamic> item) {
-  try {
-    double gstRate = (item['item_gst'] is num)
-        ? item['item_gst'].toDouble()
-        : double.tryParse(item['item_gst'].toString()) ?? 0.0;
+    try {
+      double gstRate = (item['item_gst'] is num)
+          ? item['item_gst'].toDouble()
+          : double.tryParse(item['item_gst'].toString()) ?? 0.0;
 
-    double itemValue = (item['value'] is num)
-        ? item['value'].toDouble()
-        : double.tryParse(item['value'].toString()) ?? 0.0;
+      double itemValue = (item['value'] is num)
+          ? item['value'].toDouble()
+          : double.tryParse(item['value'].toString()) ?? 0.0;
 
-    double sgstPercent = gstRate / 2;
-    double sgstAmount = (sgstPercent / 100) * itemValue;
+      double sgstPercent = gstRate / 2;
+      double sgstAmount = (sgstPercent / 100) * itemValue;
 
-    return sgstAmount;
-  } catch (e) {
-    print('Error calculating SGST: $e');
-    return 0.0; // Return 0.0 in case of an error
+      return sgstAmount;
+    } catch (e) {
+      print('Error calculating SGST: $e');
+      return 0.0; // Return 0.0 in case of an error
+    }
   }
-}
-
 
   double _calculateGrandTotal(List<dynamic> billItems, double discount) {
     double totalAmount = _calculateTotalAmount(billItems);
     double totalCGST = _calculateTotalCGST(billItems);
     double totalSGST = _calculateTotalSGST(billItems);
     // return totalAmount + totalCGST + totalSGST - discount;
-    return totalAmount - discount;
+    return (totalAmount + totalCGST + totalSGST - discount);
   }
 }

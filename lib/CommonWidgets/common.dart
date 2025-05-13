@@ -85,8 +85,16 @@ class Common {
             final qty = item['qty'] ?? '0';
             final unit = item['unit'] ?? '-';
             final gst = item['item_gst'] ?? '-';
-            final rate = item['rate'] ?? '0';
-            final value = item['value'] ?? '0';
+            final rate = (double.tryParse(item['rate'].toString()) ?? 0) -
+                ((double.tryParse(item['rate'].toString()) ?? 0) *
+                    (double.tryParse(item['item_gst'].toString()) ?? 0) /
+                    100);
+            print("monu" + rate.toString());
+            final value = (double.tryParse(item['value'].toString()) ?? 0) -
+                ((double.tryParse(item['value'].toString()) ?? 0) *
+                    (double.tryParse(item['item_gst'].toString()) ?? 0) /
+                    100);
+
             final gstPercentage =
                 (item['item_gst'] != null && item['item_gst'].isNotEmpty)
                     ? double.tryParse(item['item_gst']) ?? 0
@@ -95,7 +103,7 @@ class Common {
             totalAmount += (double.tryParse(value.toString()) ?? 0.0);
 
             final gstAmount =
-                (double.parse(value.toString()) * gstPercentage) / 100;
+                (double.parse(item['value'].toString()) * gstPercentage) / 100;
             final cgst = gstAmount / 2;
             final sgst = gstAmount / 2;
 
@@ -141,8 +149,7 @@ class Common {
                 children: [
                   pw.Text('Subtotal'),
                   pw.Text(
-                    (totalAmount - (cgstAmount + sgstAmount))
-                        .toStringAsFixed(2),
+                    totalAmount.toStringAsFixed(2),
                   ),
                 ],
               ),
@@ -173,8 +180,13 @@ class Common {
 
           // Discount calculation
           if (discount.toString().isNotEmpty) {
-            // discountAmount = (totalAmount * double.parse(discount)) / 100;
-            discountAmount = double.parse(discount.toString());
+            // Parse the discount amount safely
+            discountAmount = double.tryParse(discount.toString()) ?? 0;
+
+            // Add taxes to total first
+            totalAmount += cgstAmount + sgstAmount;
+
+            // Subtract the discount
             totalAmount -= discountAmount;
           }
 
