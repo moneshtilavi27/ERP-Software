@@ -192,7 +192,9 @@ class _LoginFormState extends State<Login> {
                                   ),
                                   Text(
                                     errorMsg,
-                                    style: TextStyle(color: Colors.red),
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(
+                                            255, 204, 177, 175)),
                                   )
                                 ],
                               );

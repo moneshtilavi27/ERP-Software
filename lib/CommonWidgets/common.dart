@@ -91,10 +91,11 @@ class Common {
                 (item['item_gst'] != null && item['item_gst'].isNotEmpty)
                     ? double.tryParse(item['item_gst']) ?? 0
                     : 0;
+            print(value);
+            totalAmount += (double.tryParse(value.toString()) ?? 0.0);
 
-            totalAmount += double.parse(value);
-
-            final gstAmount = (double.parse(value) * gstPercentage) / 100;
+            final gstAmount =
+                (double.parse(value.toString()) * gstPercentage) / 100;
             final cgst = gstAmount / 2;
             final sgst = gstAmount / 2;
 
@@ -120,11 +121,11 @@ class Common {
                   ),
                   pw.SizedBox(
                     width: 40,
-                    child: pw.Text(rate),
+                    child: pw.Text(rate.toString()),
                   ),
                   pw.SizedBox(
                     width: 50,
-                    child: pw.Text(value),
+                    child: pw.Text(value.toString()),
                   ),
                 ],
               ),
@@ -139,7 +140,10 @@ class Common {
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text('Subtotal'),
-                  pw.Text(totalAmount.toStringAsFixed(2)),
+                  pw.Text(
+                    (totalAmount - (cgstAmount + sgstAmount))
+                        .toStringAsFixed(2),
+                  ),
                 ],
               ),
             );
@@ -168,9 +172,9 @@ class Common {
           }
 
           // Discount calculation
-          if (discount.isNotEmpty) {
+          if (discount.toString().isNotEmpty) {
             // discountAmount = (totalAmount * double.parse(discount)) / 100;
-            discountAmount = double.parse(discount);
+            discountAmount = double.parse(discount.toString());
             totalAmount -= discountAmount;
           }
 

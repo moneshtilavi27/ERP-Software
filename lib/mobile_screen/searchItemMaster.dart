@@ -13,7 +13,7 @@ import 'package:simple_barcode_scanner/simple_barcode_scanner.dart';
 class SearchItemMaster extends SearchDelegate<String> {
   List<dynamic> products;
   final String userType;
-  late String selectedResult;
+  String? selectedResult;
   SearchItemMaster(this.products, this.userType);
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
@@ -49,29 +49,36 @@ class SearchItemMaster extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // In the buildResults method, you should display the selected item based on user interaction.
-    // You can access the selected item using `selectedResult`.
-    // For example, if `selectedResult` is an index of the selected item, you can do the following:
-
-    if (selectedResult.isNotEmpty) {
-      // Access the selected item based on the index or any other identifier.
-      var selectedItem = products[int.parse(selectedResult)];
-
-      return Center(
-        child: Column(
-          children: [
-            Text(selectedItem['item_name']),
-            // Display other details of the selected item.
-          ],
-        ),
-      );
-    } else {
-      // Handle the case when no item is selected.
-      return Center(
-        child: Text("No item selected"),
-      );
-    }
+    // Just unfocus the keyboard and go back to suggestions
+    FocusScope.of(context).unfocus();
+    return buildSuggestions(context); // force re-render suggestions
   }
+
+  // @override
+  // Widget buildResults(BuildContext context) {
+  //   // In the buildResults method, you should display the selected item based on user interaction.
+  //   // You can access the selected item using `selectedResult`.
+  //   // For example, if `selectedResult` is an index of the selected item, you can do the following:
+
+  //   if (selectedResult != null && selectedResult!.isNotEmpty) {
+  //     print(selectedResult);
+  //     var selectedItem = products[int.parse(selectedResult!)];
+
+  //     return Center(
+  //       child: Column(
+  //         children: [
+  //           Text(selectedItem['item_name']),
+  //           // Display other details of the selected item.
+  //         ],
+  //       ),
+  //     );
+  //   } else {
+  //     // Handle the case when no item is selected.
+  //     return Center(
+  //       child: Text("No item selected"),
+  //     );
+  //   }
+  // }
 
   @override
   Widget buildSuggestions(BuildContext context) {
@@ -113,7 +120,7 @@ class SearchItemMaster extends SearchDelegate<String> {
               children: [
                 const Icon(Icons.currency_rupee_rounded),
                 Text(
-                  suggestedUser[index]['basic_value'] +
+                  suggestedUser[index]['basic_value'].toString() +
                       " / " +
                       suggestedUser[index]['item_unit'],
                   style: const TextStyle(
@@ -134,9 +141,11 @@ class SearchItemMaster extends SearchDelegate<String> {
             },
             onLongPress: () {
               if (userType == "admin") {
+                print(suggestedUser[index]['item_id'].toString());
                 showDeleteConfirmationDialog(context, "Delete", () {
                   BlocProvider.of<ItemmasterBloc>(context).add(DeleteItemEvent(
                       suggestedUser[index]['item_id'].toString()));
+                  query.isEmpty && products.removeAt(index);
                 });
               } else {
                 Fluttertoast.showToast(
@@ -167,9 +176,9 @@ class SearchItemMaster extends SearchDelegate<String> {
     TextEditingController _itemUnitController =
         TextEditingController(text: data!['item_unit'] ?? '-');
     TextEditingController _itemMrpController =
-        TextEditingController(text: data['basic_value'] ?? '0');
+        TextEditingController(text: data['basic_value'].toString() ?? '0');
     TextEditingController _itemvalueController =
-        TextEditingController(text: data['basic_value'] ?? '0');
+        TextEditingController(text: data['basic_value'].toString() ?? '0');
     late var res;
     return showDialog(
       context: context,

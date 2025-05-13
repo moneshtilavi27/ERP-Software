@@ -80,14 +80,15 @@ class _SearchBoxState extends State<UserSearchBox> {
   Widget build(BuildContext context) {
     return Autocomplete<UserList>(
       optionsBuilder: (TextEditingValue textEditingValue) {
-        // widget.controller.text = textEditingValue.text;
-        if (textEditingValue.text == '') {
+        if (textEditingValue.text.isEmpty || userModel?.data == null) {
           return List.empty();
         }
         return userModel!.data!
-            .where((element) => element.customer_mob!
-                .toLowerCase()
-                .contains(textEditingValue.text.toLowerCase()))
+            .where((element) =>
+                element.customer_mob
+                    ?.toLowerCase()
+                    .contains(textEditingValue.text.toLowerCase()) ??
+                false)
             .toList();
       },
       fieldViewBuilder: (BuildContext context, textEditingController, focusNode,
@@ -189,7 +190,7 @@ class _SearchBoxState extends State<UserSearchBox> {
           ? ((value) =>
               {print(value), widget.onSelected(value, widget.controller)})
           : (value) => {},
-      displayStringForOption: (UserList d) => d.customer_mob!,
+      displayStringForOption: (UserList d) => d.customer_mob.toString(),
       optionsMaxHeight: 1,
     );
   }

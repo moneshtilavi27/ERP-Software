@@ -120,15 +120,15 @@ class _submitScreenState extends State<SubmitScreen> {
               if (state is InvoiceItemListState) {
                 _totalItem.text = state.dataList.length.toString();
                 for (var product in state.dataList) {
-                  tot += double.parse(product['item_value']);
+                  tot += double.parse(product['item_value'].toString());
 
                   value = (product['item_value'] != null &&
-                          product['item_value'].isNotEmpty)
-                      ? double.tryParse(product['item_value']) ?? 0
+                          product['item_value'].toString().isNotEmpty)
+                      ? double.tryParse(product['item_value'].toString()) ?? 0
                       : 0;
                   gstPercentage = (product['item_gst'] != null &&
-                          product['item_gst'].isNotEmpty)
-                      ? double.tryParse(product['item_gst']) ?? 0
+                          product['item_gst'].toString().isNotEmpty)
+                      ? double.tryParse(product['item_gst'].toString()) ?? 0
                       : 0;
 
                   gstAmount += ((value * gstPercentage) / 100) / 2;

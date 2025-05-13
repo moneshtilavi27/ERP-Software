@@ -32,13 +32,14 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
       };
       await obj.postData(API.localLogin, data).then((res) async {
         try {
+          print(res);
           emit(LoginInitialState());
           SharedPreferences sp = await SharedPreferences.getInstance();
           if (res.data['status'] == "success") {
             sp.setString("auth_key", res.data['accessToken']);
-            sp.setString("user_id", res.data['user_id']);
+            sp.setString("user_id", res.data['user_id'].toString());
             sp.setString("user_type", res.data['user_type']);
-            print(res.data);
+
             emit(InLoginState());
           } else {
             emit(WrongCredential());

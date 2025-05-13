@@ -106,7 +106,7 @@ class _ItemMasterState extends State<ItemList> {
                     children: [
                       const Icon(Icons.currency_rupee_rounded),
                       Text(
-                        DataSet[index]['basic_value'] +
+                        DataSet[index]['basic_value'].toString() +
                             " / " +
                             DataSet[index]['item_unit'],
                         style: const TextStyle(
@@ -177,7 +177,7 @@ class _ItemMasterState extends State<ItemList> {
   Future<void> _showItemInputDialog(
       BuildContext context, var index, var data) async {
     bool condition = data!['item_id'] == null ? true : false;
-    String heading = condition ? 'Add' : 'Update';
+    String heading = condition ? 'Add 12' : 'Update';
     TextEditingController _barcodeController =
         TextEditingController(text: data!['barcode'] ?? '');
     TextEditingController _itemNameController =
@@ -189,9 +189,9 @@ class _ItemMasterState extends State<ItemList> {
     TextEditingController _itemUnitController =
         TextEditingController(text: data!['item_unit'] ?? '-');
     TextEditingController _itemMrpController =
-        TextEditingController(text: data['basic_value'] ?? '0');
+        TextEditingController(text: data['basic_value'].toString() ?? '0');
     TextEditingController _itemvalueController =
-        TextEditingController(text: data['basic_value'] ?? '0');
+        TextEditingController(text: data['basic_value'].toString() ?? '0');
     late var res;
     return showDialog(
       context: context,

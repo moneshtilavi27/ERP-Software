@@ -11,7 +11,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ItemSearch extends SearchDelegate<String> {
   List<dynamic> products;
-  late String selectedResult;
+  String? selectedResult;
   ItemSearch(this.products);
   final GlobalKey<FormState> _formKey = GlobalKey();
   final GlobalKey<FormState> _formKey1 = GlobalKey();
@@ -47,29 +47,36 @@ class ItemSearch extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // In the buildResults method, you should display the selected item based on user interaction.
-    // You can access the selected item using `selectedResult`.
-    // For example, if `selectedResult` is an index of the selected item, you can do the following:
-
-    if (selectedResult.isNotEmpty) {
-      // Access the selected item based on the index or any other identifier.
-      var selectedItem = products[int.parse(selectedResult)];
-
-      return Center(
-        child: Column(
-          children: [
-            Text(selectedItem['item_name']),
-            // Display other details of the selected item.
-          ],
-        ),
-      );
-    } else {
-      // Handle the case when no item is selected.
-      return Center(
-        child: Text("No item selected"),
-      );
-    }
+    // Just unfocus the keyboard and go back to suggestions
+    FocusScope.of(context).unfocus();
+    return buildSuggestions(context); // force re-render suggestions
   }
+
+  // @override
+  // Widget buildResults(BuildContext context) {
+  //   // In the buildResults method, you should display the selected item based on user interaction.
+  //   // You can access the selected item using `selectedResult`.
+  //   // For example, if `selectedResult` is an index of the selected item, you can do the following:
+
+  //   if (selectedResult.isNotEmpty) {
+  //     // Access the selected item based on the index or any other identifier.
+  //     var selectedItem = products[int.parse(selectedResult)];
+
+  //     return Center(
+  //       child: Column(
+  //         children: [
+  //           Text(selectedItem['item_name']),
+  //           // Display other details of the selected item.
+  //         ],
+  //       ),
+  //     );
+  //   } else {
+  //     // Handle the case when no item is selected.
+  //     return Center(
+  //       child: Text("No item selected"),
+  //     );
+  //   }
+  // }
 
   @override
   Widget buildSuggestions(BuildContext context) {
@@ -111,7 +118,7 @@ class ItemSearch extends SearchDelegate<String> {
               children: [
                 const Icon(Icons.currency_rupee_rounded),
                 Text(
-                  suggestedUser[index]['basic_value'] +
+                  suggestedUser[index]['basic_value'].toString() +
                       " / " +
                       suggestedUser[index]['item_unit'],
                   style: const TextStyle(
@@ -145,7 +152,7 @@ class ItemSearch extends SearchDelegate<String> {
     TextEditingController _itemUnitController =
         TextEditingController(text: data['item_unit']);
     TextEditingController _itemvalueController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
 
     return showDialog(
       context: context,
@@ -255,11 +262,11 @@ class ItemSearch extends SearchDelegate<String> {
   Future<void> _showItemRateChangeDialog(
       BuildContext context, var index, var data) async {
     TextEditingController oldrateController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
     TextEditingController newUnitController =
         TextEditingController(text: data['item_unit']);
     TextEditingController newrateController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
     return showDialog(
       context: context,
       builder: (context) {

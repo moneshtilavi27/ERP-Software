@@ -83,7 +83,7 @@ class _ItemMasterState extends State<BillReport> {
               children: [
                 ListTile(
                   leading: Text(
-                    DataSet[index]['number'],
+                    DataSet[index]['number'].toString(),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: Color.fromARGB(255, 162, 55, 28),
@@ -112,7 +112,8 @@ class _ItemMasterState extends State<BillReport> {
                         context,
                         MaterialPageRoute(
                             builder: (context) => ShowInvoice(
-                                invoiceNum: DataSet[index]['number'])));
+                                invoiceNum:
+                                    DataSet[index]['number'].toString())));
                   },
                 ),
                 const Divider(

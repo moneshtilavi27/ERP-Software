@@ -402,21 +402,29 @@ class _InvoiceFormState extends State<Invoice> {
                                                                 context)
                                                             .add(AddProductEvent(
                                                                 _itemIdController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemNameController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemHsnController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemGstController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemQtyController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemUnitController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemRateController
-                                                                    .text,
+                                                                    .text
+                                                                    .toString(),
                                                                 _itemvalueController
-                                                                    .text));
+                                                                    .text
+                                                                    .toString()));
                                                         clearFields();
                                                       }
                                                     },

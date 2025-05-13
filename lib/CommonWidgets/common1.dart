@@ -86,34 +86,35 @@ class InternetStatusMessage extends StatelessWidget {
 
 double calculateQuantity(dynamic qty, String unit, dynamic rate) {
   double stk = 0;
+
   try {
-    qty = (qty != null && qty.isNotEmpty) ? double.tryParse(qty) ?? 0 : 0;
-    rate = (rate != null && rate.isNotEmpty) ? double.tryParse(rate) ?? 0 : 0;
+    // Safely convert qty and rate to double
+    qty =
+        (qty is num) ? qty.toDouble() : double.tryParse(qty.toString()) ?? 0.0;
+    rate = (rate is num)
+        ? rate.toDouble()
+        : double.tryParse(rate.toString()) ?? 0.0;
 
-    print(rate);
+    // Debugging output
+    print('Rate: $rate, Quantity: $qty, Unit: $unit');
 
+    // Unit conversion logic
     if (unit == 'gm' || unit == 'ml') {
-      stk = qty / 1000;
+      stk = qty / 1000; // Convert grams/ml to kg/ltr
+    } else if (['kg', 'ltr', 'btl', 'pkt', 'pcs', 'pouch', '-', 'hgr']
+        .contains(unit)) {
+      stk = double.parse(qty.toString()); // No conversion needed
+    } else if (unit == 'qtl') {
+      stk = qty * 100; // Quintal to kg
+    } else {
+      print('Unknown unit: $unit'); // Log unexpected units
     }
-    if (unit == 'kg' ||
-        unit == 'ltr' ||
-        unit == 'btl' ||
-        unit == 'pkt' ||
-        unit == 'pcs' ||
-        unit == 'pouch' ||
-        unit == '-' ||
-        unit == 'hgr') {
-      stk = qty / 1;
-    }
-    if (unit == 'qtl') {
-      stk = qty * 100;
-    }
-    double value = stk * rate;
-    print(unit);
+
+    double value = stk * rate; // Final calculation
     return value;
   } catch (e) {
-    print(e.toString());
-    return 0;
+    print('Error: ${e.toString()}');
+    return 0.0; // Return 0.0 in case of an error
   }
 }
 

@@ -1,6 +1,6 @@
 class URL {
   String api = true
-      ? "http://believebond.co.in/onomart/api/"
+      ? "http://b2cbgm.com/onomart/api/"
       : "https://moneshtilavi.000webhostapp.com/billing/api/login/";
 }
 

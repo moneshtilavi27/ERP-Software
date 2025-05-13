@@ -66,7 +66,6 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
       try {
         // double value =
         //     double.parse(event.basic_value) * double.parse(event.item_quant);
-        // print(value);
         Map<String, dynamic> data = {
           "request": "add",
           "data": {
@@ -117,8 +116,9 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "item_id": event.item_id,
           "user_id": sp.getString('user_id')
         };
-
+        print(data);
         obj.postData(API.invoice, data).then((res) {
+          print(res);
           if (res.data['status'] == "success") {
             featchItemData({
               'request': "get",
@@ -142,9 +142,9 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
             "customer_address": event.customerAddress,
           }
         };
-
+        print(customerData);
         String custId = await addCustomer(customerData);
-
+        print(custId);
         Map<String, dynamic> invoiceData = {
           "request": "getInvoiceNumber",
           "user_id": sp.getString('user_id'),
@@ -152,7 +152,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "discount": event.discount
         };
         int invoiceNum = await getBillNumber(invoiceData);
-
+        print(invoiceNum);
         Map<String, dynamic> invoiceData1 = {
           "request": "transferItem",
           "user_id": sp.getString('user_id'),
@@ -165,6 +165,7 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
           "user_id": sp.getString('user_id'),
           "invoiceNumber": invoiceNum
         };
+        print(getBill);
         emit(InvoiceItemListState([]));
         getInvoiceData(getBill, event.status);
       } catch (e) {
@@ -228,11 +229,10 @@ class InvoiceBloc extends Bloc<InvoiceEvent, InvoiceState> {
     try {
       APIMethods obj = APIMethods();
       final res = await obj.postData(API.customer, data);
-      print(res);
       if (res.data['status'] == "success") {
-        return res.data['inserted_id'];
+        return res.data['inserted_id'].toString();
       } else {
-        throw ErrorInvoiceState(res.data['data']);
+        throw ErrorInvoiceState(res.data['data'].toString());
       }
     } catch (e) {
       throw ErrorInvoiceState(e.toString());

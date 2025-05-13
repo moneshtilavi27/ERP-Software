@@ -29,7 +29,8 @@ class ShowInvoice extends StatelessWidget {
             final billItems = state.dataList['billItem'];
 
             double totalAmount = 0;
-            double totalDiscount = double.parse(billData['discount'] ?? "0");
+            double totalDiscount =
+                double.parse(billData['discount'].toString() ?? "0");
             double totalCGST = 0;
             double totalSGST = 0;
 
@@ -44,7 +45,8 @@ class ShowInvoice extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   Text('Customer Name: ${billData['customer_name']}'),
-                  Text('Customer Mobile: ${billData['customer_mob']}'),
+                  Text(
+                      'Customer Mobile: ${billData['customer_mob'].toString()}'),
                   Text(
                       'Customer Address: ${billData['customer_address'] ?? 'N/A'}'),
                   SizedBox(height: 10),
@@ -199,7 +201,13 @@ class ShowInvoice extends StatelessWidget {
   }
 
   double _calculateTotalAmountForItem(Map<String, dynamic> item) {
-    return double.parse(item['value']);
+    try {
+      return double.parse(item['value'].toString());
+    } catch (e) {
+      // Handle error, for example, return 0 or log the error
+      print('Error parsing value: $e');
+      return 0.0;
+    }
   }
 
   double _calculateTotalCGST(List<dynamic> billItems) {
@@ -219,16 +227,45 @@ class ShowInvoice extends StatelessWidget {
   }
 
   double _calculateCGST(Map<String, dynamic> item) {
-    double cgstPercent = (double.parse(item['item_gst']) / 2);
-    double cgstAmount = (cgstPercent / 100) * double.parse(item['value']);
-    return cgstAmount;
+    try {
+      double gstRate = (item['item_gst'] is num)
+          ? item['item_gst'].toDouble()
+          : double.tryParse(item['item_gst'].toString()) ?? 0.0;
+
+      double itemValue = (item['value'] is num)
+          ? item['value'].toDouble()
+          : double.tryParse(item['value'].toString()) ?? 0.0;
+
+      double cgstPercent = gstRate / 2;
+      double cgstAmount = (cgstPercent / 100) * itemValue;
+
+      return cgstAmount;
+    } catch (e) {
+      print('Error calculating CGST: $e');
+      return 0.0; // Return 0.0 in case of an error
+    }
   }
 
   double _calculateSGST(Map<String, dynamic> item) {
-    double sgstPercent = (double.parse(item['item_gst']) / 2);
-    double sgstAmount = (sgstPercent / 100) * double.parse(item['value']);
+  try {
+    double gstRate = (item['item_gst'] is num)
+        ? item['item_gst'].toDouble()
+        : double.tryParse(item['item_gst'].toString()) ?? 0.0;
+
+    double itemValue = (item['value'] is num)
+        ? item['value'].toDouble()
+        : double.tryParse(item['value'].toString()) ?? 0.0;
+
+    double sgstPercent = gstRate / 2;
+    double sgstAmount = (sgstPercent / 100) * itemValue;
+
     return sgstAmount;
+  } catch (e) {
+    print('Error calculating SGST: $e');
+    return 0.0; // Return 0.0 in case of an error
   }
+}
+
 
   double _calculateGrandTotal(List<dynamic> billItems, double discount) {
     double totalAmount = _calculateTotalAmount(billItems);

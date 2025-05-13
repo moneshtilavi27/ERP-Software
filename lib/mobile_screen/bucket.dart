@@ -136,7 +136,7 @@ class _BucketState extends State<Bucket> {
             late double tot = 0;
             totalItemValue = 0;
             for (var product in state.dataList) {
-              totalItemValue += double.parse(product['item_value']);
+              totalItemValue += double.parse(product['item_value'].toString());
             }
             return Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -154,7 +154,8 @@ class _BucketState extends State<Bucket> {
                           style: const TextStyle(
                               fontSize: 12, fontWeight: FontWeight.w400),
                         ),
-                        subtitle: Text(state.dataList[index]['item_hsn'],
+                        subtitle: Text(
+                            state.dataList[index]['item_hsn'].toString(),
                             textAlign: TextAlign.start,
                             maxLines: 1,
                             style: TextStyle(
@@ -167,10 +168,11 @@ class _BucketState extends State<Bucket> {
                             const Icon(Icons.currency_rupee_rounded,
                                 color: Colors.grey),
                             Text(
-                              state.dataList[index]['item_value'] +
+                              state.dataList[index]['item_value'].toString() +
                                   " / " +
-                                  state.dataList[index]['item_quant'] +
-                                  state.dataList[index]['item_unit'],
+                                  state.dataList[index]['item_quant']
+                                      .toString() +
+                                  state.dataList[index]['item_unit'].toString(),
                               style: const TextStyle(
                                   color: Color.fromARGB(255, 162, 55, 28),
                                   fontSize: 16,
@@ -279,11 +281,11 @@ class _BucketState extends State<Bucket> {
 
   Future<void> _showItemInputDialog(BuildContext context, var data) async {
     TextEditingController quantityController =
-        TextEditingController(text: data['item_quant']);
+        TextEditingController(text: data['item_quant'].toString());
     TextEditingController _itemUnitController =
         TextEditingController(text: data['item_unit']);
     TextEditingController _itemvalueController =
-        TextEditingController(text: data['item_value']);
+        TextEditingController(text: data['item_value'].toString());
 
     return showDialog(
       context: context,

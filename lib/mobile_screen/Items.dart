@@ -89,7 +89,7 @@ class _ItemsState extends State<Items> {
                       const Icon(Icons.currency_rupee_rounded,
                           color: Colors.grey),
                       Text(
-                        DataSet[index]['basic_value'] +
+                        DataSet[index]['basic_value'].toString() +
                             " / " +
                             DataSet[index]['item_unit'],
                         style: const TextStyle(
@@ -130,7 +130,7 @@ class _ItemsState extends State<Items> {
     TextEditingController _itemUnitController =
         TextEditingController(text: data['item_unit']);
     TextEditingController _itemvalueController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
 
     return showDialog(
       context: context,
@@ -243,11 +243,11 @@ class _ItemsState extends State<Items> {
   Future<void> _showItemRateChangeDialog(
       BuildContext context, var index, var data) async {
     TextEditingController oldrateController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
     TextEditingController newUnitController =
         TextEditingController(text: data['item_unit']);
     TextEditingController newrateController =
-        TextEditingController(text: data['basic_value']);
+        TextEditingController(text: data['basic_value'].toString());
 
     return showDialog(
       context: context,

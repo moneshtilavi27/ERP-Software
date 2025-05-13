@@ -39,6 +39,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
         "basic_value": event.basic_value,
         "whole_sale_value": event.basic_value
       };
+      print(data);
       addUpdate(data);
     });
 
@@ -76,6 +77,7 @@ class ItemmasterBloc extends Bloc<ItemmasterEvent, ItemmasterState> {
         "item_id": event.item_id,
         "data": {"delete": 1}
       };
+      print(data);
       addUpdate(data);
     });
   }
